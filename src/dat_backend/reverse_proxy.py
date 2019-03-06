@@ -1,3 +1,10 @@
+from typing import Iterable, TYPE_CHECKING
+
+# https://git.io/fhHMJ
+if TYPE_CHECKING:
+    from wsgiref.types import StartResponse, WSGIApplication, WSGIEnvironment
+
+
 class ReverseProxied(object):
     """
     Adapted from Flask Snippets:
@@ -20,12 +27,16 @@ class ReverseProxied(object):
 
     :param app: the WSGI application
     """
-    def __init__(self, app):
+    def __init__(self, app: 'WSGIApplication'):
         self.app = app
+        self.api_root = '/'
 
-    def __call__(self, environ, start_response):
+    def __call__(self,
+                 environ: 'WSGIEnvironment',
+                 start_response: 'StartResponse') -> Iterable[bytes]:
         script_name = environ.get('HTTP_X_SCRIPT_NAME', '')
         if script_name:
+            self.api_root = script_name
             environ['SCRIPT_NAME'] = script_name
             path_info = environ['PATH_INFO']
             if path_info.startswith(script_name):
