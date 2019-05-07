@@ -19,8 +19,7 @@
 # where 'myusername' and 'mypassword' are your Earthdata credentials.
 #
 # ------------------------------------------------------------------------------
-# Ignore mypy and flake8 warnings for this file
-# type: ignore
+# Ignore flake8 warnings for this file
 # flake8: noqa
 #
 from __future__ import print_function
