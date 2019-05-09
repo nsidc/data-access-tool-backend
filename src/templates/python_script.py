@@ -225,8 +225,6 @@ def cmr_search(short_name, version, time_start, time_end,
         if hits > CMR_PAGE_SIZE:
             print()
         return urls
-    except IOError as e:
-        raise
     except KeyboardInterrupt:
         quit()
 
