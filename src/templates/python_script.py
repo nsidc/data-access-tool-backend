@@ -33,43 +33,83 @@ from getpass import getpass
 try:
     from urllib.parse import urlparse
     from urllib.request import urlopen, Request, build_opener, HTTPCookieProcessor
-    from urllib.error import HTTPError
+    from urllib.error import HTTPError, URLError
 except ImportError:
     from urlparse import urlparse
-    from urllib2 import urlopen, Request, HTTPError, build_opener, HTTPCookieProcessor
+    from urllib2 import urlopen, Request, HTTPError, URLError, build_opener, HTTPCookieProcessor
 
-collectionAuthId = '{collectionAuthId}'
-collectionVersionId = '{collectionVersionId}'
-temporalLowerBound = '{temporalLowerBound}'
-temporalUpperBound = '{temporalUpperBound}'
-boundingBox = '{boundingBox}'
+short_name = '{short_name}'
+version = '{version}'
+time_start = '{time_start}'
+time_end = '{time_end}'
 polygon = '{polygon}'
-granuleFilter = '{granuleFilter}'
+filename_filter = '{filename_filter}'
 
 CMR_URL = 'https://cmr.earthdata.nasa.gov'
 CMR_PAGE_SIZE = 2000
 CMR_FILE_URL = CMR_URL + '/search/granules.json?provider=NSIDC_ECS&sort_key=short_name' + \
-    '&page_size=' + str(CMR_PAGE_SIZE)
+    '&scroll=true&page_size=' + str(CMR_PAGE_SIZE)
 
 
-def get_credentials():
+def get_username():
+    username = ''
+    try:
+        do_input = raw_input
+    except:
+        do_input = input
+    while not username:
+        try:
+            username = do_input('Earthdata username: ')
+        except KeyboardInterrupt:
+            quit()
+    return username
+
+
+def get_password():
+    password = ''
+    while not password:
+        try:
+            password = getpass('password: ')
+        except KeyboardInterrupt:
+            quit()
+    return password
+
+
+def get_credentials(url):
+    # Try once to get the credentials from a .netrc file
+    credentials = None
     try:
         info = netrc.netrc()
         username, account, password = info.authenticators(urlparse(CMR_URL).hostname)
     except:
-        try:
-            username = raw_input("Earthdata username: ")
-        except:
-            username = input("Earthdata username: ")
-        password = getpass("password: ")
-    credentials = ('%s:%s' % (username, password))
-    credentials = base64.b64encode(credentials.encode('ascii')).decode("ascii")
+        username = ''
+        password = ''
+
+    while not credentials:
+        if not username:
+            username = get_username()
+            password = get_password()
+        credentials = '{}:{}'.format(username, password)
+        credentials = base64.b64encode(credentials.encode('ascii')).decode('ascii')
+
+        if url:
+            try:
+                req = Request(url)
+                req.add_header('Authorization', 'Basic %s' % credentials)
+                opener = build_opener(HTTPCookieProcessor())
+                opener.open(req)
+            except HTTPError as e:
+                print("Incorrect username or password")
+                credentials = None
+                username = ''
+                password = ''
+
     return credentials
 
 
 def cmr_download(urls):
     try:
-        if not isinstance(urls, list) or len(urls) == 0:
+        if not isinstance(urls, list) or not urls:
             return
     except:
         return
@@ -78,8 +118,8 @@ def cmr_download(urls):
     credentials = None
 
     for url in urls:
-        if credentials == None and urlparse(url).scheme == 'https':
-            credentials = get_credentials()
+        if not credentials and urlparse(url).scheme == 'https':
+            credentials = get_credentials(url)
 
         filename = url.split('/')[-1]
         print('Downloading ' + filename)
@@ -89,29 +129,28 @@ def cmr_download(urls):
             # resp = requests.get(url, auth=(username, password))
             # open(filename, 'wb').write(resp.content)
             req = Request(url)
-            if credentials != None:
+            if credentials:
                 req.add_header('Authorization', 'Basic %s' % credentials)
             opener = build_opener(HTTPCookieProcessor())
             data = opener.open(req).read()
-            open(filename, "wb").write(data)
+            open(filename, 'wb').write(data)
+        except HTTPError as e:
+            print('HTTP error {}, {}'.format(e.code, e.reason))
+        except URLError as e:
+            print('URL error: {}'.format(e.reason))
         except IOError as e:
-            if hasattr(e, 'code'):  # HTTPError
-                print(('HTTP error code: %d' % e.code))
-            elif hasattr(e, 'reason'):  # URLError
-                print('HTTP cannot connect: ' + e.reason)
-            else:
-                raise
+            raise
         except KeyboardInterrupt:
-            return
+            quit()
 
 
 def cmr_filter_urls(searchResults):
     if 'feed' not in searchResults or 'entry' not in searchResults['feed']:
-        return None
+        return []
     
     entries = searchResults['feed']['entry']
-    if len(entries) == 0:
-        return None
+    if not entries:
+        return []
 
     urls = []
     # Filter out filename duplicates (use a dict for O(1) lookups)
@@ -136,26 +175,22 @@ def cmr_filter_urls(searchResults):
     return urls
 
 
-def cmr_search(collectionAuthId, collectionVersionId, temporalLowerBound, temporalUpperBound,
-               boundingBox='', polygon='',
-               granuleFilter=''):
-    params = "&short_name=" + collectionAuthId
+def cmr_search(short_name, version, time_start, time_end,
+               polygon='', filename_filter=''):
+    params = '&short_name=' + short_name
     desiredPadLength = 3
-    padding = ""
-    while len(collectionVersionId) <= desiredPadLength:
-        params += "&version=" + padding + collectionVersionId
+    padding = ''
+    while len(version) <= desiredPadLength:
+        params += '&version=' + padding + version
         desiredPadLength -= 1
-        padding += "0"
-    params += "&temporal[]=" + temporalLowerBound + "," + temporalUpperBound
+        padding += '0'
+    params += '&temporal[]=' + time_start + ',' + time_end
     if polygon is not '':
-        params += "&polygon=" + polygon
-    elif boundingBox is not '':
-        params += "&bounding_box=" + boundingBox
-    if granuleFilter is not '':
-        params += "&producer_granule_id[]=" + granuleFilter + \
-            "&options[producer_granule_id][pattern]=true"
+        params += '&polygon=' + polygon
+    if filename_filter is not '':
+        params += '&producer_granule_id[]=' + filename_filter + \
+            '&options[producer_granule_id][pattern]=true'
     print(CMR_FILE_URL + params)
-    scroll = '&scroll=true'
     cmrScrollID = None
     ctx = ssl.create_default_context()
     ctx.check_hostname = False
@@ -164,25 +199,23 @@ def cmr_search(collectionAuthId, collectionVersionId, temporalLowerBound, tempor
     try:
         urls = []
         while True:
-            req = Request(CMR_FILE_URL + params + scroll)
-            if cmrScrollID != None:
+            req = Request(CMR_FILE_URL + params)
+            if cmrScrollID:
                 req.add_header('CMR-Scroll-Id', cmrScrollID)
             response = urlopen(req, context=ctx)
-            if cmrScrollID == None:
+            if not cmrScrollID:
                 # Python 2 and 3 have different case for the http headers
-                headers = dict()
-                for k, v in dict(response.info()).items():
-                    headers[k.lower()] = v
+                headers = {k.lower(): v for k, v in dict(response.info()).items()}
                 cmrScrollID = headers['cmr-scroll-id']
                 hits = int(headers['cmr-hits'])
                 if hits > 0:
-                    print(('Found %d matches, retrieving URLs' % (hits, )))
+                    print('Found {} matches, retrieving URLs'.format(hits))
                 else:
                     print('Found no matches')
             searchResults = response.read()
             searchResults = json.loads(searchResults)
             urlScrollResults = cmr_filter_urls(searchResults)
-            if urlScrollResults == None:
+            if not urlScrollResults:
                 break
             if hits > CMR_PAGE_SIZE:
                 print('.', end='')
@@ -193,27 +226,26 @@ def cmr_search(collectionAuthId, collectionVersionId, temporalLowerBound, tempor
             print()
         return urls
     except IOError as e:
-        print(e)
-        return None
+        raise
     except KeyboardInterrupt:
-        return
+        quit()
 
-
-# Supply some default search parameters, just for testing purposes.
-# These are only used if the parameters aren't filled in up above.
-if 'collectionAuthId' in collectionAuthId:
-    collectionAuthId = 'MOD10A2'
-    collectionVersionId = '6'
-    temporalLowerBound = '2001-01-01T00:00:00Z'
-    temporalUpperBound = '2019-03-07T22:09:38Z'
-    boundingBox = '-180,-90,180,90'
-    polygon = '-109,37,-102,37,-102,41,-109,41,-109,37'
-    granuleFilter = '*A2019*'  # '*2019010204*'
 
 def main():
 
-    urls = cmr_search(collectionAuthId, collectionVersionId, temporalLowerBound, temporalUpperBound,
-                      boundingBox=boundingBox, polygon=polygon, granuleFilter=granuleFilter)
+    # Supply some default search parameters, just for testing purposes.
+    # These are only used if the parameters aren't filled in up above.
+    global short_name, version, time_start, time_end, polygon, filename_filter
+    if 'short_name' in short_name:
+        short_name = 'MOD10A2'
+        version = '6'
+        time_start = '2001-01-01T00:00:00Z'
+        time_end = '2019-03-07T22:09:38Z'
+        polygon = '-109,37,-102,37,-102,41,-109,41,-109,37'
+        filename_filter = '*A2019*'  # '*2019010204*'
+
+    urls = cmr_search(short_name, version, time_start, time_end,
+                      polygon=polygon, filename_filter=filename_filter)
 
     cmr_download(urls)
 
