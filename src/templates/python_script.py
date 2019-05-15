@@ -95,7 +95,7 @@ def get_credentials(url):
         if url:
             try:
                 req = Request(url)
-                req.add_header('Authorization', 'Basic %s' % credentials)
+                req.add_header('Authorization', 'Basic {}'.format(credentials))
                 opener = build_opener(HTTPCookieProcessor())
                 opener.open(req)
             except HTTPError as e:
@@ -114,7 +114,7 @@ def cmr_download(urls):
     except:
         return
 
-    print(('Downloading %d files' % (len(urls), )))
+    print('Downloading {} files'.format(len(urls)))
     credentials = None
 
     for url in urls:
@@ -130,7 +130,7 @@ def cmr_download(urls):
             # open(filename, 'wb').write(resp.content)
             req = Request(url)
             if credentials:
-                req.add_header('Authorization', 'Basic %s' % credentials)
+                req.add_header('Authorization', 'Basic {}'.format(credentials))
             opener = build_opener(HTTPCookieProcessor())
             data = opener.open(req).read()
             open(filename, 'wb').write(data)
