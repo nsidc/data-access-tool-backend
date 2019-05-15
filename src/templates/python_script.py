@@ -111,6 +111,23 @@ def get_credentials(url):
     return credentials
 
 
+def build_cmr_query_url(short_name, version, time_start, time_end, polygon, filename_filter):
+    params = '&short_name=' + short_name
+    desired_pad_length = 3
+    padding = ''
+    while len(version) <= desired_pad_length:
+        params += '&version=' + padding + version
+        desired_pad_length -= 1
+        padding += '0'
+    params += '&temporal[]=' + time_start + ',' + time_end
+    if polygon != '':
+        params += '&polygon=' + polygon
+    if filename_filter != '':
+        params += '&producer_granule_id[]=' + filename_filter + \
+            '&options[producer_granule_id][pattern]=true'
+    return CMR_FILE_URL + params
+
+
 def cmr_download(urls):
     """Download files from list of urls."""
     # TODO: Test this works as expected
@@ -187,20 +204,11 @@ def cmr_search(short_name, version, time_start, time_end,
                polygon='', filename_filter=''):
     """Initiate a scrolling CMR query for files matching input criteria."""
 
-    params = '&short_name=' + short_name
-    desired_pad_length = 3
-    padding = ''
-    while len(version) <= desired_pad_length:
-        params += '&version=' + padding + version
-        desired_pad_length -= 1
-        padding += '0'
-    params += '&temporal[]=' + time_start + ',' + time_end
-    if polygon != '':
-        params += '&polygon=' + polygon
-    if filename_filter != '':
-        params += '&producer_granule_id[]=' + filename_filter + \
-            '&options[producer_granule_id][pattern]=true'
-    print(CMR_FILE_URL + params)
+    cmr_query_url = build_cmr_query_url(short_name=short_name, version=version,
+                                        time_start=time_start, time_end=time_end,
+                                        polygon=polygon, filename_filter=filename_filter)
+    print('Querying CMR for data:\n\n\t{}\n'.format(cmr_query_url))
+
     cmr_scroll_id = None
     ctx = ssl.create_default_context()
     ctx.check_hostname = False
@@ -209,7 +217,7 @@ def cmr_search(short_name, version, time_start, time_end,
     try:
         urls = []
         while True:
-            req = Request(CMR_FILE_URL + params)
+            req = Request(cmr_query_url)
             if cmr_scroll_id:
                 # TODO: is consistent capitalization possible here?
                 req.add_header('CMR-Scroll-Id', cmr_scroll_id)
