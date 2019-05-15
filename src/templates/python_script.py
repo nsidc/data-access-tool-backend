@@ -76,7 +76,9 @@ def get_password():
 
 
 def get_credentials(url):
-    # Try once to get the credentials from a .netrc file
+    """If the user has a .netrc file set up, use that. Otherwise, prompt for
+    creds.
+    """
     credentials = None
     try:
         info = netrc.netrc()
@@ -108,6 +110,7 @@ def get_credentials(url):
 
 
 def cmr_download(urls):
+    """Download files from list of urls."""
     try:
         if not isinstance(urls, list) or not urls:
             return
@@ -145,6 +148,7 @@ def cmr_download(urls):
 
 
 def cmr_filter_urls(search_results):
+    """Select only the desired data files from CMR response."""
     if 'feed' not in search_results or 'entry' not in search_results['feed']:
         return []
 
@@ -177,6 +181,8 @@ def cmr_filter_urls(search_results):
 
 def cmr_search(short_name, version, time_start, time_end,
                polygon='', filename_filter=''):
+    """Initiate a scrolling CMR query for files matching input criteria."""
+
     params = '&short_name=' + short_name
     desiredPadLength = 3
     padding = ''
