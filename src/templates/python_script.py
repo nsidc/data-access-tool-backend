@@ -173,7 +173,7 @@ def cmr_filter_urls(search_results):
 
         filename = link['href'].split('/')[-1]
         if filename in unique_filenames:
-            # Exclude links we already got
+            # Exclude links with duplicate filenames (they would overwrite)
             continue
         unique_filenames.add(filename)
 
