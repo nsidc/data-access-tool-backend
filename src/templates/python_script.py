@@ -83,7 +83,8 @@ def get_credentials(url):
     try:
         info = netrc.netrc()
         username, account, password = info.authenticators(urlparse(CMR_URL).hostname)
-    except:
+    except Exception:
+        # TODO: Set to None instead of ''
         username = ''
         password = ''
 
@@ -111,10 +112,8 @@ def get_credentials(url):
 
 def cmr_download(urls):
     """Download files from list of urls."""
-    try:
-        if not isinstance(urls, list) or not urls:
-            return
-    except:
+    # TODO: Test this works as expected
+    if not urls:
         return
 
     print('Downloading {} files'.format(len(urls)))
