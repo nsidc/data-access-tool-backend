@@ -184,11 +184,11 @@ def cmr_search(short_name, version, time_start, time_end,
     """Initiate a scrolling CMR query for files matching input criteria."""
 
     params = '&short_name=' + short_name
-    desiredPadLength = 3
+    desired_pad_length = 3
     padding = ''
-    while len(version) <= desiredPadLength:
+    while len(version) <= desired_pad_length:
         params += '&version=' + padding + version
-        desiredPadLength -= 1
+        desired_pad_length -= 1
         padding += '0'
     params += '&temporal[]=' + time_start + ',' + time_end
     if polygon is not '':
