@@ -112,19 +112,19 @@ def get_credentials(url):
 
 
 def build_cmr_query_url(short_name, version, time_start, time_end, polygon, filename_filter):
-    params = '&short_name=' + short_name
+    params = '&short_name={}'.format(short_name)
     desired_pad_length = 3
     padding = ''
     while len(version) <= desired_pad_length:
-        params += '&version=' + padding + version
+        padded_version = '{}{}'.format(padding, version)
+        params += '&version={}'.format(padded_version)
         desired_pad_length -= 1
         padding += '0'
-    params += '&temporal[]=' + time_start + ',' + time_end
-    if polygon != '':
-        params += '&polygon=' + polygon
-    if filename_filter != '':
-        params += '&producer_granule_id[]=' + filename_filter + \
-            '&options[producer_granule_id][pattern]=true'
+    params += '&temporal[]={},{}'.format(time_start, time_end)
+    if polygon:
+        params += '&polygon={}'.format(polygon)
+    if filename_filter:
+        params += '&producer_granule_id[]={}&options[producer_granule_id][pattern]=true'.format(filename_filter)
     return CMR_FILE_URL + params
 
 
