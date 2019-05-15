@@ -172,13 +172,12 @@ def cmr_filter_urls(search_results):
             continue
 
         filename = link['href'].split('/')[-1]
-
         if filename in unique_filenames:
             # Exclude links we already got
             continue
+        unique_filenames.add(filename)
 
         urls.append(link['href'])
-        unique_filenames.add(filename)
 
 
     return urls
