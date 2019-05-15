@@ -228,7 +228,7 @@ def cmr_search(short_name, version, time_start, time_end,
                 cmr_scroll_id = headers['cmr-scroll-id']
                 hits = int(headers['cmr-hits'])
                 if hits > 0:
-                    print('Found {} CMR hits, retrieving associated files'.format(hits))
+                    print('Found {} CMR hits.'.format(hits))
                 else:
                     print('Found no CMR hits')
             search_page = response.read()
