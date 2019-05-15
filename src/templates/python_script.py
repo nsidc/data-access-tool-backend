@@ -17,17 +17,14 @@
 # read this file. The .netrc file should have the following format:
 #    machine cmr.earthdata.nasa.gov login myusername password mypassword
 # where 'myusername' and 'mypassword' are your Earthdata credentials.
-#
-# ------------------------------------------------------------------------------
-# Ignore flake8 warnings for this file
-# flake8: noqa
-#
+
 from __future__ import print_function
-import sys
+
 import base64
 import json
 import netrc
 import ssl
+import sys
 from getpass import getpass
 
 try:
@@ -56,8 +53,8 @@ def get_username():
 
     # For Python 2/3 compatibility:
     try:
-        do_input = raw_input
-    except:
+        do_input = raw_input  # noqa
+    except NameError:
         do_input = input
 
     while not username:
@@ -103,8 +100,8 @@ def get_credentials(url):
                 req.add_header('Authorization', 'Basic {}'.format(credentials))
                 opener = build_opener(HTTPCookieProcessor())
                 opener.open(req)
-            except HTTPError as e:
-                print("Incorrect username or password")
+            except HTTPError:
+                print('Incorrect username or password')
                 credentials = None
                 username = ''
                 password = ''
@@ -144,7 +141,7 @@ def cmr_download(urls):
             print('HTTP error {}, {}'.format(e.code, e.reason))
         except URLError as e:
             print('URL error: {}'.format(e.reason))
-        except IOError as e:
+        except IOError:
             raise
         except KeyboardInterrupt:
             quit()
@@ -194,9 +191,9 @@ def cmr_search(short_name, version, time_start, time_end,
         desired_pad_length -= 1
         padding += '0'
     params += '&temporal[]=' + time_start + ',' + time_end
-    if polygon is not '':
+    if polygon != '':
         params += '&polygon=' + polygon
-    if filename_filter is not '':
+    if filename_filter != '':
         params += '&producer_granule_id[]=' + filename_filter + \
             '&options[producer_granule_id][pattern]=true'
     print(CMR_FILE_URL + params)
