@@ -144,17 +144,17 @@ def cmr_download(urls):
             quit()
 
 
-def cmr_filter_urls(searchResults):
-    if 'feed' not in searchResults or 'entry' not in searchResults['feed']:
+def cmr_filter_urls(search_results):
+    if 'feed' not in search_results or 'entry' not in search_results['feed']:
         return []
-    
-    entries = searchResults['feed']['entry']
+
+    entries = search_results['feed']['entry']
     if not entries:
         return []
 
     urls = []
     # Filter out filename duplicates (use a dict for O(1) lookups)
-    urlDup = dict()
+    url_dups = dict()
 
     for entry in entries:
         if 'links' not in entry:
@@ -168,9 +168,9 @@ def cmr_filter_urls(searchResults):
             if 'rel' in link and 'data#' not in link['rel']:
                 continue
             filename = link['href'].split('/')[-1]
-            if filename not in urlDup:
+            if filename not in url_dups:
                 urls.append(link['href'])
-                urlDup[filename] = True
+                url_dups[filename] = True
 
     return urls
 
@@ -191,7 +191,7 @@ def cmr_search(short_name, version, time_start, time_end,
         params += '&producer_granule_id[]=' + filename_filter + \
             '&options[producer_granule_id][pattern]=true'
     print(CMR_FILE_URL + params)
-    cmrScrollID = None
+    cmr_scroll_id = None
     ctx = ssl.create_default_context()
     ctx.check_hostname = False
     ctx.verify_mode = ssl.CERT_NONE
@@ -200,27 +200,28 @@ def cmr_search(short_name, version, time_start, time_end,
         urls = []
         while True:
             req = Request(CMR_FILE_URL + params)
-            if cmrScrollID:
-                req.add_header('CMR-Scroll-Id', cmrScrollID)
+            if cmr_scroll_id:
+                # TODO: is consistent capitalization possible here?
+                req.add_header('CMR-Scroll-Id', cmr_scroll_id)
             response = urlopen(req, context=ctx)
-            if not cmrScrollID:
+            if not cmr_scroll_id:
                 # Python 2 and 3 have different case for the http headers
                 headers = {k.lower(): v for k, v in dict(response.info()).items()}
-                cmrScrollID = headers['cmr-scroll-id']
+                cmr_scroll_id = headers['cmr-scroll-id']
                 hits = int(headers['cmr-hits'])
                 if hits > 0:
                     print('Found {} matches, retrieving URLs'.format(hits))
                 else:
                     print('Found no matches')
-            searchResults = response.read()
-            searchResults = json.loads(searchResults)
-            urlScrollResults = cmr_filter_urls(searchResults)
-            if not urlScrollResults:
+            search_page = response.read()
+            search_page = json.loads(search_page)
+            url_scroll_results = cmr_filter_urls(search_page)
+            if not url_scroll_results:
                 break
             if hits > CMR_PAGE_SIZE:
                 print('.', end='')
                 sys.stdout.flush()
-            urls += urlScrollResults
+            urls += url_scroll_results
 
         if hits > CMR_PAGE_SIZE:
             print()
