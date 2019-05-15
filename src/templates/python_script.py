@@ -45,8 +45,8 @@ filename_filter = '{filename_filter}'
 
 CMR_URL = 'https://cmr.earthdata.nasa.gov'
 CMR_PAGE_SIZE = 2000
-CMR_FILE_URL = CMR_URL + '/search/granules.json?provider=NSIDC_ECS&sort_key=short_name' + \
-    '&scroll=true&page_size=' + str(CMR_PAGE_SIZE)
+CMR_FILE_URL = ('{}/search/granules.json?provider=NSIDC_ECS&sort_key=short_name'
+    '&scroll=true&page_size={}'.format(CMR_URL, CMR_PAGE_SIZE))
 
 
 def get_username():
@@ -134,7 +134,7 @@ def cmr_download(urls):
     if not urls:
         return
 
-    print('Downloading {} files'.format(len(urls)))
+    print('Downloading {} files...'.format(len(urls)))
     credentials = None
 
     for url in urls:
@@ -142,7 +142,7 @@ def cmr_download(urls):
             credentials = get_credentials(url)
 
         filename = url.split('/')[-1]
-        print('Downloading ' + filename)
+        print('Downloading {}'.format(filename))
 
         try:
             # In Python 3 we could eliminate the opener and just do 2 lines:
