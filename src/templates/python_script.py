@@ -159,8 +159,7 @@ def cmr_filter_urls(search_results):
     links = list(itertools.chain(*entries))
 
     urls = []
-    # Filter out filename duplicates (use a dict for O(1) lookups)
-    url_dups = dict()
+    unique_filenames = set()
     for link in links:
         if 'href' not in link:
             # Exclude links with nothing to download
@@ -173,9 +172,13 @@ def cmr_filter_urls(search_results):
             continue
 
         filename = link['href'].split('/')[-1]
-        if filename not in url_dups:
-            urls.append(link['href'])
-            url_dups[filename] = True
+
+        if filename in unique_filenames:
+            # Exclude links we already got
+            continue
+
+        urls.append(link['href'])
+        unique_filenames.add(filename)
 
 
     return urls
