@@ -53,10 +53,13 @@ CMR_FILE_URL = CMR_URL + '/search/granules.json?provider=NSIDC_ECS&sort_key=shor
 
 def get_username():
     username = ''
+
+    # For Python 2/3 compatibility:
     try:
         do_input = raw_input
     except:
         do_input = input
+
     while not username:
         try:
             username = do_input('Earthdata username: ')
