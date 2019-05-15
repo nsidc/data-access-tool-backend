@@ -21,6 +21,7 @@
 from __future__ import print_function
 
 import base64
+import itertools
 import json
 import netrc
 import ssl
@@ -151,29 +152,31 @@ def cmr_filter_urls(search_results):
     if 'feed' not in search_results or 'entry' not in search_results['feed']:
         return []
 
-    entries = search_results['feed']['entry']
-    if not entries:
-        return []
+    entries = [e['links']
+               for e in search_results['feed']['entry']
+               if 'links' in e]
+    # Flatten "entries" to a simple list of links
+    links = list(itertools.chain(*entries))
 
     urls = []
     # Filter out filename duplicates (use a dict for O(1) lookups)
     url_dups = dict()
-
-    for entry in entries:
-        if 'links' not in entry:
+    for link in links:
+        if 'href' not in link:
+            # Exclude links with nothing to download
             continue
-        for link in entry['links']:
-            if 'href' not in link:
-                continue
-            if 'inherited' in link and link['inherited']:
-                continue
-            # Note: This will allow both data# and metadata# to go thru
-            if 'rel' in link and 'data#' not in link['rel']:
-                continue
-            filename = link['href'].split('/')[-1]
-            if filename not in url_dups:
-                urls.append(link['href'])
-                url_dups[filename] = True
+        if 'inherited' in link and link['inherited'] is True:
+            # Why are we excluding these links?
+            continue
+        if 'rel' in link and 'data#' not in link['rel']:
+            # Exclude links which are not classified by CMR as "data" or "metadata"
+            continue
+
+        filename = link['href'].split('/')[-1]
+        if filename not in url_dups:
+            urls.append(link['href'])
+            url_dups[filename] = True
+
 
     return urls
 
