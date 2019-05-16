@@ -130,7 +130,6 @@ def build_cmr_query_url(short_name, version, time_start, time_end, polygon, file
 
 def cmr_download(urls):
     """Download files from list of urls."""
-    # TODO: Test this works as expected
     if not urls:
         return
 
