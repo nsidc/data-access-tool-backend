@@ -85,9 +85,8 @@ def get_credentials(url):
         info = netrc.netrc()
         username, account, password = info.authenticators(urlparse(CMR_URL).hostname)
     except Exception:
-        # TODO: Set to None instead of ''
-        username = ''
-        password = ''
+        username = None
+        password = None
 
     while not credentials:
         if not username:
@@ -105,8 +104,8 @@ def get_credentials(url):
             except HTTPError:
                 print('Incorrect username or password')
                 credentials = None
-                username = ''
-                password = ''
+                username = None
+                password = None
 
     return credentials
 
