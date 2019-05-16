@@ -222,8 +222,7 @@ def cmr_search(short_name, version, time_start, time_end,
         while True:
             req = Request(cmr_query_url)
             if cmr_scroll_id:
-                # TODO: is consistent capitalization possible here?
-                req.add_header('CMR-Scroll-Id', cmr_scroll_id)
+                req.add_header('cmr-scroll-id', cmr_scroll_id)
             response = urlopen(req, context=ctx)
             if not cmr_scroll_id:
                 # Python 2 and 3 have different case for the http headers
