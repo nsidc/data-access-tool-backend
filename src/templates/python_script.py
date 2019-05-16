@@ -136,12 +136,12 @@ def cmr_download(urls):
     print('Downloading {} files...'.format(len(urls)))
     credentials = None
 
-    for url in urls:
+    for index, url in enumerate(urls, start=1):
         if not credentials and urlparse(url).scheme == 'https':
             credentials = get_credentials(url)
 
         filename = url.split('/')[-1]
-        print('Downloading {}'.format(filename))
+        print('{}/{}: {}'.format(index, len(urls), filename))
 
         try:
             # In Python 3 we could eliminate the opener and just do 2 lines:
@@ -211,7 +211,7 @@ def cmr_search(short_name, version, time_start, time_end,
     cmr_query_url = build_cmr_query_url(short_name=short_name, version=version,
                                         time_start=time_start, time_end=time_end,
                                         polygon=polygon, filename_filter=filename_filter)
-    print('Querying CMR for data:\n\n\t{}\n'.format(cmr_query_url))
+    print('Querying for data:\n\t{}\n'.format(cmr_query_url))
 
     cmr_scroll_id = None
     ctx = ssl.create_default_context()
@@ -232,9 +232,9 @@ def cmr_search(short_name, version, time_start, time_end,
                 cmr_scroll_id = headers['cmr-scroll-id']
                 hits = int(headers['cmr-hits'])
                 if hits > 0:
-                    print('Found {} CMR hits.'.format(hits))
+                    print('Found {} matches.'.format(hits))
                 else:
-                    print('Found no CMR hits')
+                    print('Found no matches.')
             search_page = response.read()
             search_page = json.loads(search_page)
             url_scroll_results = cmr_filter_urls(search_page)
