@@ -61,7 +61,7 @@ def get_username():
     while not username:
         try:
             username = do_input('Earthdata username: ')
-        except KeyboardInterrupt, EOFError:
+        except KeyboardInterrupt:
             quit()
     return username
 
@@ -71,7 +71,7 @@ def get_password():
     while not password:
         try:
             password = getpass('password: ')
-        except KeyboardInterrupt, EOFError:
+        except KeyboardInterrupt:
             quit()
     return password
 
