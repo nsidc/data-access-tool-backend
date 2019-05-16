@@ -46,7 +46,7 @@ filename_filter = '{filename_filter}'
 CMR_URL = 'https://cmr.earthdata.nasa.gov'
 CMR_PAGE_SIZE = 2000
 CMR_FILE_URL = ('{}/search/granules.json?provider=NSIDC_ECS&sort_key=short_name'
-    '&scroll=true&page_size={}'.format(CMR_URL, CMR_PAGE_SIZE))
+                '&scroll=true&page_size={}'.format(CMR_URL, CMR_PAGE_SIZE))
 
 
 def get_username():
@@ -195,7 +195,6 @@ def cmr_filter_urls(search_results):
         unique_filenames.add(filename)
 
         urls.append(link['href'])
-
 
     return urls
 
