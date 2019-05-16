@@ -188,6 +188,12 @@ def cmr_filter_urls(search_results):
             # Exclude links which are not classified by CMR as "data" or "metadata"
             continue
 
+        if 'title' in link and 'opendap' in link['title'].lower():
+            # Exclude OPeNDAP links--they are responsible for many duplicates
+            # This is a hack; when the metadata is updated to properly identify
+            # non-datapool links, we should be able to do this in a non-hack way
+            continue
+
         filename = link['href'].split('/')[-1]
         if filename in unique_filenames:
             # Exclude links with duplicate filenames (they would overwrite)
