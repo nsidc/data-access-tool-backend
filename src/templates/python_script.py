@@ -45,8 +45,8 @@ filename_filter = '{filename_filter}'
 
 CMR_URL = 'https://cmr.earthdata.nasa.gov'
 CMR_PAGE_SIZE = 2000
-CMR_FILE_URL = ('{}/search/granules.json?provider=NSIDC_ECS&sort_key=short_name'
-                '&scroll=true&page_size={}'.format(CMR_URL, CMR_PAGE_SIZE))
+CMR_FILE_URL = ('{0}/search/granules.json?provider=NSIDC_ECS&sort_key=short_name'
+                '&scroll=true&page_size={1}'.format(CMR_URL, CMR_PAGE_SIZE))
 
 
 def get_username():
@@ -92,13 +92,13 @@ def get_credentials(url):
         if not username:
             username = get_username()
             password = get_password()
-        credentials = '{}:{}'.format(username, password)
+        credentials = '{0}:{1}'.format(username, password)
         credentials = base64.b64encode(credentials.encode('ascii')).decode('ascii')
 
         if url:
             try:
                 req = Request(url)
-                req.add_header('Authorization', 'Basic {}'.format(credentials))
+                req.add_header('Authorization', 'Basic {0}'.format(credentials))
                 opener = build_opener(HTTPCookieProcessor())
                 opener.open(req)
             except HTTPError:
@@ -111,19 +111,19 @@ def get_credentials(url):
 
 
 def build_cmr_query_url(short_name, version, time_start, time_end, polygon, filename_filter):
-    params = '&short_name={}'.format(short_name)
+    params = '&short_name={0}'.format(short_name)
     desired_pad_length = 3
     padding = ''
     while len(version) <= desired_pad_length:
-        padded_version = '{}{}'.format(padding, version)
-        params += '&version={}'.format(padded_version)
+        padded_version = '{0}{1}'.format(padding, version)
+        params += '&version={0}'.format(padded_version)
         desired_pad_length -= 1
         padding += '0'
-    params += '&temporal[]={},{}'.format(time_start, time_end)
+    params += '&temporal[]={0},{1}'.format(time_start, time_end)
     if polygon:
-        params += '&polygon={}'.format(polygon)
+        params += '&polygon={0}'.format(polygon)
     if filename_filter:
-        params += '&producer_granule_id[]={}&options[producer_granule_id][pattern]=true'.format(filename_filter)
+        params += '&producer_granule_id[]={0}&options[producer_granule_id][pattern]=true'.format(filename_filter)
     return CMR_FILE_URL + params
 
 
@@ -132,7 +132,7 @@ def cmr_download(urls):
     if not urls:
         return
 
-    print('Downloading {} files...'.format(len(urls)))
+    print('Downloading {0} files...'.format(len(urls)))
     credentials = None
 
     for index, url in enumerate(urls, start=1):
@@ -140,7 +140,7 @@ def cmr_download(urls):
             credentials = get_credentials(url)
 
         filename = url.split('/')[-1]
-        print('{}/{}: {}'.format(index, len(urls), filename))
+        print('{0}/{1}: {2}'.format(index, len(urls), filename))
 
         try:
             # In Python 3 we could eliminate the opener and just do 2 lines:
@@ -148,14 +148,14 @@ def cmr_download(urls):
             # open(filename, 'wb').write(resp.content)
             req = Request(url)
             if credentials:
-                req.add_header('Authorization', 'Basic {}'.format(credentials))
+                req.add_header('Authorization', 'Basic {0}'.format(credentials))
             opener = build_opener(HTTPCookieProcessor())
             data = opener.open(req).read()
             open(filename, 'wb').write(data)
         except HTTPError as e:
-            print('HTTP error {}, {}'.format(e.code, e.reason))
+            print('HTTP error {0}, {1}'.format(e.code, e.reason))
         except URLError as e:
-            print('URL error: {}'.format(e.reason))
+            print('URL error: {0}'.format(e.reason))
         except IOError:
             raise
         except KeyboardInterrupt:
@@ -210,7 +210,7 @@ def cmr_search(short_name, version, time_start, time_end,
     cmr_query_url = build_cmr_query_url(short_name=short_name, version=version,
                                         time_start=time_start, time_end=time_end,
                                         polygon=polygon, filename_filter=filename_filter)
-    print('Querying for data:\n\t{}\n'.format(cmr_query_url))
+    print('Querying for data:\n\t{0}\n'.format(cmr_query_url))
 
     cmr_scroll_id = None
     ctx = ssl.create_default_context()
@@ -230,7 +230,7 @@ def cmr_search(short_name, version, time_start, time_end,
                 cmr_scroll_id = headers['cmr-scroll-id']
                 hits = int(headers['cmr-hits'])
                 if hits > 0:
-                    print('Found {} matches.'.format(hits))
+                    print('Found {0} matches.'.format(hits))
                 else:
                     print('Found no matches.')
             search_page = response.read()
