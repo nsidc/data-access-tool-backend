@@ -108,16 +108,26 @@ def get_credentials(url):
     return credentials
 
 
-def build_cmr_query_url(short_name, version, time_start, time_end, polygon, filename_filter):
-    params = '&short_name={0}'.format(short_name)
+def build_version_query_params(version):
     desired_pad_length = 3
-    padding = ''
+    if len(version) > desired_pad_length:
+        print('Version string too long: "{}"'.format(version))
+        quit()
+
+    version = str(int(version))  # Strip off any leading zeros
+    query_params = ''
+
     while len(version) <= desired_pad_length:
-        padded_version = '{0}{1}'.format(padding, version)
-        params += '&version={0}'.format(padded_version)
+        padded_version = version.zfill(desired_pad_length)
+        query_params += '&version={0}'.format(padded_version)
         desired_pad_length -= 1
-        padding += '0'
-    params += '&temporal[]={0},{1}'.format(time_start, time_end)
+    return query_params
+
+
+def build_cmr_query_url(short_name, version, time_start, time_end, polygon=None, filename_filter=None):
+    params = '&short_name={0}'.format(short_name)
+    params += build_version_query_params(version)
+    params += '&temporal[]={},{}'.format(time_start, time_end)
     if polygon:
         params += '&polygon={0}'.format(polygon)
     if filename_filter:
@@ -130,7 +140,8 @@ def cmr_download(urls):
     if not urls:
         return
 
-    print('Downloading {0} files...'.format(len(urls)))
+    url_count = len(urls)
+    print('Downloading {0} files...'.format(url_count))
     credentials = None
 
     for index, url in enumerate(urls, start=1):
@@ -138,7 +149,9 @@ def cmr_download(urls):
             credentials = get_credentials(url)
 
         filename = url.split('/')[-1]
-        print('{0}/{1}: {2}'.format(index, len(urls), filename))
+        print('{0}/{1}: {2}'.format(str(index).zfill(len(str(url_count))),
+                                 url_count,
+                                 filename))
 
         try:
             # In Python 3 we could eliminate the opener and just do 2 lines:
