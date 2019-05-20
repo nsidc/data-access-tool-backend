@@ -77,9 +77,7 @@ def get_password():
 
 
 def get_credentials(url):
-    """If the user has a .netrc file set up, use that. Otherwise, prompt for
-    creds.
-    """
+    """Get user credentials from .netrc or prompt for input."""
     credentials = None
     try:
         info = netrc.netrc()
@@ -205,8 +203,7 @@ def cmr_filter_urls(search_results):
 
 def cmr_search(short_name, version, time_start, time_end,
                polygon='', filename_filter=''):
-    """Initiate a scrolling CMR query for files matching input criteria."""
-
+    """Perform a scrolling CMR query for files matching input criteria."""
     cmr_query_url = build_cmr_query_url(short_name=short_name, version=version,
                                         time_start=time_start, time_end=time_end,
                                         polygon=polygon, filename_filter=filename_filter)
