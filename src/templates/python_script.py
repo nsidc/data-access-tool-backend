@@ -111,7 +111,7 @@ def get_credentials(url):
 def build_version_query_params(version):
     desired_pad_length = 3
     if len(version) > desired_pad_length:
-        print('Version string too long: "{}"'.format(version))
+        print('Version string too long: "{0}"'.format(version))
         quit()
 
     version = str(int(version))  # Strip off any leading zeros
@@ -127,7 +127,7 @@ def build_version_query_params(version):
 def build_cmr_query_url(short_name, version, time_start, time_end, polygon=None, filename_filter=None):
     params = '&short_name={0}'.format(short_name)
     params += build_version_query_params(version)
-    params += '&temporal[]={},{}'.format(time_start, time_end)
+    params += '&temporal[]={0},{1}'.format(time_start, time_end)
     if polygon:
         params += '&polygon={0}'.format(polygon)
     if filename_filter:
@@ -150,8 +150,8 @@ def cmr_download(urls):
 
         filename = url.split('/')[-1]
         print('{0}/{1}: {2}'.format(str(index).zfill(len(str(url_count))),
-                                 url_count,
-                                 filename))
+                                    url_count,
+                                    filename))
 
         try:
             # In Python 3 we could eliminate the opener and just do 2 lines:
