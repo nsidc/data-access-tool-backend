@@ -6,8 +6,7 @@ if TYPE_CHECKING:
 
 
 class ReverseProxied(object):
-    """
-    Adapted from Flask Snippets:
+    """Adapted from Flask Snippets.
 
         http://flask.pocoo.org/snippets/35/
 
@@ -27,6 +26,7 @@ class ReverseProxied(object):
 
     :param app: the WSGI application
     """
+
     def __init__(self, app: 'WSGIApplication'):
         self.app = app
         self.api_root = '/'
