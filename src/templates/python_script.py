@@ -142,7 +142,8 @@ def cmr_download(urls):
     if not urls:
         return
 
-    print('Downloading {} files...'.format(len(urls)))
+    url_count = len(urls)
+    print('Downloading {} files...'.format(url_count))
     credentials = None
 
     for index, url in enumerate(urls, start=1):
@@ -150,7 +151,9 @@ def cmr_download(urls):
             credentials = get_credentials(url)
 
         filename = url.split('/')[-1]
-        print('{}/{}: {}'.format(index, len(urls), filename))
+        print('{}/{}: {}'.format(str(index).zfill(len(str(url_count))),
+                                 url_count,
+                                 filename))
 
         try:
             # In Python 3 we could eliminate the opener and just do 2 lines:
