@@ -16,7 +16,7 @@
 # If you wish, you may store your Earthdata username/password in a .netrc
 # file in your $HOME directory and the script will automatically attempt to
 # read this file. The .netrc file should have the following format:
-#    machine cmr.earthdata.nasa.gov login myusername password mypassword
+#    machine urs.earthdata.nasa.gov login myusername password mypassword
 # where 'myusername' and 'mypassword' are your Earthdata credentials.
 
 from __future__ import print_function
@@ -45,6 +45,7 @@ polygon = '{polygon}'
 filename_filter = '{filename_filter}'
 
 CMR_URL = 'https://cmr.earthdata.nasa.gov'
+URS_URL = 'https://urs.earthdata.nasa.gov'
 CMR_PAGE_SIZE = 2000
 CMR_FILE_URL = ('{0}/search/granules.json?provider=NSIDC_ECS&sort_key=short_name'
                 '&scroll=true&page_size={1}'.format(CMR_URL, CMR_PAGE_SIZE))
@@ -80,12 +81,15 @@ def get_password():
 def get_credentials(url):
     """Get user credentials from .netrc or prompt for input."""
     credentials = None
+    info = netrc.netrc()
     try:
-        info = netrc.netrc()
-        username, account, password = info.authenticators(urlparse(CMR_URL).hostname)
+        username, account, password = info.authenticators(urlparse(URS_URL).hostname)
     except Exception:
-        username = None
-        password = None
+        try:
+            username, account, password = info.authenticators(urlparse(CMR_URL).hostname)
+        except Exception:
+            username = None
+            password = None
 
     while not credentials:
         if not username:
