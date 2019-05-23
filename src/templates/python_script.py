@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # ------------------------------------------------------------------------------
 # NSIDC Data Download Script
-# Tested in Python 2.7 and Python 3.7
+# Tested in Python 2.7 and Python 3.4, 3.6, 3.7
 #
 # To run the script at a Linux, macOS, or Cygwin command-line terminal:
 #   $ python nsidc-data-download.py
@@ -249,7 +249,7 @@ def cmr_search(short_name, version, time_start, time_end,
                 else:
                     print('Found no matches.')
             search_page = response.read()
-            search_page = json.loads(search_page)
+            search_page = json.loads(search_page.decode("utf-8"))
             url_scroll_results = cmr_filter_urls(search_page)
             if not url_scroll_results:
                 break
