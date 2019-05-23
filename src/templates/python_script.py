@@ -249,7 +249,7 @@ def cmr_search(short_name, version, time_start, time_end,
                 else:
                     print('Found no matches.')
             search_page = response.read()
-            search_page = json.loads(search_page.decode("utf-8"))
+            search_page = json.loads(search_page.decode('utf-8'))
             url_scroll_results = cmr_filter_urls(search_page)
             if not url_scroll_results:
                 break
