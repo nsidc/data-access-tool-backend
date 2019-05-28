@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # ------------------------------------------------------------------------------
 # NSIDC Data Download Script
 # Tested in Python 2.7 and Python 3.7
