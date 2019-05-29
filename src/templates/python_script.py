@@ -16,7 +16,7 @@
 # If you wish, you may store your Earthdata username/password in a .netrc
 # file in your $HOME directory and the script will automatically attempt to
 # read this file. The .netrc file should have the following format:
-#    machine cmr.earthdata.nasa.gov login myusername password mypassword
+#    machine urs.earthdata.nasa.gov login myusername password mypassword
 # where 'myusername' and 'mypassword' are your Earthdata credentials.
 
 from __future__ import print_function
