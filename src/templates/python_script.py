@@ -81,8 +81,8 @@ def get_password():
 def get_credentials(url):
     """Get user credentials from .netrc or prompt for input."""
     credentials = None
-    info = netrc.netrc()
     try:
+        info = netrc.netrc()
         username, account, password = info.authenticators(urlparse(URS_URL).hostname)
     except Exception:
         try:
