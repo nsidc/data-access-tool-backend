@@ -47,7 +47,8 @@ filename_filter = '{filename_filter}'
 CMR_URL = 'https://cmr.earthdata.nasa.gov'
 URS_URL = 'https://urs.earthdata.nasa.gov'
 CMR_PAGE_SIZE = 2000
-CMR_FILE_URL = ('{0}/search/granules.json?provider=NSIDC_ECS&sort_key=short_name'
+CMR_FILE_URL = ('{0}/search/granules.json?provider=NSIDC_ECS'
+                '&sort_key[]=start_date&sort_key[]=producer_granule_id'
                 '&scroll=true&page_size={1}'.format(CMR_URL, CMR_PAGE_SIZE))
 
 
