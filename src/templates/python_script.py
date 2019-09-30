@@ -41,6 +41,7 @@ short_name = '{short_name}'
 version = '{version}'
 time_start = '{time_start}'
 time_end = '{time_end}'
+bounding_box = '{bounding_box}'
 polygon = '{polygon}'
 filename_filter = '{filename_filter}'
 
@@ -130,14 +131,19 @@ def build_version_query_params(version):
     return query_params
 
 
-def build_cmr_query_url(short_name, version, time_start, time_end, polygon=None, filename_filter=None):
+def build_cmr_query_url(short_name, version, time_start, time_end,
+                        bounding_box=None, polygon=None,
+                        filename_filter=None):
     params = '&short_name={0}'.format(short_name)
     params += build_version_query_params(version)
     params += '&temporal[]={0},{1}'.format(time_start, time_end)
     if polygon:
         params += '&polygon={0}'.format(polygon)
+    elif bounding_box:
+        params += '&bounding_box={0}'.format(bounding_box)
     if filename_filter:
-        params += '&producer_granule_id[]={0}&options[producer_granule_id][pattern]=true'.format(filename_filter)
+        option = '&options[producer_granule_id][pattern]=true'
+        params += '&producer_granule_id[]={0}{1}'.format(filename_filter, option)
     return CMR_FILE_URL + params
 
 
@@ -221,10 +227,11 @@ def cmr_filter_urls(search_results):
 
 
 def cmr_search(short_name, version, time_start, time_end,
-               polygon='', filename_filter=''):
+               bounding_box='', polygon='', filename_filter=''):
     """Perform a scrolling CMR query for files matching input criteria."""
     cmr_query_url = build_cmr_query_url(short_name=short_name, version=version,
                                         time_start=time_start, time_end=time_end,
+                                        bounding_box=bounding_box,
                                         polygon=polygon, filename_filter=filename_filter)
     print('Querying for data:\n\t{0}\n'.format(cmr_query_url))
 
@@ -270,16 +277,19 @@ def main():
 
     # Supply some default search parameters, just for testing purposes.
     # These are only used if the parameters aren't filled in up above.
-    global short_name, version, time_start, time_end, polygon, filename_filter
+    global short_name, version, time_start, time_end, \
+        bounding_box, polygon, filename_filter
     if 'short_name' in short_name:
         short_name = 'MOD10A2'
         version = '6'
         time_start = '2001-01-01T00:00:00Z'
         time_end = '2019-03-07T22:09:38Z'
+        bounding_box = ''
         polygon = '-109,37,-102,37,-102,41,-109,41,-109,37'
         filename_filter = '*A2019*'  # '*2019010204*'
 
     urls = cmr_search(short_name, version, time_start, time_end,
+                      bounding_box=bounding_box,
                       polygon=polygon, filename_filter=filename_filter)
 
     cmr_download(urls)
