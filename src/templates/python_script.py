@@ -44,6 +44,7 @@ time_end = '{time_end}'
 bounding_box = '{bounding_box}'
 polygon = '{polygon}'
 filename_filter = '{filename_filter}'
+url_list = '{url_list}'
 
 CMR_URL = 'https://cmr.earthdata.nasa.gov'
 URS_URL = 'https://urs.earthdata.nasa.gov'
@@ -274,11 +275,11 @@ def cmr_search(short_name, version, time_start, time_end,
 
 
 def main():
+    global short_name, version, time_start, time_end, bounding_box, \
+        polygon, filename_filter, url_list
 
     # Supply some default search parameters, just for testing purposes.
     # These are only used if the parameters aren't filled in up above.
-    global short_name, version, time_start, time_end, \
-        bounding_box, polygon, filename_filter
     if 'short_name' in short_name:
         short_name = 'MOD10A2'
         version = '6'
@@ -287,12 +288,14 @@ def main():
         bounding_box = ''
         polygon = '-109,37,-102,37,-102,41,-109,41,-109,37'
         filename_filter = '*A2019*'  # '*2019010204*'
+        url_list = []
 
-    urls = cmr_search(short_name, version, time_start, time_end,
-                      bounding_box=bounding_box,
-                      polygon=polygon, filename_filter=filename_filter)
+    if not url_list:
+        url_list = cmr_search(short_name, version, time_start, time_end,
+                              bounding_box=bounding_box,
+                              polygon=polygon, filename_filter=filename_filter)
 
-    cmr_download(urls)
+    cmr_download(url_list)
 
 
 if __name__ == '__main__':
