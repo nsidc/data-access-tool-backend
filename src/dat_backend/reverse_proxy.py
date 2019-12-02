@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 class ReverseProxied(object):
     """Adapted from Flask Snippets.
 
-        http://flask.pocoo.org/snippets/35/
+        https://web.archive.org/web/20190523102024/http://flask.pocoo.org/snippets/35/
 
     Wrap the application in this middleware and configure the
     front-end server to add these headers, to let you quietly bind
