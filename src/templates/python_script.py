@@ -84,15 +84,16 @@ def get_password():
 def get_credentials(url):
     """Get user credentials from .netrc or prompt for input."""
     credentials = None
+    errprefix = ''
     try:
         info = netrc.netrc()
         username, account, password = info.authenticators(urlparse(URS_URL).hostname)
-    except Exception:
-        try:
-            username, account, password = info.authenticators(urlparse(CMR_URL).hostname)
-        except Exception:
-            username = None
-            password = None
+        errprefix = 'netrc error: '
+    except Exception as e:
+        if (not ('No such file' in str(e))):
+            print('netrc error: {0}'.format(str(e)))
+        username = None
+        password = None
 
     while not credentials:
         if not username:
@@ -108,7 +109,8 @@ def get_credentials(url):
                 opener = build_opener(HTTPCookieProcessor())
                 opener.open(req)
             except HTTPError:
-                print('Incorrect username or password')
+                print(errprefix + 'Incorrect username or password')
+                errprefix = ''
                 credentials = None
                 username = None
                 password = None
