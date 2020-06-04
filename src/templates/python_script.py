@@ -2,7 +2,7 @@
 # ----------------------------------------------------------------------------
 # NSIDC Data Download Script
 #
-# Copyright (c) 2020 Regents of the University of Colorado
+# Copyright (c) {copyright_year} Regents of the University of Colorado
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the "Software"),
 # to deal in the Software without restriction, including without limitation
