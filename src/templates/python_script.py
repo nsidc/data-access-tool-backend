@@ -314,7 +314,7 @@ def main():
         time_start = '2001-01-01T00:00:00Z'
         time_end = '2019-03-07T22:09:38Z'
         bounding_box = ''
-        polygon = '-108,38,-102,38,-102,41,-108,41,-108,38'
+        polygon = '-109,37,-102,37,-102,41,-109,41,-109,37'
         filename_filter = 'A2019'
         url_list = []
 
