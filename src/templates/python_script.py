@@ -145,6 +145,22 @@ def build_version_query_params(version):
     return query_params
 
 
+def filter_add_wildcards(filter):
+    if not filter.startswith('*'):
+        filter = '*' + filter
+    if not filter.endswith('*'):
+        filter = filter + '*'
+    return filter
+
+
+def build_filename_filter(filename_filter):
+    filters = filename_filter.split(',')
+    result = '&options[producer_granule_id][pattern]=true'
+    for filter in filters:
+        result += '&producer_granule_id[]=' + filter_add_wildcards(filter)
+    return result
+
+
 def build_cmr_query_url(short_name, version, time_start, time_end,
                         bounding_box=None, polygon=None,
                         filename_filter=None):
@@ -156,8 +172,7 @@ def build_cmr_query_url(short_name, version, time_start, time_end,
     elif bounding_box:
         params += '&bounding_box={0}'.format(bounding_box)
     if filename_filter:
-        option = '&options[producer_granule_id][pattern]=true'
-        params += '&producer_granule_id[]={0}{1}'.format(filename_filter, option)
+        params += build_filename_filter(filename_filter)
     return CMR_FILE_URL + params
 
 
@@ -300,7 +315,7 @@ def main():
         time_end = '2019-03-07T22:09:38Z'
         bounding_box = ''
         polygon = '-109,37,-102,37,-102,41,-109,41,-109,37'
-        filename_filter = '*A2019*'  # '*2019010204*'
+        filename_filter = 'A2019'
         url_list = []
 
     if not url_list:
