@@ -176,6 +176,16 @@ def build_cmr_query_url(short_name, version, time_start, time_end,
     return CMR_FILE_URL + params
 
 
+def cmr_read_in_chunks(file_object, chunk_size=1024 * 1024):
+    """Generator to read a file piece by piece.
+    Default chunk size: 1Mb."""
+    while True:
+        data = file_object.read(chunk_size)
+        if not data:
+            break
+        yield data
+
+
 def cmr_download(urls):
     """Download files from list of urls."""
     if not urls:
@@ -202,8 +212,10 @@ def cmr_download(urls):
             if credentials:
                 req.add_header('Authorization', 'Basic {0}'.format(credentials))
             opener = build_opener(HTTPCookieProcessor())
-            data = opener.open(req).read()
-            open(filename, 'wb').write(data)
+            response = opener.open(req)
+            with open(filename, 'wb') as out_file:
+                for data in cmr_read_in_chunks(response):
+                    out_file.write(data)
         except HTTPError as e:
             print('HTTP error {0}, {1}'.format(e.code, e.reason))
         except URLError as e:
