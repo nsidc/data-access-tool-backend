@@ -38,6 +38,10 @@ import json
 import netrc
 import ssl
 import sys
+import getopt
+import os.path
+import math
+import time
 from getpass import getpass
 
 try:
@@ -176,6 +180,27 @@ def build_cmr_query_url(short_name, version, time_start, time_end,
     return CMR_FILE_URL + params
 
 
+def get_speed(time_elapsed, chunk_size):
+    speed = chunk_size / time_elapsed
+    if speed <= 0:
+        speed = 1
+    size_name = ("", "k", "M", "G", "T", "P", "E", "Z", "Y")
+    i = int(math.floor(math.log(speed, 1000)))
+    p = math.pow(1000, i)
+    return '{0:.1f}{1}B/s'.format(speed / p, size_name[i])
+
+
+def output_progress(count, total, status='', bar_len=60):
+    fraction = min(max(count / float(total), 0), 1)
+    filled_len = int(round(bar_len * fraction))
+    percents = int(round(100.0 * fraction))
+    bar = '=' * filled_len + ' ' * (bar_len - filled_len)
+    fmt = '  [{0}] {1:3d}%  {2}   '.format(bar, percents, status)
+    print('\b' * (len(fmt) + 4), end='')  # clears the line
+    sys.stdout.write(fmt)
+    sys.stdout.flush()
+
+
 def cmr_read_in_chunks(file_object, chunk_size=1024 * 1024):
     """Read a file in chunks using a generator. Default chunk size: 1Mb."""
     while True:
@@ -185,13 +210,14 @@ def cmr_read_in_chunks(file_object, chunk_size=1024 * 1024):
         yield data
 
 
-def cmr_download(urls):
+def cmr_download(urls, force=False, quiet=False):
     """Download files from list of urls."""
     if not urls:
         return
 
     url_count = len(urls)
-    print('Downloading {0} files...'.format(url_count))
+    if not quiet:
+        print('Downloading {0} files...'.format(url_count))
     credentials = None
 
     for index, url in enumerate(urls, start=1):
@@ -199,30 +225,44 @@ def cmr_download(urls):
             credentials = get_credentials(url)
 
         filename = url.split('/')[-1]
-        print('{0}/{1}: {2}'.format(str(index).zfill(len(str(url_count))),
-                                    url_count,
-                                    filename))
+        if not quiet:
+            print('{0}/{1}: {2}'.format(str(index).zfill(len(str(url_count))),
+                                        url_count, filename))
 
         try:
-            # In Python 3 we could eliminate the opener and just do 2 lines:
-            # resp = requests.get(url, auth=(username, password))
-            # open(filename, 'wb').write(resp.content)
             req = Request(url)
             if credentials:
                 req.add_header('Authorization', 'Basic {0}'.format(credentials))
             opener = build_opener(HTTPCookieProcessor())
             response = opener.open(req)
+            length = int(response.headers['content-length'])
+            try:
+                if not force and length == os.path.getsize(filename):
+                    if not quiet:
+                        print('  File exists, skipping')
+                    continue
+            except OSError:
+                pass
+            count = 0
+            chunk_size = min(max(length, 1), 1024 * 1024)
+            max_chunks = int(math.ceil(length / chunk_size))
+            time_initial = time.time()
             with open(filename, 'wb') as out_file:
-                for data in cmr_read_in_chunks(response):
+                for data in cmr_read_in_chunks(response, chunk_size=chunk_size):
                     out_file.write(data)
+                    if not quiet:
+                        count = count + 1
+                        time_elapsed = time.time() - time_initial
+                        download_speed = get_speed(time_elapsed, count * chunk_size)
+                        output_progress(count, max_chunks, status=download_speed)
+            if not quiet:
+                print()
         except HTTPError as e:
             print('HTTP error {0}, {1}'.format(e.code, e.reason))
         except URLError as e:
             print('URL error: {0}'.format(e.reason))
         except IOError:
             raise
-        except KeyboardInterrupt:
-            quit()
 
 
 def cmr_filter_urls(search_results):
@@ -267,74 +307,100 @@ def cmr_filter_urls(search_results):
 
 
 def cmr_search(short_name, version, time_start, time_end,
-               bounding_box='', polygon='', filename_filter=''):
+               bounding_box='', polygon='', filename_filter='', quiet=False):
     """Perform a scrolling CMR query for files matching input criteria."""
     cmr_query_url = build_cmr_query_url(short_name=short_name, version=version,
                                         time_start=time_start, time_end=time_end,
                                         bounding_box=bounding_box,
                                         polygon=polygon, filename_filter=filename_filter)
-    print('Querying for data:\n\t{0}\n'.format(cmr_query_url))
+    if not quiet:
+        print('Querying for data:\n\t{0}\n'.format(cmr_query_url))
 
     cmr_scroll_id = None
     ctx = ssl.create_default_context()
     ctx.check_hostname = False
     ctx.verify_mode = ssl.CERT_NONE
 
-    try:
-        urls = []
-        while True:
-            req = Request(cmr_query_url)
-            if cmr_scroll_id:
-                req.add_header('cmr-scroll-id', cmr_scroll_id)
-            response = urlopen(req, context=ctx)
-            if not cmr_scroll_id:
-                # Python 2 and 3 have different case for the http headers
-                headers = {k.lower(): v for k, v in dict(response.info()).items()}
-                cmr_scroll_id = headers['cmr-scroll-id']
-                hits = int(headers['cmr-hits'])
+    urls = []
+    hits = 0
+    while True:
+        req = Request(cmr_query_url)
+        if cmr_scroll_id:
+            req.add_header('cmr-scroll-id', cmr_scroll_id)
+        response = urlopen(req, context=ctx)
+        if not cmr_scroll_id:
+            # Python 2 and 3 have different case for the http headers
+            headers = {k.lower(): v for k, v in dict(response.info()).items()}
+            cmr_scroll_id = headers['cmr-scroll-id']
+            hits = int(headers['cmr-hits'])
+            if not quiet:
                 if hits > 0:
                     print('Found {0} matches.'.format(hits))
                 else:
                     print('Found no matches.')
-            search_page = response.read()
-            search_page = json.loads(search_page.decode('utf-8'))
-            url_scroll_results = cmr_filter_urls(search_page)
-            if not url_scroll_results:
-                break
-            if hits > CMR_PAGE_SIZE:
-                print('.', end='')
-                sys.stdout.flush()
-            urls += url_scroll_results
+        search_page = response.read()
+        search_page = json.loads(search_page.decode('utf-8'))
+        url_scroll_results = cmr_filter_urls(search_page)
+        if not url_scroll_results:
+            break
+        if not quiet and hits > CMR_PAGE_SIZE:
+            print('.', end='')
+            sys.stdout.flush()
+        urls += url_scroll_results
 
-        if hits > CMR_PAGE_SIZE:
-            print()
-        return urls
-    except KeyboardInterrupt:
-        quit()
+    if not quiet and hits > CMR_PAGE_SIZE:
+        print()
+    return urls
 
 
-def main():
+def main(argv=None):
     global short_name, version, time_start, time_end, bounding_box, \
         polygon, filename_filter, url_list
+
+    if argv is None:
+        argv = sys.argv[1:]
+
+    force = False
+    quiet = False
+    usage = "usage: nsidc-download_***.py [--help, -h] [--force, -f] [--quiet, -q]"
+
+    try:
+        opts, args = getopt.getopt(argv, "hfq", ["help", "force", "quiet"])
+        for opt, arg in opts:
+            if opt in ("-f", "--force"):
+                force = True
+            elif opt in ("-q", "--quiet"):
+                quiet = True
+            elif opt in ("-h", "--help"):
+                print(usage)
+                sys.exit()
+    except getopt.GetoptError as e:
+        print(e.args[0])
+        print(usage)
+        sys.exit(1)
 
     # Supply some default search parameters, just for testing purposes.
     # These are only used if the parameters aren't filled in up above.
     if 'short_name' in short_name:
-        short_name = 'MOD10A2'
-        version = '6'
-        time_start = '2001-01-01T00:00:00Z'
-        time_end = '2019-03-07T22:09:38Z'
+        short_name = 'ATL06'
+        version = '003'
+        time_start = '2018-10-14T00:00:00Z'
+        time_end = '2021-01-08T21:48:13Z'
         bounding_box = ''
-        polygon = '-109,37,-102,37,-102,41,-109,41,-109,37'
-        filename_filter = 'A2019'
+        polygon = ''
+        filename_filter = '*ATL06_2020111121*'
         url_list = []
 
-    if not url_list:
-        url_list = cmr_search(short_name, version, time_start, time_end,
-                              bounding_box=bounding_box,
-                              polygon=polygon, filename_filter=filename_filter)
+    try:
+        if not url_list:
+            url_list = cmr_search(short_name, version, time_start, time_end,
+                                bounding_box=bounding_box,
+                                polygon=polygon, filename_filter=filename_filter,
+                                quiet=quiet)
 
-    cmr_download(url_list)
+        cmr_download(url_list, force=force, quiet=quiet)
+    except KeyboardInterrupt:
+        quit()
 
 
 if __name__ == '__main__':
