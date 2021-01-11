@@ -33,14 +33,14 @@
 from __future__ import print_function
 
 import base64
+import getopt
 import itertools
 import json
+import math
 import netrc
+import os.path
 import ssl
 import sys
-import getopt
-import os.path
-import math
 import time
 from getpass import getpass
 
@@ -184,7 +184,7 @@ def get_speed(time_elapsed, chunk_size):
     speed = chunk_size / time_elapsed
     if speed <= 0:
         speed = 1
-    size_name = ("", "k", "M", "G", "T", "P", "E", "Z", "Y")
+    size_name = ('', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y')
     i = int(math.floor(math.log(speed, 1000)))
     p = math.pow(1000, i)
     return '{0:.1f}{1}B/s'.format(speed / p, size_name[i])
@@ -362,16 +362,16 @@ def main(argv=None):
 
     force = False
     quiet = False
-    usage = "usage: nsidc-download_***.py [--help, -h] [--force, -f] [--quiet, -q]"
+    usage = 'usage: nsidc-download_***.py [--help, -h] [--force, -f] [--quiet, -q]'
 
     try:
-        opts, args = getopt.getopt(argv, "hfq", ["help", "force", "quiet"])
-        for opt, arg in opts:
-            if opt in ("-f", "--force"):
+        opts, args = getopt.getopt(argv, 'hfq', ['help', 'force', 'quiet'])
+        for opt, _arg in opts:
+            if opt in ('-f', '--force'):
                 force = True
-            elif opt in ("-q", "--quiet"):
+            elif opt in ('-q', '--quiet'):
                 quiet = True
-            elif opt in ("-h", "--help"):
+            elif opt in ('-h', '--help'):
                 print(usage)
                 sys.exit()
     except getopt.GetoptError as e:
@@ -394,9 +394,8 @@ def main(argv=None):
     try:
         if not url_list:
             url_list = cmr_search(short_name, version, time_start, time_end,
-                                bounding_box=bounding_box,
-                                polygon=polygon, filename_filter=filename_filter,
-                                quiet=quiet)
+                                  bounding_box=bounding_box, polygon=polygon,
+                                  filename_filter=filename_filter, quiet=quiet)
 
         cmr_download(url_list, force=force, quiet=quiet)
     except KeyboardInterrupt:
