@@ -367,7 +367,7 @@ def main(argv=None):
                 quiet = True
             elif opt in ('-h', '--help'):
                 print(usage)
-                sys.exit()
+                sys.exit(0)
     except getopt.GetoptError as e:
         print(e.args[0])
         print(usage)
