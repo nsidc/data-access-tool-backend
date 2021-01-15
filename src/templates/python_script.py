@@ -175,6 +175,8 @@ def build_cmr_query_url(short_name, version, time_start, time_end,
 
 
 def get_speed(time_elapsed, chunk_size):
+    if time_elapsed <= 0:
+        return ''
     speed = chunk_size / time_elapsed
     if speed <= 0:
         speed = 1
@@ -185,6 +187,8 @@ def get_speed(time_elapsed, chunk_size):
 
 
 def output_progress(count, total, status='', bar_len=60):
+    if total <= 0:
+        return
     fraction = min(max(count / float(total), 0), 1)
     filled_len = int(round(bar_len * fraction))
     percents = int(round(100.0 * fraction))
