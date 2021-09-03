@@ -112,7 +112,7 @@ def get_login_credentials():
     try:
         info = netrc.netrc()
         username, account, password = info.authenticators(urlparse(URS_URL).hostname)
-        if username == "token":
+        if username == 'token':
             token = password
         else:
             credentials = '{0}:{1}'.format(username, password)
@@ -238,7 +238,14 @@ def get_login_response(url, credentials, token):
     try:
         response = opener.open(req)
     except HTTPError as e:
-        print('HTTP error {0}, {1}'.format(e.code, e.reason))
+        err = 'HTTP error {0}, {1}'.format(e.code, e.reason)
+        if 'Unauthorized' in e.reason:
+            if token:
+                err += ': Check your bearer token'
+            else:
+                err += ': Check your username and password'
+        print(err)
+        sys.exit(1)
     except Exception as e:
         print('Error{0}: {1}'.format(type(e), str(e)))
         sys.exit(1)
@@ -362,7 +369,11 @@ def cmr_search(short_name, version, time_start, time_end,
         req = Request(cmr_query_url)
         if cmr_scroll_id:
             req.add_header('cmr-scroll-id', cmr_scroll_id)
-        response = urlopen(req, context=ctx)
+        try:
+            response = urlopen(req, context=ctx)
+        except Exception as e:
+            print('Error: ' + str(e))
+            sys.exit(1)
         if not cmr_scroll_id:
             # Python 2 and 3 have different case for the http headers
             headers = {k.lower(): v for k, v in dict(response.info()).items()}
