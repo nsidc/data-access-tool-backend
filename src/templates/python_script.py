@@ -12,7 +12,7 @@
 # The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
 #
-# Tested in Python 2.7 and Python 3.4, 3.6, 3.7
+# Tested in Python 2.7 and Python 3.4, 3.6, 3.7, 3.8, 3.9
 #
 # To run the script at a Linux, macOS, or Cygwin command-line terminal:
 #   $ python nsidc-data-download.py
@@ -27,8 +27,16 @@
 # If you wish, you may store your Earthdata username/password in a .netrc
 # file in your $HOME directory and the script will automatically attempt to
 # read this file. The .netrc file should have the following format:
-#    machine urs.earthdata.nasa.gov login myusername password mypassword
-# where 'myusername' and 'mypassword' are your Earthdata credentials.
+#    machine urs.earthdata.nasa.gov login MYUSERNAME password MYPASSWORD
+# where 'MYUSERNAME' and 'MYPASSWORD' are your Earthdata credentials.
+#
+# Instead of a username/password, you may use an Earthdata bearer token.
+# To construct a bearer token, log into Earthdata and choose "Generate Token".
+# To use the token, when the script prompts for your username,
+# just press Return (Enter). You will then be prompted for your token.
+# You can store your bearer token in the .netrc file in the following format:
+#    machine urs.earthdata.nasa.gov login token password MYBEARERTOKEN
+# where 'MYBEARERTOKEN' is your Earthdata bearer token.
 #
 from __future__ import print_function
 
@@ -78,8 +86,7 @@ def get_username():
     except NameError:
         do_input = input
 
-    while not username:
-        username = do_input('Earthdata username: ')
+    username = do_input('Earthdata username (or press Return to use a bearer token): ')
     return username
 
 
@@ -90,41 +97,40 @@ def get_password():
     return password
 
 
-def get_credentials(url):
+def get_token():
+    token = ''
+    while not token:
+        token = getpass('bearer token: ')
+    return token
+
+
+def get_login_credentials():
     """Get user credentials from .netrc or prompt for input."""
     credentials = None
-    errprefix = ''
+    token = None
+
     try:
         info = netrc.netrc()
         username, account, password = info.authenticators(urlparse(URS_URL).hostname)
-        errprefix = 'netrc error: '
-    except Exception as e:
-        if (not ('No such file' in str(e))):
-            print('netrc error: {0}'.format(str(e)))
+        if username == 'token':
+            token = password
+        else:
+            credentials = '{0}:{1}'.format(username, password)
+            credentials = base64.b64encode(credentials.encode('ascii')).decode('ascii')
+    except Exception:
         username = None
         password = None
 
-    while not credentials:
-        if not username:
-            username = get_username()
+    if not username:
+        username = get_username()
+        if len(username):
             password = get_password()
-        credentials = '{0}:{1}'.format(username, password)
-        credentials = base64.b64encode(credentials.encode('ascii')).decode('ascii')
+            credentials = '{0}:{1}'.format(username, password)
+            credentials = base64.b64encode(credentials.encode('ascii')).decode('ascii')
+        else:
+            token = get_token()
 
-        if url:
-            try:
-                req = Request(url)
-                req.add_header('Authorization', 'Basic {0}'.format(credentials))
-                opener = build_opener(HTTPCookieProcessor())
-                opener.open(req)
-            except HTTPError:
-                print(errprefix + 'Incorrect username or password')
-                errprefix = ''
-                credentials = None
-                username = None
-                password = None
-
-    return credentials
+    return credentials, token
 
 
 def build_version_query_params(version):
@@ -208,6 +214,45 @@ def cmr_read_in_chunks(file_object, chunk_size=1024 * 1024):
         yield data
 
 
+def get_login_response(url, credentials, token):
+    opener = build_opener(HTTPCookieProcessor())
+
+    req = Request(url)
+    if token:
+        req.add_header('Authorization', 'Bearer {0}'.format(token))
+    elif credentials:
+        try:
+            response = opener.open(req)
+            # We have a redirect URL - try again with authorization.
+            url = response.url
+        except HTTPError:
+            # No redirect - just try again with authorization.
+            pass
+        except Exception as e:
+            print('Error{0}: {1}'.format(type(e), str(e)))
+            sys.exit(1)
+
+        req = Request(url)
+        req.add_header('Authorization', 'Basic {0}'.format(credentials))
+
+    try:
+        response = opener.open(req)
+    except HTTPError as e:
+        err = 'HTTP error {0}, {1}'.format(e.code, e.reason)
+        if 'Unauthorized' in e.reason:
+            if token:
+                err += ': Check your bearer token'
+            else:
+                err += ': Check your username and password'
+        print(err)
+        sys.exit(1)
+    except Exception as e:
+        print('Error{0}: {1}'.format(type(e), str(e)))
+        sys.exit(1)
+
+    return response
+
+
 def cmr_download(urls, force=False, quiet=False):
     """Download files from list of urls."""
     if not urls:
@@ -217,10 +262,13 @@ def cmr_download(urls, force=False, quiet=False):
     if not quiet:
         print('Downloading {0} files...'.format(url_count))
     credentials = None
+    token = None
 
     for index, url in enumerate(urls, start=1):
-        if not credentials and urlparse(url).scheme == 'https':
-            credentials = get_credentials(url)
+        if not credentials and not token:
+            p = urlparse(url)
+            if p.scheme == 'https':
+                credentials, token = get_login_credentials()
 
         filename = url.split('/')[-1]
         if not quiet:
@@ -228,11 +276,7 @@ def cmr_download(urls, force=False, quiet=False):
                                         url_count, filename))
 
         try:
-            req = Request(url)
-            if credentials:
-                req.add_header('Authorization', 'Basic {0}'.format(credentials))
-            opener = build_opener(HTTPCookieProcessor())
-            response = opener.open(req)
+            response = get_login_response(url, credentials, token)
             length = int(response.headers['content-length'])
             try:
                 if not force and length == os.path.getsize(filename):
@@ -325,7 +369,11 @@ def cmr_search(short_name, version, time_start, time_end,
         req = Request(cmr_query_url)
         if cmr_scroll_id:
             req.add_header('cmr-scroll-id', cmr_scroll_id)
-        response = urlopen(req, context=ctx)
+        try:
+            response = urlopen(req, context=ctx)
+        except Exception as e:
+            print('Error: ' + str(e))
+            sys.exit(1)
         if not cmr_scroll_id:
             # Python 2 and 3 have different case for the http headers
             headers = {k.lower(): v for k, v in dict(response.info()).items()}
