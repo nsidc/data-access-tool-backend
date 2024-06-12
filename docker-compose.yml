@@ -1,0 +1,6 @@
+services:
+  downloader-script:
+    # TODO: dev stuff extracted to dev env yaml
+    build: .
+    ports:
+      - "5000:5000"

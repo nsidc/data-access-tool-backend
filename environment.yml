@@ -1,0 +1,11 @@
+name: dat-downloader-script-service
+channels:
+  - conda-forge
+  - nsidc
+  - nodefaults
+dependencies:
+  - python ~=3.12.0
+  - pydantic
+  - flask
+  - flask-restx ~=1.3.0
+  - gunicorn
