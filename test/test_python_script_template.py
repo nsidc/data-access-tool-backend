@@ -1,3 +1,6 @@
+import os
+from pathlib import Path
+
 import pytest
 
 from templates.python_script import build_cmr_query_url, \
@@ -101,14 +104,17 @@ def test_output_progress():
     output_progress(0, 100)
 
 
-def test_cmr_download():
-    # TODO: these download calls fail because we're just fetching the result of
-    # the collections query, and it doesn't function the way we expect (we
-    # expect content-length header that isn't present on a the result from a
-    # query like this).
-    # cmr_download(['https://n5eil01u.ecs.nsidc.org/DP4/MOST/MOD10A2.061/2019.01.01/MOD10A2.A2019001.h09v04.061.2020286153245.hdf'])
+def test_cmr_download(tmpdir):
+    # TODO: get download URL from cmr query. This example uses ECS, which is
+    # going away!
+    original_cwd = os.getcwd()
+    os.chdir(tmpdir)
+    cmr_download(['https://n5eil01u.ecs.nsidc.org/DP4/MOST/MOD10A2.061/2019.01.01/MOD10A2.A2019001.h09v04.061.2020286153245.hdf'])
     # # Call again so we exercise the "skip duplicate file" code path
-    # cmr_download(['http://cmr.earthdata.nasa.gov/search/collections'])
+    cmr_download(['https://n5eil01u.ecs.nsidc.org/DP4/MOST/MOD10A2.061/2019.01.01/MOD10A2.A2019001.h09v04.061.2020286153245.hdf'])
+    assert Path("MOD10A2.A2019001.h09v04.061.2020286153245.hdf").is_file()
+    os.chdir(original_cwd)
+
     # HTTP error 404
     with pytest.raises(SystemExit) as excinfo:
         cmr_download(['http://cmr.earthdata.nasa.gov/search/collectionsxxx'])
