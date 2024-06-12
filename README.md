@@ -8,3 +8,14 @@ This service was originally a part of the
 [hermes-api](https://bitbucket.org/nsidc/hermes-api/src). It was moved to a
 standalone service to support the decomissioning of ECS and the rest of the
 hermes stack planned for July 2026.
+
+
+## Dev
+
+### Testing
+
+To test the python script template code itself:
+
+```
+PYTHONPATH=./src/ pytest test/
+```

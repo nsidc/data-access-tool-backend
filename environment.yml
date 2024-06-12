@@ -9,3 +9,6 @@ dependencies:
   - flask
   - flask-restx ~=1.3.0
   - gunicorn
+
+  # Dev deps
+  - pytest
