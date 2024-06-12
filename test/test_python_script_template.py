@@ -64,7 +64,13 @@ def test_get_token(monkeypatch):
     assert actual == expected
 
 
-def test_get_login_credentials(monkeypatch):
+def test_get_login_credentials_login_prompt(monkeypatch):
+    # mock the netrc method so that the logic prompting for username and
+    # password is tested
+    def _netrc_fail():
+        raise RuntimeError("No netrc.")
+    monkeypatch.setattr('netrc.netrc', _netrc_fail)
+
     monkeypatch.setattr('builtins.input', lambda text: 'myusername')
     monkeypatch.setattr('templates.python_script.getpass', lambda text: 'mypassword')
     cred, token = get_login_credentials()
