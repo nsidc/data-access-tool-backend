@@ -136,11 +136,13 @@ class DataDownloaderScript(frx.Resource):
             send_file(stream,
                       mimetype='application/x-python',
                       as_attachment=True,
-                      attachment_filename=filename)
+                      download_name=filename)
         )
 
         return response
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # `ssl_context` option:
+    # https://werkzeug.palletsprojects.com/en/2.3.x/serving/#werkzeug.serving.run_simple
+    app.run(debug=True, ssl_context="adhoc")
