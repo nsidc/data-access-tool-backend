@@ -72,9 +72,10 @@ url_list = '{url_list}'
 CMR_URL = 'https://cmr.earthdata.nasa.gov'
 URS_URL = 'https://urs.earthdata.nasa.gov'
 CMR_PAGE_SIZE = 2000
-CMR_FILE_URL = ('{0}/search/granules.json?provider=NSIDC_ECS'
+CMR_FILE_URL = ('{0}/search/granules.json?'
                 '&sort_key[]=start_date&sort_key[]=producer_granule_id'
                 '&scroll=true&page_size={1}'.format(CMR_URL, CMR_PAGE_SIZE))
+CMR_COLLECTIONS_URL = '{0}/search/collections.json?'.format(CMR_URL)
 
 
 def get_username():
@@ -165,18 +166,43 @@ def build_filename_filter(filename_filter):
     return result
 
 
-def build_cmr_query_url(short_name, version, time_start, time_end,
-                        bounding_box=None, polygon=None,
-                        filename_filter=None):
+def build_query_params_str(short_name, version, time_start=None, time_end=None,
+                           bounding_box=None, polygon=None,
+                           filename_filter=None, provider=None):
+    """Create the query params string for the given inputs.
+
+    E.g.,: '&short_name=ATL06&version=006&version=06&version=6'
+    """
     params = '&short_name={0}'.format(short_name)
     params += build_version_query_params(version)
-    params += '&temporal[]={0},{1}'.format(time_start, time_end)
+    if time_start and time_end:
+        params += '&temporal[]={0},{1}'.format(time_start, time_end)
     if polygon:
         params += '&polygon={0}'.format(polygon)
     elif bounding_box:
         params += '&bounding_box={0}'.format(bounding_box)
     if filename_filter:
         params += build_filename_filter(filename_filter)
+    if provider:
+        params += '&provider={0}'.format(provider)
+
+    return params
+
+
+def build_cmr_query_url(short_name, version, time_start=None, time_end=None,
+                        bounding_box=None, polygon=None,
+                        filename_filter=None, provider=None):
+    params = build_query_params_str(
+        short_name=short_name,
+        version=version,
+        time_start=time_start,
+        time_end=time_end,
+        bounding_box=bounding_box,
+        polygon=polygon,
+        filename_filter=filename_filter,
+        provider=provider,
+    )
+
     return CMR_FILE_URL + params
 
 
@@ -348,10 +374,58 @@ def cmr_filter_urls(search_results):
     return urls
 
 
+def check_provider_for_collection(short_name, version, provider):
+    """Return `True` if the given provider is available, otherwise `False`."""
+    query_params = build_query_params_str(short_name=short_name, version=version, provider=provider)
+    cmr_query_url = CMR_COLLECTIONS_URL + query_params
+
+    req = Request(cmr_query_url)
+    try:
+        # TODO: context w/ ssl stuff here?
+        response = urlopen(req)
+    except Exception as e:
+        print('Error: ' + str(e))
+        sys.exit(1)
+
+    search_page = response.read()
+    search_page = json.loads(search_page.decode('utf-8'))
+
+    if 'feed' not in search_page or 'entry' not in search_page['feed']:
+        return False
+
+    if len(search_page['feed']['entry']) > 0:
+        return True
+    else:
+        return False
+
+
+def get_provider_for_collection(short_name, version):
+    """Return the provider for the collection associated with the given short_name and version.
+
+    Cloud-hosted data (NSIDC_CPRD) is preferred, but some datasets are still
+    only available in ECS. Eventually all datasets will be hosted in the
+    cloud. ECS is planned to be decommissioned in July 2026.
+    """
+    cloud_provider = 'NSIDC_CPRD'
+    in_earthdata_cloud = check_provider_for_collection(short_name, version, cloud_provider)
+    if in_earthdata_cloud:
+        return cloud_provider
+
+    ecs_provider = 'NSIDC_ECS'
+    in_ecs = check_provider_for_collection(short_name, version, ecs_provider)
+    if in_ecs:
+        return ecs_provider
+
+    raise RuntimeError(
+        'Found no collection matching the given short_name ({0}) and version ({1})'.format(short_name, version)
+    )
+
+
 def cmr_search(short_name, version, time_start, time_end,
                bounding_box='', polygon='', filename_filter='', quiet=False):
     """Perform a scrolling CMR query for files matching input criteria."""
-    cmr_query_url = build_cmr_query_url(short_name=short_name, version=version,
+    provider = get_provider_for_collection(short_name=short_name, version=version)
+    cmr_query_url = build_cmr_query_url(provider=provider, short_name=short_name, version=version,
                                         time_start=time_start, time_end=time_end,
                                         bounding_box=bounding_box,
                                         polygon=polygon, filename_filter=filename_filter)
