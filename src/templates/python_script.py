@@ -76,6 +76,8 @@ CMR_FILE_URL = ('{0}/search/granules.json?'
                 '&sort_key[]=start_date&sort_key[]=producer_granule_id'
                 '&scroll=true&page_size={1}'.format(CMR_URL, CMR_PAGE_SIZE))
 CMR_COLLECTIONS_URL = '{0}/search/collections.json?'.format(CMR_URL)
+# Maximum number of times to re-try downloading a file if something goes wrong.
+FILE_DOWNLOAD_MAX_RETRIES = 3
 
 
 def get_username():
@@ -304,9 +306,8 @@ def cmr_download(urls, force=False, quiet=False):
             print('{0}/{1}: {2}'.format(str(index).zfill(len(str(url_count))),
                                         url_count, filename))
 
-        file_download_retries = 3
-        while file_download_retries:
-            if not quiet and file_download_retries < 3:
+        for download_attempt_number in range(1, FILE_DOWNLOAD_MAX_RETRIES + 1):
+            if not quiet and download_attempt_number > 1:
                 print('Retrying download of {0}'.format(url))
             try:
                 response = get_login_response(url, credentials, token)
@@ -315,6 +316,8 @@ def cmr_download(urls, force=False, quiet=False):
                     if not force and length == os.path.getsize(filename):
                         if not quiet:
                             print('  File exists, skipping')
+                        # We have already downloaded the file. Break out of the
+                        # retry loop.
                         break
                 except OSError:
                     pass
@@ -332,6 +335,8 @@ def cmr_download(urls, force=False, quiet=False):
                             output_progress(count, max_chunks, status=download_speed)
                 if not quiet:
                     print()
+                # If we get here, the download was successful and we can break
+                # out of the retry loop.
                 break
             except HTTPError as e:
                 print('HTTP error {0}, {1}'.format(e.code, e.reason))
@@ -340,8 +345,9 @@ def cmr_download(urls, force=False, quiet=False):
             except IOError:
                 raise
 
-            file_download_retries -= 1
-            if file_download_retries == 0:
+            # If this happens, none of our attempts to download the file
+            # succeeded. Print an error message and raise an error.
+            if download_attempt_number == FILE_DOWNLOAD_MAX_RETRIES:
                 print('failed to download file {0}.'.format(filename))
                 sys.exit(1)
 
