@@ -76,6 +76,8 @@ CMR_FILE_URL = ('{0}/search/granules.json?'
                 '&sort_key[]=start_date&sort_key[]=producer_granule_id'
                 '&scroll=true&page_size={1}'.format(CMR_URL, CMR_PAGE_SIZE))
 CMR_COLLECTIONS_URL = '{0}/search/collections.json?'.format(CMR_URL)
+# Maximum number of times to re-try downloading a file if something goes wrong.
+FILE_DOWNLOAD_MAX_RETRIES = 3
 
 
 def get_username():
@@ -272,8 +274,9 @@ def get_login_response(url, credentials, token):
                 err += ': Check your bearer token'
             else:
                 err += ': Check your username and password'
-        print(err)
-        sys.exit(1)
+            print(err)
+            sys.exit(1)
+        raise
     except Exception as e:
         print('Error{0}: {1}'.format(type(e), str(e)))
         sys.exit(1)
@@ -303,36 +306,50 @@ def cmr_download(urls, force=False, quiet=False):
             print('{0}/{1}: {2}'.format(str(index).zfill(len(str(url_count))),
                                         url_count, filename))
 
-        try:
-            response = get_login_response(url, credentials, token)
-            length = int(response.headers['content-length'])
+        for download_attempt_number in range(1, FILE_DOWNLOAD_MAX_RETRIES + 1):
+            if not quiet and download_attempt_number > 1:
+                print('Retrying download of {0}'.format(url))
             try:
-                if not force and length == os.path.getsize(filename):
-                    if not quiet:
-                        print('  File exists, skipping')
-                    continue
-            except OSError:
-                pass
-            count = 0
-            chunk_size = min(max(length, 1), 1024 * 1024)
-            max_chunks = int(math.ceil(length / chunk_size))
-            time_initial = time.time()
-            with open(filename, 'wb') as out_file:
-                for data in cmr_read_in_chunks(response, chunk_size=chunk_size):
-                    out_file.write(data)
-                    if not quiet:
-                        count = count + 1
-                        time_elapsed = time.time() - time_initial
-                        download_speed = get_speed(time_elapsed, count * chunk_size)
-                        output_progress(count, max_chunks, status=download_speed)
-            if not quiet:
-                print()
-        except HTTPError as e:
-            print('HTTP error {0}, {1}'.format(e.code, e.reason))
-        except URLError as e:
-            print('URL error: {0}'.format(e.reason))
-        except IOError:
-            raise
+                response = get_login_response(url, credentials, token)
+                length = int(response.headers['content-length'])
+                try:
+                    if not force and length == os.path.getsize(filename):
+                        if not quiet:
+                            print('  File exists, skipping')
+                        # We have already downloaded the file. Break out of the
+                        # retry loop.
+                        break
+                except OSError:
+                    pass
+                count = 0
+                chunk_size = min(max(length, 1), 1024 * 1024)
+                max_chunks = int(math.ceil(length / chunk_size))
+                time_initial = time.time()
+                with open(filename, 'wb') as out_file:
+                    for data in cmr_read_in_chunks(response, chunk_size=chunk_size):
+                        out_file.write(data)
+                        if not quiet:
+                            count = count + 1
+                            time_elapsed = time.time() - time_initial
+                            download_speed = get_speed(time_elapsed, count * chunk_size)
+                            output_progress(count, max_chunks, status=download_speed)
+                if not quiet:
+                    print()
+                # If we get here, the download was successful and we can break
+                # out of the retry loop.
+                break
+            except HTTPError as e:
+                print('HTTP error {0}, {1}'.format(e.code, e.reason))
+            except URLError as e:
+                print('URL error: {0}'.format(e.reason))
+            except IOError:
+                raise
+
+            # If this happens, none of our attempts to download the file
+            # succeeded. Print an error message and raise an error.
+            if download_attempt_number == FILE_DOWNLOAD_MAX_RETRIES:
+                print('failed to download file {0}.'.format(filename))
+                sys.exit(1)
 
 
 def cmr_filter_urls(search_results):
