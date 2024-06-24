@@ -377,7 +377,7 @@ def cmr_filter_urls(search_results):
 
 
 def check_provider_for_collection(short_name, version, provider):
-    """Return `True` if the given provider is available, otherwise `False`."""
+    """Return `True` if the collection is available for the given provider, otherwise `False`."""
     query_params = build_query_params_str(short_name=short_name, version=version, provider=provider)
     cmr_query_url = CMR_COLLECTIONS_URL + query_params
 
