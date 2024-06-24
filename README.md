@@ -1,5 +1,11 @@
 # Data Access Tool (DAT) downloader script service
 
+> [!NOTE]
+> The idea of using this microservice to replace hermes-api's downloader-script
+> endpoint has been superceeded by
+> <https://bitbucket.org/nsidc/hermes-api/pull-requests/126>. Once we drop more
+> support from hermes-api, this microservice could be used as a replacement.
+
 This repository contains code for a service that provides the [Data Access Tool
 (AKA Everest UI)](https://bitbucket.org/nsidc/everest-ui/) with a python-based download script for data granules
 matching a user's filters.
