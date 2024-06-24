@@ -166,7 +166,7 @@ def build_filename_filter(filename_filter):
     return result
 
 
-def build_query_params_str(short_name, version, time_start=None, time_end=None,
+def build_query_params_str(short_name, version, time_start='', time_end='',
                            bounding_box=None, polygon=None,
                            filename_filter=None, provider=None):
     """Create the query params string for the given inputs.
@@ -175,7 +175,9 @@ def build_query_params_str(short_name, version, time_start=None, time_end=None,
     """
     params = '&short_name={0}'.format(short_name)
     params += build_version_query_params(version)
-    if time_start and time_end:
+    if time_start or time_end:
+        # See
+        # https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html#temporal-range-searches
         params += '&temporal[]={0},{1}'.format(time_start, time_end)
     if polygon:
         params += '&polygon={0}'.format(polygon)
@@ -189,7 +191,7 @@ def build_query_params_str(short_name, version, time_start=None, time_end=None,
     return params
 
 
-def build_cmr_query_url(short_name, version, time_start=None, time_end=None,
+def build_cmr_query_url(short_name, version, time_start, time_end,
                         bounding_box=None, polygon=None,
                         filename_filter=None, provider=None):
     params = build_query_params_str(
