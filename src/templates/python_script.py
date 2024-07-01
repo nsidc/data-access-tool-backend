@@ -386,7 +386,7 @@ def cmr_filter_urls(search_results):
 
         if 'metadata#' in link['rel'] and filename.endswith('.dmrpp'):
             # Exclude .dmrpp metadata links that exist in cloud-hosted
-            # collections (DA-78)
+            # collections
             continue
 
         if filename in unique_filenames:
