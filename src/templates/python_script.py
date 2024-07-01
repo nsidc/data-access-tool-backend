@@ -383,6 +383,12 @@ def cmr_filter_urls(search_results):
             continue
 
         filename = link['href'].split('/')[-1]
+
+        if 'metadata#' in link['rel'] and filename.endswith('.dmrpp'):
+            # Exclude .dmrpp metadata links that exist in cloud-hosted
+            # collections (DA-78)
+            continue
+
         if filename in unique_filenames:
             # Exclude links with duplicate filenames (they would overwrite)
             continue
