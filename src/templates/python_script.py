@@ -74,7 +74,7 @@ URS_URL = 'https://urs.earthdata.nasa.gov'
 CMR_PAGE_SIZE = 2000
 CMR_FILE_URL = ('{0}/search/granules.json?'
                 '&sort_key[]=start_date&sort_key[]=producer_granule_id'
-                '&scroll=true&page_size={1}'.format(CMR_URL, CMR_PAGE_SIZE))
+                '&page_size={1}'.format(CMR_URL, CMR_PAGE_SIZE))
 CMR_COLLECTIONS_URL = '{0}/search/collections.json?'.format(CMR_URL)
 # Maximum number of times to re-try downloading a file if something goes wrong.
 FILE_DOWNLOAD_MAX_RETRIES = 3
@@ -457,7 +457,8 @@ def cmr_search(short_name, version, time_start, time_end,
     if not quiet:
         print('Querying for data:\n\t{0}\n'.format(cmr_query_url))
 
-    cmr_scroll_id = None
+    cmr_paging_header = 'cmr-search-after'
+    cmr_page_id = None
     ctx = ssl.create_default_context()
     ctx.check_hostname = False
     ctx.verify_mode = ssl.CERT_NONE
@@ -466,23 +467,29 @@ def cmr_search(short_name, version, time_start, time_end,
     hits = 0
     while True:
         req = Request(cmr_query_url)
-        if cmr_scroll_id:
-            req.add_header('cmr-scroll-id', cmr_scroll_id)
+        if cmr_page_id:
+            req.add_header(cmr_paging_header, cmr_page_id)
         try:
             response = urlopen(req, context=ctx)
         except Exception as e:
             print('Error: ' + str(e))
             sys.exit(1)
-        if not cmr_scroll_id:
-            # Python 2 and 3 have different case for the http headers
-            headers = {k.lower(): v for k, v in dict(response.info()).items()}
-            cmr_scroll_id = headers['cmr-scroll-id']
+
+        # Python 2 and 3 have different case for the http headers
+        headers = {k.lower(): v for k, v in dict(response.info()).items()}
+        if not cmr_page_id:
+            # Number of hits is on the first result set, which will not have a
+            # page id.
             hits = int(headers['cmr-hits'])
             if not quiet:
                 if hits > 0:
                     print('Found {0} matches.'.format(hits))
                 else:
                     print('Found no matches.')
+
+        # If there are multiple pages, we'll get a new page ID on each request.
+        cmr_page_id = headers.get(cmr_paging_header)
+
         search_page = response.read()
         search_page = json.loads(search_page.decode('utf-8'))
         url_scroll_results = cmr_filter_urls(search_page)
