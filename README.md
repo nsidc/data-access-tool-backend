@@ -1,16 +1,17 @@
-# Data Access Tool (DAT) downloader script service
+# Data Access Tool (DAT) Backend
 
-> [!NOTE]
-> The idea of using this microservice to replace hermes-api's downloader-script
-> endpoint has been superceeded by
-> <https://bitbucket.org/nsidc/hermes-api/pull-requests/126>. Once we drop more
-> support from hermes-api, this microservice could be used as a replacement.
+Backend services for the [Data Access Tool UI](https://github.com/nsidc/data-access-tool-ui).
 
-This repository contains code for a service that provides the [Data Access Tool
-(AKA Everest UI)](https://bitbucket.org/nsidc/everest-ui/) with a python-based download script for data granules
-matching a user's filters.
+A Flask-based API provides:
 
-This service was originally a part of the
+* The`python_script.py` download script for data granules matching a user's filters.
+* TODO: The
+  [getLinks](https://github.com/nasa/earthdata-download/blob/main/docs/GET_LINKS.md)
+  service required for DAT integration with the [NASA Earthdata
+  Downloader](https://github.com/nasa/earthdata-download).
+
+
+Note that this service was originally a part of the
 [hermes-api](https://bitbucket.org/nsidc/hermes-api/src). It was moved to a
 standalone service to support the decomissioning of ECS and the rest of the
 hermes stack planned for July 2026.
