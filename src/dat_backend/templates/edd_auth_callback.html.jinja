@@ -1,0 +1,13 @@
+<!doctype html>
+<html>
+  <head>
+    <script>
+      newwin = window.open("{{ redirect_uri }}", "_blank");
+      newwin.close()
+      window.close()
+    </script>
+  </head>
+  <body>
+    <p><a href="{{ redirect_uri }}">Click here if you are not automatically redirected!</a></p>
+  </body>
+</html>
