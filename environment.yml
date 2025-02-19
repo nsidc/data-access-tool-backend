@@ -1,4 +1,4 @@
-name: dat-downloader-script-service
+name: dat-backend
 channels:
   - conda-forge
   - nsidc
