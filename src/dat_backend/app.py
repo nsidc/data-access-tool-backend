@@ -142,6 +142,16 @@ class DataDownloaderScript(frx.Resource):
         return response
 
 
+@api.route('/downloader-script/')
+class DataDownloaderScript(frx.Resource):
+
+    @api.response(200, 'Success')  # type: ignore
+    @api.expect(SCRIPT_DOC)  # type: ignore
+    def get(self):
+        selection_filters = SelectionFilters(**api.payload)
+        logger.info(f'getLInks received successfully: {selection_filters}')
+
+
 if __name__ == '__main__':
     # `ssl_context` option:
     # https://werkzeug.palletsprojects.com/en/2.3.x/serving/#werkzeug.serving.run_simple
