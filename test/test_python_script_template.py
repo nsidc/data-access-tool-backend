@@ -38,11 +38,12 @@ parameters = [
 def test_build_cmr_query_url(bounding_box, polygon, filename_filter, extra_expect):
     actual = build_cmr_query_url('MOD10A2', '6', '2001-01-01T00:00:00Z', '2019-03-07T22:09:38Z',
                                  bounding_box, polygon,
-                                 filename_filter)
+                                 filename_filter, provider='NSIDC_CPRD')
     expected = 'https://cmr.earthdata.nasa.gov/search/granules.json?' \
-        'provider=NSIDC_ECS&sort_key[]=start_date&sort_key[]=producer_granule_id' \
-        '&scroll=true&page_size=2000&short_name=MOD10A2&version=006&version=06' \
-        '&version=6&temporal[]=2001-01-01T00:00:00Z,2019-03-07T22:09:38Z' + extra_expect
+        '&sort_key[]=start_date&sort_key[]=producer_granule_id' \
+        '&page_size=2000&short_name=MOD10A2&version=006&version=06' \
+        '&version=6&temporal[]=2001-01-01T00:00:00Z,2019-03-07T22:09:38Z' \
+        + extra_expect + '&provider=NSIDC_CPRD'
     assert actual == expected
 
 
