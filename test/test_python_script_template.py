@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from templates.python_script import build_cmr_query_url, \
+from dat_backend.templates.python_script import build_cmr_query_url, \
     build_version_query_params, cmr_download, cmr_search, get_login_credentials, \
     get_password, get_speed, get_token, get_username, main, output_progress
 
@@ -55,14 +55,14 @@ def test_get_username(monkeypatch):
 
 
 def test_get_password(monkeypatch):
-    monkeypatch.setattr('templates.python_script.getpass', lambda text: 'mypassword')
+    monkeypatch.setattr('dat_backend.templates.python_script.getpass', lambda text: 'mypassword')
     actual = get_password()
     expected = 'mypassword'
     assert actual == expected
 
 
 def test_get_token(monkeypatch):
-    monkeypatch.setattr('templates.python_script.getpass', lambda text: 'mytoken')
+    monkeypatch.setattr('dat_backend.templates.python_script.getpass', lambda text: 'mytoken')
     actual = get_token()
     expected = 'mytoken'
     assert actual == expected
@@ -76,13 +76,13 @@ def test_get_login_credentials_login_prompt(monkeypatch):
     monkeypatch.setattr('netrc.netrc', _netrc_fail)
 
     monkeypatch.setattr('builtins.input', lambda text: 'myusername')
-    monkeypatch.setattr('templates.python_script.getpass', lambda text: 'mypassword')
+    monkeypatch.setattr('dat_backend.templates.python_script.getpass', lambda text: 'mypassword')
     cred, token = get_login_credentials()
     expected = 'bXl1c2VybmFtZTpteXBhc3N3b3Jk'
     assert cred == expected
     assert token is None
     monkeypatch.setattr('builtins.input', lambda text: '')
-    monkeypatch.setattr('templates.python_script.getpass', lambda text: 'mytoken')
+    monkeypatch.setattr('dat_backend.templates.python_script.getpass', lambda text: 'mytoken')
     cred, token = get_login_credentials()
     expected = 'mytoken'
     assert cred is None

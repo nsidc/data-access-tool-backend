@@ -13,4 +13,4 @@ EXPOSE 5000
 # CMD /bin/bash -c "gunicorn --bind 0.0.0.0:5000 --workers 3 app:app"
 
 # TODO this might not work
-CMD /bin/bash -c "python app.py"
+CMD /bin/bash -c "PYTHONPATH=./ python dat_backend/app.py"
