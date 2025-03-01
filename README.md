@@ -13,7 +13,7 @@ A Flask-based API provides:
 
 Note that this service was originally a part of the
 [hermes-api](https://bitbucket.org/nsidc/hermes-api/src). It was moved to a
-standalone service to support the decomissioning of ECS and the rest of the
+standalone service to support the decommissioning of ECS and the rest of the
 hermes stack planned for July 2026.
 
 
