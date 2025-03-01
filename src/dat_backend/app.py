@@ -180,21 +180,23 @@ class DataDownloaderScript(frx.Resource):
         return response
 
 
-GET_LINKS_DOC: Final[frx.model.Model] = api.model(
-    "get_links",
-    {
-        "cmr_request_params": frx.fields.String(
-            description="CMR Request parameters as a string",
-            example="provider=NSIDC_ECS&page_size=2000&sort_key[]=-start_date&sort_key[]=producer_granule_id&short_name=ATL06&version=6&version=06&version=006&temporal[]=2018-10-14T00:00:00Z,2025-02-19T20:51:37Z&bounding_box=-101.94,57.71,-90.21,61.13",
-            required=True,
-        ),
-        "cursor": frx.fields.String(
-            description="CMR search results cursor",
-            example='1638327816913,"atl06_20211201030329_10641303_006_01.h5",2706594203',
-            required=False,
-        ),
-    },
-)
+# TODO: re-add this and make use of it. This gives the swagger interface more
+# information and helps to document the API.
+# GET_LINKS_DOC: Final[frx.model.Model] = api.model(
+#     "get_links",
+#     {
+#         "cmr_request_params": frx.fields.String(
+#             description="CMR Request parameters as a string",
+#             example="provider=NSIDC_ECS&page_size=2000&sort_key[]=-start_date&sort_key[]=producer_granule_id&short_name=ATL06&version=6&version=06&version=006&temporal[]=2018-10-14T00:00:00Z,2025-02-19T20:51:37Z&bounding_box=-101.94,57.71,-90.21,61.13",
+#             required=True,
+#         ),
+#         "cursor": frx.fields.String(
+#             description="CMR search results cursor",
+#             example='1638327816913,"atl06_20211201030329_10641303_006_01.h5",2706594203',
+#             required=False,
+#         ),
+#     },
+# )
 
 
 @api.route("/api/get-links/")

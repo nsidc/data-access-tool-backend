@@ -123,7 +123,7 @@ def get_login_credentials():
 
     try:
         info = netrc.netrc()
-        username, account, password = info.authenticators(urlparse(URS_URL).hostname)
+        username, _account, password = info.authenticators(urlparse(URS_URL).hostname)
         if username == "token":
             token = password
         else:

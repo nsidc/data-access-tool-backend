@@ -23,3 +23,16 @@ repos:
     rev: "25.1.0"
     hooks:
       - id: "black"
+
+  - repo: "https://github.com/jendrikseipp/vulture"
+    rev: "v2.14"
+    hooks:
+      - id: "vulture"
+        args:
+          # Ignore flask routes that we define with the `@api.route` decorator.
+          - "--ignore-decorators"
+          - "@api.route"
+          # Ignore names of attrs in a ctx object in python_script.py that
+          # vulture incorrectly believes are unused.
+          - "--ignore-names"
+          - "check_hostname,verify_mode"
