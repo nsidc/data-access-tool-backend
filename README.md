@@ -1,21 +1,21 @@
 # Data Access Tool (DAT) Backend
 
-Backend services for the [Data Access Tool UI](https://github.com/nsidc/data-access-tool-ui).
+Backend services for the
+[Data Access Tool UI](https://github.com/nsidc/data-access-tool-ui).
 
 A Flask-based API provides:
 
-* The`python_script.py` download script for data granules matching a user's filters.
-* The
+- The`python_script.py` download script for data granules matching a user's
+  filters.
+- The
   [getLinks](https://github.com/nasa/earthdata-download/blob/main/docs/GET_LINKS.md)
-  service required for DAT integration with the [NASA Earthdata
-  Downloader](https://github.com/nasa/earthdata-download).
-
+  service required for DAT integration with the
+  [NASA Earthdata Downloader](https://github.com/nasa/earthdata-download).
 
 Note that this service was originally a part of the
 [hermes-api](https://bitbucket.org/nsidc/hermes-api/src). It was moved to a
 standalone service to support the decommissioning of ECS and the rest of the
 hermes stack planned for July 2026.
-
 
 ## Dev
 
@@ -23,8 +23,8 @@ hermes stack planned for July 2026.
 
 The tests for the download script assumes a .netrc file is setup for the current
 user to login to earthdata. Setup a `.netrc` with credentials for earthdata
-login by e.g., [using the earthaccess
-library](https://earthaccess.readthedocs.io/en/latest/howto/authenticate/)
+login by e.g.,
+[using the earthaccess library](https://earthaccess.readthedocs.io/en/latest/howto/authenticate/)
 
 Once a `.netrc` file is setup:
 
@@ -46,16 +46,14 @@ that looks like the above.
 The GET request to `earthdata-download://startDownload` should include the
 following query parameters:
 
-* `getLinks`: URI for `/api/get-links/`. This URI will specify the
+- `getLinks`: URI for `/api/get-links/`. This URI will specify the
   `cmr_request_params` query-parameter, which is a string representing the CMR
   query parameters mapping to a user's selections in the DAT.
-* `downloadId`: The dataset ID and version for the current order (e.g., ATL06 v6
+- `downloadId`: The dataset ID and version for the current order (e.g., ATL06 v6
   is `atl06_06`)
-* `authUrl`: URI for `/api/earthdata/auth/`. EDD will
-  use this to initiate a token exchange with URS to authenticate user
-  downloads. This URL must include
+- `authUrl`: URI for `/api/earthdata/auth/`. EDD will use this to initiate a
+  token exchange with URS to authenticate user downloads. This URL must include
   `eddRedirect=earthdata-download%3A%2F%2FauthCallback` as a query parameter.
 
-> [!WARNING]
-> As of this writing, the CMR query parameters are hard-coded to always return a
-> small subset of ATL06 v6 data.
+> [!WARNING] As of this writing, the CMR query parameters are hard-coded to
+> always return a small subset of ATL06 v6 data.

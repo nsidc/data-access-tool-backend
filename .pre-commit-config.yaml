@@ -1,9 +1,7 @@
 default_language_version:
   python: "python3.12"
 
-
 repos:
-
   - repo: "https://github.com/pre-commit/pre-commit-hooks"
     rev: "v5.0.0"
     hooks:
@@ -17,7 +15,8 @@ repos:
       - id: "ruff"
         # NOTE: "--exit-non-zero-on-fix" is important for CI to function
         # correctly!
-        args: ["--fix", "--exit-non-zero-on-fix", "--verbose", "--line-length=88"]
+        args:
+          ["--fix", "--exit-non-zero-on-fix", "--verbose", "--line-length=88"]
 
   - repo: "https://github.com/psf/black"
     rev: "25.1.0"
@@ -41,3 +40,10 @@ repos:
     rev: "v2.4.1"
     hooks:
       - id: codespell
+
+  - repo: https://github.com/rbubley/mirrors-prettier
+    rev: "v3.5.2"
+    hooks:
+      - id: prettier
+        types_or: [yaml, markdown, html, css, scss, javascript, json]
+        args: [--prose-wrap=always]

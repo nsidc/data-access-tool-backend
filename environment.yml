@@ -13,5 +13,5 @@ dependencies:
 
   # Dev deps
   - pytest ~=8.2
-  - pyopenssl  # required for test server w/ ssl
+  - pyopenssl # required for test server w/ ssl
   - pre-commit ~=4.1
