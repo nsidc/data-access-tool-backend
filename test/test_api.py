@@ -13,7 +13,7 @@ def test_app():
 def test_download_script():
     with app.test_client() as client:
         result = client.post(
-            "/downloader-script/",
+            "/api/downloader-script/",
             json={
                 "bounding_box": "",
                 "dataset_short_name": "ATL06",
