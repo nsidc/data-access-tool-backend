@@ -19,6 +19,35 @@ hermes stack planned for July 2026.
 
 ## Dev
 
+### Pre-commit
+
+This project uses [pre-commit](https://pre-commit.com/) to run pre-commit hooks
+that check and format this project's code for stylistic consistency (e.g., using
+`ruff` and `black`) .
+
+The pre-commit configuration for this project can be found in
+`.pre-commit-config.yaml`. Configuration for specific tools (e.g., `vulture`) is
+given in the included `pyproject.toml`.
+
+For more information about using `pre-commit`, please sese the
+[Scientific Python Library Development Guide's section on pre-commit](https://learn.scientific-python.org/development/guides/gha-basic/#pre-commit).
+
+To install pre-commit to run checks for each commit you make:
+
+```
+$ pre-commit install
+```
+
+To manually run the pre-commit hooks without a commit:
+
+```
+$ pre-commit run --all-files
+```
+
+> [!NOTE] GitHub actions are configured to run pre-commit for all PRs and pushes
+> to the `main` branch. See
+> [.github/workflows/pre-commit.yml](.github/workflows/pre-commit.yml).
+
 ### Testing the download script
 
 The tests for the download script assumes a .netrc file is setup for the current
