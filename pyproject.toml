@@ -1,2 +1,11 @@
+[project]
+name = "data-access-tool-backend"
+authors = [
+  { name = "NSIDC", email = "nsidc@nsidc.org" },
+]
+description = "Backend services for the data-access-tool"
+readme = "README.md"
+license.file = "LICENSE"
+
 [tool.vulture]
 paths = ["src"]
