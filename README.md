@@ -48,18 +48,20 @@ $ pre-commit run --all-files
 > to the `main` branch. See
 > [.github/workflows/pre-commit.yml](.github/workflows/pre-commit.yml).
 
-### Testing the download script
+### Running tests
 
-The tests for the download script assumes a .netrc file is setup for the current
-user to login to earthdata. Setup a `.netrc` with credentials for earthdata
-login by e.g.,
-[using the earthaccess library](https://earthaccess.readthedocs.io/en/latest/howto/authenticate/)
+Before manually running tests, setup the `EARTHDATA_USERNAME` and
+`EARTHDATA_PASSWORD` envvars, which are necessary for integration tests.
 
-Once a `.netrc` file is setup:
+Next, to run all tests:
 
 ```
-PYTHONPATH=./src/ pytest test/
+scripts/run_tests.sh
 ```
+
+> [!NOTE] GitHub actions are configured to run unit tests that do not require
+> Earthdata login credentials for all PRs and pushes to the `main` branch. See
+> [.github/workflows/test.yml](.github/workflows/test.yml).
 
 ### Testing the EDD integration
 

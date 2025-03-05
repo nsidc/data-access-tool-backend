@@ -1,0 +1,12 @@
+services:
+  # TODO: rename this.
+  downloader-script:
+    # TODO: dev stuff extracted to dev env yaml
+    build: .
+    volumes:
+      - "./src/dat_backend:/tmp/dat_backend/"
+      - "./test:/tmp/test/"
+    command: "pytest test/"
+    environment:
+      - EARTHDATA_USERNAME=${EARTHDATA_USERNAME:?EARTHDATA_USERNAME must be set}
+      - EARTHDATA_PASSWORD=${EARTHDATA_PASSWORD:?EARTHDATA_PASSWORD must be set}
