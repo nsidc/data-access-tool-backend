@@ -1,3 +1,5 @@
+# ignore this file because the python script itself is also ignored.
+# type: ignore
 import pytest
 
 from dat_backend.templates.python_script import (

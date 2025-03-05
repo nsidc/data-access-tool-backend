@@ -7,6 +7,7 @@ RUN micromamba install -y -n base -f /tmp/env.yaml && \
 
 COPY src/dat_backend/ ./dat_backend/
 COPY test/ ./test/
+COPY pyproject.toml .
 
 EXPOSE 5000
 

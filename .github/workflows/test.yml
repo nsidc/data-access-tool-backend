@@ -18,6 +18,10 @@ jobs:
         run: |
           docker build --tag "test" .
 
+      # mypy
+      - name: "Run mypy"
+        run: "docker run test mypy dat_backend/ test/"
+
       # Unit tests
       - name: "Run unit tests"
         run: "docker run test pytest test/unit"

@@ -15,3 +15,4 @@ dependencies:
   - pytest ~=8.2
   - pyopenssl # required for test server w/ ssl
   - pre-commit ~=4.1
+  - mypy ~=1.15

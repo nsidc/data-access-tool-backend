@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pytest
 
-from dat_backend.templates.python_script import (
+from dat_backend.templates.python_script import (  # type: ignore[attr-defined]
     cmr_download,
 )
 

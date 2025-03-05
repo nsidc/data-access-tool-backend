@@ -100,10 +100,10 @@ SCRIPT_DOC: Final[frx.model.Model] = api.model(
 
 
 @api.route("/api/downloader-script/")
-class DataDownloaderScript(frx.Resource):
+class DataDownloaderScript(frx.Resource):  # type: ignore[misc]
 
-    @api.response(200, "Success")  # type: ignore
-    @api.expect(SCRIPT_DOC)  # type: ignore
+    @api.response(200, "Success")  # type: ignore[misc]
+    @api.expect(SCRIPT_DOC)  # type: ignore[misc]
     def post(self) -> Any:
         current_date = dt.date.today().isoformat()
 
@@ -133,7 +133,7 @@ class DataDownloaderScript(frx.Resource):
             # This validation error should come from pydantic.
             except pydantic.ValidationError as e:
                 app.logger.exception(e)
-                frx.abort(400, "Validation failed.", errors=e.messages)
+                frx.abort(400, f"Validation failed. {e}")
             except RuntimeError as e:
                 app.logger.exception(e)
                 frx.abort(400, str(e))
@@ -200,9 +200,9 @@ class DataDownloaderScript(frx.Resource):
 
 
 @api.route("/api/get-links/")
-class GetLinks(frx.Resource):
+class GetLinks(frx.Resource):  # type: ignore[misc]
 
-    @api.response(200, "Success")  # type: ignore
+    @api.response(200, "Success")
     # @api.expect(GET_LINKS_DOC)  # type: ignore
     def get(self):
         # cmr_request_params = api.payload["cmr_request_params"]
@@ -253,9 +253,9 @@ else:
 
 
 @api.route("/api/earthdata/auth/")
-class EarthdataAuth(frx.Resource):
-    @api.response(*RESPONSE_CODES[302])  # type: ignore
-    @api.response(*RESPONSE_CODES[500])  # type: ignore
+class EarthdataAuth(frx.Resource):  # type: ignore[misc]
+    @api.response(*RESPONSE_CODES[302])  # type: ignore[misc]
+    @api.response(*RESPONSE_CODES[500])  # type: ignore[misc]
     def get(self) -> Response:
         app.logger.info("AUTH HAPPENING HERE!")
         app.logger.info(f"Got {request.args}")
@@ -321,9 +321,9 @@ def earthdata_token_exchange(authorization_code: Optional[str]) -> Dict[str, Any
 
 # TODO: Consider renaming to `/login_callback/` or `/auth_callback/`
 @api.route("/api/earthdata/auth_finish/")
-class EarthdataAuthFinish(frx.Resource):
-    @api.response(*RESPONSE_CODES[302])  # type: ignore
-    @api.response(*RESPONSE_CODES[500])  # type: ignore
+class EarthdataAuthFinish(frx.Resource):  # type: ignore[misc]
+    @api.response(*RESPONSE_CODES[302])  # type: ignore[misc]
+    @api.response(*RESPONSE_CODES[500])  # type: ignore[misc]
     def get(self) -> Response:
         # Perform token exchange
         authorization_code: Optional[str] = request.args.get("code")

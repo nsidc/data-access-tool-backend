@@ -9,3 +9,25 @@ license.file = "LICENSE"
 
 [tool.vulture]
 paths = ["src"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_unused_configs = true
+strict = true
+enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
+disable_error_code = ["no-untyped-call"]
+warn_unreachable = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+
+[[tool.mypy.overrides]]
+module = "dat_backend.*"
+disallow_untyped_defs = false
+disallow_incomplete_defs = true
+
+[[tool.mypy.overrides]]
+module = [
+  "requests.*",
+  "flask_restx.*",
+]
+ignore_missing_imports = true

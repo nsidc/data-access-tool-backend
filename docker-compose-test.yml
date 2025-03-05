@@ -6,7 +6,7 @@ services:
     volumes:
       - "./src/dat_backend:/tmp/dat_backend/"
       - "./test:/tmp/test/"
-    command: "pytest test/"
+    command: 'bash -c "mypy dat_backend/ test/ && pytest test/"'
     environment:
       - EARTHDATA_USERNAME=${EARTHDATA_USERNAME:?EARTHDATA_USERNAME must be set}
       - EARTHDATA_PASSWORD=${EARTHDATA_PASSWORD:?EARTHDATA_PASSWORD must be set}

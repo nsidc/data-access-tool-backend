@@ -38,6 +38,7 @@
 #    machine urs.earthdata.nasa.gov login token password MYBEARERTOKEN
 # where 'MYBEARERTOKEN' is your Earthdata bearer token.
 #
+# type: ignore
 from __future__ import print_function
 
 import base64
