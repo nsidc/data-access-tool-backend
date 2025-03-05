@@ -1,13 +1,13 @@
-import datetime as dt
-
 import requests
 
-from dat_backend.templates.python_script import cmr_filter_urls
+from dat_backend.templates.python_script import cmr_filter_urls  # type: ignore[attr-defined]
 
 CMR_GRANULES_URL = "https://cmr.earthdata.nasa.gov/search/granules.json"
 
 
-def get_links(*, cmr_request_params: str, search_after_cursor: str | None = None):
+def get_links(
+    *, cmr_request_params: str, search_after_cursor: str | None = None
+) -> tuple[list[str], str | None]:
     request_url = CMR_GRANULES_URL + f"?{cmr_request_params}"
 
     headers = {}
@@ -21,6 +21,7 @@ def get_links(*, cmr_request_params: str, search_after_cursor: str | None = None
 
     return (data_urls, cursor)
 
+
 if __name__ == "__main__":
     urls, cursor = get_links(
         cmr_request_params="provider=NSIDC_ECS&page_size=5&sort_key[]=-start_date&sort_key[]=producer_granule_id&short_name=ATL06&version=6&version=06&version=006&temporal[]=2018-10-14T00:00:00Z,2025-02-25T00:25:20Z&bounding_box=-180,-90,180,90&options[producer_granule_id][pattern]=true&producer_granule_id[]=*ATL06_2024*_0804*_006_01.h5*"
@@ -33,4 +34,3 @@ if __name__ == "__main__":
             search_after_cursor=cursor,
         )
         print(f"Number of results with cursor {len(urls)}")
-        

@@ -1,0 +1,27 @@
+name: tests
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: "Run backend tests"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Check out repository"
+        uses: "actions/checkout@v4"
+
+      - name: "Build container image"
+        run: |
+          docker build --tag "test" .
+
+      # mypy
+      - name: "Run mypy"
+        run: "docker run test mypy dat_backend/ test/"
+
+      # Unit tests
+      - name: "Run unit tests"
+        run: "docker run test pytest test/unit"
