@@ -362,6 +362,14 @@ class EarthdataAuthFinish(frx.Resource):  # type: ignore[misc]
         )
 
 
+@api.route("/api/test/")
+class EarthdataAuthFinish(frx.Resource):  # type: ignore[misc]
+    @api.response(*RESPONSE_CODES[302])  # type: ignore[misc]
+    @api.response(*RESPONSE_CODES[500])  # type: ignore[misc]
+    def get(self) -> Response:
+        return "Hello, world!"
+
+
 if __name__ == "__main__":
     # `ssl_context` option:
     # https://werkzeug.palletsprojects.com/en/2.3.x/serving/#werkzeug.serving.run_simple
