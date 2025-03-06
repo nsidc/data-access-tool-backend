@@ -199,7 +199,7 @@ class DataDownloaderScript(frx.Resource):  # type: ignore[misc]
 # )
 
 
-@api.route("/api/get-links/")
+@api.route("/api/get-links")
 class GetLinks(frx.Resource):  # type: ignore[misc]
 
     @api.response(200, "Success")
