@@ -22,10 +22,13 @@ import pydantic
 from werkzeug.wrappers import Response
 
 from dat_backend.get_links import get_links
+from dat_backend.reverse_proxy import ReverseProxied
 
 
 app = Flask(__name__)
 api = frx.Api(app)
+
+app.wsgi_app = ReverseProxied(app.wsgi_app)  # type: ignore
 
 app.logger.setLevel(logging.INFO)
 
