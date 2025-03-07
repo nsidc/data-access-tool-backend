@@ -363,7 +363,7 @@ class EarthdataAuthFinish(frx.Resource):  # type: ignore[misc]
 
 
 @api.route("/api/test/")
-class EarthdataAuthFinish(frx.Resource):  # type: ignore[misc]
+class TestEndpoint(frx.Resource):  # type: ignore[misc]
     @api.response(*RESPONSE_CODES[302])  # type: ignore[misc]
     @api.response(*RESPONSE_CODES[500])  # type: ignore[misc]
     def get(self) -> Response:
