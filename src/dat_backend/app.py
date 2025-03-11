@@ -32,8 +32,7 @@ app.wsgi_app = ReverseProxied(app.wsgi_app)  # type: ignore
 
 app.logger.setLevel(logging.INFO)
 
-# TODO: regenerate and move into secrets storage.
-secret_key = "87b8af58ade1d827860a52c25c55b0f75c8286195c62531a4cdc4bd152fe6116"
+secret_key = os.environ.get("DAT_FLASK_SECRET_KEY")
 app.secret_key = secret_key
 
 RESPONSE_CODES = {

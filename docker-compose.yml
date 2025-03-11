@@ -13,6 +13,7 @@ services:
       - EARTHDATA_APP_USERNAME
       - EARTHDATA_APP_PASSWORD
       - EARTHDATA_APP_CLIENT_ID
+      - DAT_FLASK_SECRET_KEY
     networks:
       - dat
     dns_search: .
