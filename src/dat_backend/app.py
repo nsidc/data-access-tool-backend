@@ -254,7 +254,7 @@ else:
     EARTHDATA_APP_PASSWORD = os.environ.get("EARTHDATA_APP_PASSWORD")
 
 
-@api.route("/api/earthdata/auth/")
+@api.route("/api/earthdata/auth")
 class EarthdataAuth(frx.Resource):  # type: ignore[misc]
     @api.response(*RESPONSE_CODES[302])  # type: ignore[misc]
     @api.response(*RESPONSE_CODES[500])  # type: ignore[misc]
@@ -271,10 +271,13 @@ class EarthdataAuth(frx.Resource):  # type: ignore[misc]
         earthdata_authorize_url = "https://urs.earthdata.nasa.gov/oauth/authorize"
         earthdata_authorize_url += "?client_id={0}".format(EARTHDATA_APP_CLIENT_ID)
         earthdata_authorize_url += "&response_type=code"
-        edl_auth_finish_redirect_uri = url_for("earthdata_auth_finish", _external=True)
-        app.logger.info(f"Using {edl_auth_finish_redirect_uri=}")
+        edl_auth_callback_redirect_uri = url_for(
+            "earthdata_auth_callback",
+            _external=True,
+        )
+        app.logger.info(f"Using {edl_auth_callback_redirect_uri=}")
         earthdata_authorize_url += "&redirect_uri={0}".format(
-            edl_auth_finish_redirect_uri
+            edl_auth_callback_redirect_uri
         )
 
         response = redirect(earthdata_authorize_url, code=302)
@@ -294,7 +297,7 @@ def earthdata_token_exchange(authorization_code: Optional[str]) -> Dict[str, Any
     # TODO: This URL maybe needs to be parametrized like in Constants.py
     earthdata_token_api = "https://urs.earthdata.nasa.gov/oauth/token"
     grant_type = "authorization_code"
-    redirect_uri = url_for("earthdata_auth_finish", _external=True)
+    redirect_uri = url_for("earthdata_auth_callback", _external=True)
 
     credentials = f"{EARTHDATA_APP_UID}:{EARTHDATA_APP_PASSWORD}"
     auth = base64.b64encode(credentials.encode("ascii")).decode("ascii")
@@ -321,9 +324,8 @@ def earthdata_token_exchange(authorization_code: Optional[str]) -> Dict[str, Any
     return authorization_result_json
 
 
-# TODO: Consider renaming to `/login_callback/` or `/auth_callback/`
-@api.route("/api/earthdata/auth_finish/")
-class EarthdataAuthFinish(frx.Resource):  # type: ignore[misc]
+@api.route("/api/earthdata/auth_callback")
+class EarthdataAuthCallback(frx.Resource):  # type: ignore[misc]
     @api.response(*RESPONSE_CODES[302])  # type: ignore[misc]
     @api.response(*RESPONSE_CODES[500])  # type: ignore[misc]
     def get(self) -> Response:
