@@ -33,8 +33,9 @@ repos:
           - "@api.route"
           # Ignore names of attrs in a ctx object in python_script.py that
           # vulture incorrectly believes are unused.
+          # Also ignore typechecker imports in reverse_proxy.py.
           - "--ignore-names"
-          - "check_hostname,verify_mode"
+          - "check_hostname,verify_mode,StartResponse,WSGIApplication,WSGIEnvironment,api_root"
 
   - repo: https://github.com/codespell-project/codespell
     rev: "v2.4.1"

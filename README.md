@@ -67,8 +67,16 @@ scripts/run_tests.sh
 
 An example deep-link to initiate EDD downloads:
 
+In dev:
+
 ```
-earthdata-download://startDownload?getLinks=https://dev.hermes.trst2284.dev.int.nsidc.org/api/get-links?cmr_request_params=foo&downloadId=atl06_06&clientId=data_access_tool&authUrl=https://dev.hermes.trst2284.dev.int.nsidc.org/api/earthdata/auth/?eddRedirect=earthdata-download%3A%2F%2FauthCallback
+earthdata-download://startDownload?getLinks=https://dev.hermes.trst2284.dev.int.nsidc.org/api/get-links?cmr_request_params=foo&downloadId=atl06_06&clientId=data_access_tool&authUrl=https://dev.hermes.trst2284.dev.int.nsidc.org/api/earthdata/auth?eddRedirect=earthdata-download%3A%2F%2FauthCallback
+```
+
+In integration:
+
+```
+earthdata-download://startDownload?getLinks=https://integration.nsidc.org/apps/data-access-tool/api/get-links?cmr_request_params=foo&downloadId=atl06_06&clientId=data_access_tool&authUrl=https://integration.nsidc.org/apps/data-access-tool/api/earthdata/auth?eddRedirect=earthdata-download%3A%2F%2FauthCallback
 ```
 
 A button needs to be added to the Data Access Tool that will issue a GET request
