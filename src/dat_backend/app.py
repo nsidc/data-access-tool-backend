@@ -28,7 +28,7 @@ from dat_backend.reverse_proxy import ReverseProxied
 app = Flask(__name__)
 api = frx.Api(app)
 
-app.wsgi_app = ReverseProxied(app.wsgi_app)  # type: ignore
+app.wsgi_app = ReverseProxied(app.wsgi_app)  # type: ignore[method-assign]
 
 app.logger.setLevel(logging.INFO)
 
