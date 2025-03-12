@@ -182,30 +182,23 @@ class DataDownloaderScript(frx.Resource):  # type: ignore[misc]
         return response
 
 
-# TODO: re-add this and make use of it. This gives the swagger interface more
-# information and helps to document the API.
-# GET_LINKS_DOC: Final[frx.model.Model] = api.model(
-#     "get_links",
-#     {
-#         "cmr_request_params": frx.fields.String(
-#             description="CMR Request parameters as a string",
-#             example="provider=NSIDC_ECS&page_size=2000&sort_key[]=-start_date&sort_key[]=producer_granule_id&short_name=ATL06&version=6&version=06&version=006&temporal[]=2018-10-14T00:00:00Z,2025-02-19T20:51:37Z&bounding_box=-101.94,57.71,-90.21,61.13",
-#             required=True,
-#         ),
-#         "cursor": frx.fields.String(
-#             description="CMR search results cursor",
-#             example='1638327816913,"atl06_20211201030329_10641303_006_01.h5",2706594203',
-#             required=False,
-#         ),
-#     },
-# )
-
-
 @api.route("/api/get-links")
 class GetLinks(frx.Resource):  # type: ignore[misc]
 
-    @api.response(200, "Success")
-    # @api.expect(GET_LINKS_DOC)  # type: ignore
+    @api.response(*RESPONSE_CODES[200])  # type: ignore[misc]
+    @api.response(*RESPONSE_CODES[500])  # type: ignore[misc]
+    @api.param(
+        "cmr_request_params",
+        description="CMR Request parameters as a string",
+        example=r"provider=NSIDC_CPRD&page_size=5&sort_key[]=-start_date&sort_key[]=producer_granule_id&short_name=ATL06&version=6&version=06&version=006&temporal[]=2018-10-14T00:00:00Z,2025-02-25T00:25:20Z&bounding_box=-180,-90,180,90&options[producer_granule_id][pattern]=true&producer_granule_id[]=\*ATL06_2024\*_0804\*_006_01.h5\*",
+        required=True,
+    )
+    @api.param(
+        "cursor",
+        description="CMR search results cursor",
+        example='[1638327816913,"atl06_20211201030329_10641303_006_01.h5",2706594203]',
+        required=False,
+    )
     def get(self):
         # cmr_request_params = api.payload["cmr_request_params"]
         cmr_request_params = request.args.get("cmr_request_params")
@@ -214,12 +207,6 @@ class GetLinks(frx.Resource):  # type: ignore[misc]
         app.logger.info(
             f"get_links received successfully: {cmr_request_params=} {cursor=}"
         )
-
-        # TODO: remove hard-coded params. We may need to break these out into
-        # individual args instead of just passing a query string...encoding this
-        # in a way that the earthdata downloader can pass the requests along is
-        # difficult. Not sure how to achieve yet.
-        cmr_request_params = "provider=NSIDC_CPRD&page_size=5&sort_key[]=-start_date&sort_key[]=producer_granule_id&short_name=ATL06&version=6&version=06&version=006&temporal[]=2018-10-14T00:00:00Z,2025-02-25T00:25:20Z&bounding_box=-180,-90,180,90&options[producer_granule_id][pattern]=true&producer_granule_id[]=*ATL06_2024*_0804*_006_01.h5*"
 
         app.logger.info(f"get_links using {cursor=}")
         links, cursor = get_links(
