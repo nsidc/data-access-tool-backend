@@ -185,8 +185,8 @@ class DataDownloaderScript(frx.Resource):  # type: ignore[misc]
 @api.route("/api/get-links")
 class GetLinks(frx.Resource):  # type: ignore[misc]
 
-    @api.response(*RESPONSE_CODES[200])  # type: ignore[misc]
-    @api.response(*RESPONSE_CODES[500])  # type: ignore[misc]
+    @api.response(*RESPONSE_CODES[200])
+    @api.response(*RESPONSE_CODES[500])
     @api.param(
         "cmr_request_params",
         description="CMR Request parameters as a string",
