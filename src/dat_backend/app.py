@@ -200,7 +200,7 @@ class GetLinks(frx.Resource):  # type: ignore[misc]
         required=False,
     )
     def get(self):
-        cmr_request_params = request.args.get("cmr_request_params")
+        cmr_request_params = request.args["cmr_request_params"]
         cursor = request.args.get("cursor")
         app.logger.info(
             f"get_links received successfully: {cmr_request_params=} {cursor=}"
