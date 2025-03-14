@@ -182,9 +182,26 @@ class DataDownloaderScript(frx.Resource):  # type: ignore[misc]
         return response
 
 
+get_links_response_model = api.model(
+    "GetLinksResponse",
+    {
+        "links": frx.fields.List(
+            frx.fields.String(
+                example="https://data.nsidc.earthdatacloud.nasa.gov/nsidc-cumulus-prod-protected/ATLAS/ATL06/006/2024/02/09/ATL06_20240209110944_08042201_006_01.h5"
+            )
+        ),
+        "done": frx.fields.Boolean(example=False),
+        "cursor": frx.fields.String(
+            example='[1638327816913,"atl06_20211201030329_10641303_006_01.h5",2706594203]'
+        ),
+    },
+)
+
+
 @api.route("/api/get-links")
 class GetLinks(frx.Resource):  # type: ignore[misc]
 
+    @api.marshal_with(get_links_response_model, mask=False)
     @api.response(*RESPONSE_CODES[200])
     @api.response(*RESPONSE_CODES[500])
     @api.param(
