@@ -6,7 +6,9 @@ CMR_GRANULES_URL = "https://cmr.earthdata.nasa.gov/search/granules.json"
 
 
 def get_links(
-    *, cmr_request_params: str, search_after_cursor: str | None = None
+    *,
+    cmr_request_params: str,
+    search_after_cursor: str | None = None,
 ) -> tuple[list[str], str | None]:
     request_url = CMR_GRANULES_URL + f"?{cmr_request_params}"
 
