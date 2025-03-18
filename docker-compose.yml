@@ -28,6 +28,7 @@ services:
     dns_search: .
     volumes:
       - ./nginx/logs:/var/log/nginx/
+      - ./nginx/edd_release/:/var/www/edd_release/
 
 networks:
   dat:
