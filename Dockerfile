@@ -9,10 +9,8 @@ COPY src/dat_backend/ ./dat_backend/
 COPY test/ ./test/
 COPY pyproject.toml .
 
+RUN mkdir -p /tmp/ssl && /opt/conda/bin/openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /tmp/ssl/dat.key -out /tmp/ssl/dat.crt -subj "/CN=nsidc"
+
 EXPOSE 5000
 
-# TODO: handle ssl w/ gunicorn? Self-signed cert on this image easiest?
-# CMD /bin/bash -c "gunicorn --bind 0.0.0.0:5000 --workers 3 app:app"
-
-# TODO this might not work
-CMD /bin/bash -c "PYTHONPATH=./ python dat_backend/app.py"
+CMD /bin/bash -c "gunicorn --certfile=/tmp/ssl/dat.crt --keyfile=/tmp/ssl/dat.key --bind 0.0.0.0:5000 --workers 9 dat_backend.app:app"
