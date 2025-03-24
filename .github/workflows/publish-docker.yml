@@ -26,7 +26,7 @@ jobs:
 
       - name: "Build container image"
         run: |
-          docker build --tag "ghcr.io/qgreenland-net/${IMAGE_NAME}:${IMAGE_TAG}" .
+          docker build --tag "ghcr.io/nsidc/${IMAGE_NAME}:${IMAGE_TAG}" .
 
       - name: "GHCR login"
         uses: "docker/login-action@v3"
@@ -38,4 +38,4 @@ jobs:
       - name: "Push to image registries (DockerHub, GHCR)"
         run: |
           # Push to GHCR
-          docker push "ghcr.io/qgreenland-net/${IMAGE_NAME}:${IMAGE_TAG}"
+          docker push "ghcr.io/nsidc/${IMAGE_NAME}:${IMAGE_TAG}"
