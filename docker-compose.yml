@@ -14,6 +14,7 @@ services:
     networks:
       - dat
     dns_search: .
+    restart: always
 
   server:
     ports:
@@ -22,6 +23,7 @@ services:
     networks:
       - dat
     dns_search: .
+    restart: always
 
 networks:
   dat:
