@@ -2,4 +2,4 @@ services:
   api:
     image: "nsidc/data-access-tool-api:latest"
   server:
-    image: "nsidc/data-access-tool-api:latest"
+    image: "nsidc/data-access-tool-server:latest"
