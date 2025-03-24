@@ -1,7 +1,5 @@
 services:
   api:
-    # TODO: remove this `build` option when we start supporting specific versions of images
-    build: .
     ports:
       - "5000:5000"
     environment:

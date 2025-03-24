@@ -1,0 +1,5 @@
+services:
+  api:
+    image: "nsidc/data-access-tool-api:latest"
+  server:
+    image: "nsidc/data-access-tool-api:latest"
