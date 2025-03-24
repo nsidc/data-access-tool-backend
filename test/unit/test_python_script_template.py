@@ -139,7 +139,11 @@ def test_cmr_search():
         "-109,37,-102,37,-102,41,-109,41,-109,37",
         "*A2019*",
     )
-    assert len(actual) == 72
+    # TODO: the length of the query result used to consistently be 72, but a
+    # recent change to MODIS cloud colelctions result in the inclusion of an
+    # `s3credentials` file. While we try to figure out what the "right" thing to
+    # do here is, we accept either possibility.
+    assert len(actual) == 72 or len(actual) == 73
 
 
 def test_get_speed():
