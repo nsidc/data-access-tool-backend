@@ -17,7 +17,7 @@ services:
       - dat
     dns_search: .
 
-  nginx:
+  server:
     build: ./nginx
     ports:
       - "443:443"

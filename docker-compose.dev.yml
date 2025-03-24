@@ -5,7 +5,7 @@ services:
       - "./src:/tmp/"
     command: '/bin/bash -c "PYTHONPATH=./ python dat_backend/app.py"'
 
-  nginx:
+  server:
     build: ./nginx
     volumes:
       - ./nginx/logs:/var/log/nginx/
