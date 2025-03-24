@@ -1,7 +1,5 @@
 services:
   api:
-    # TODO: remove this `build` option when we start supporting specific versions of images
-    build: .
     ports:
       - "5000:5000"
     environment:
@@ -17,8 +15,7 @@ services:
       - dat
     dns_search: .
 
-  nginx:
-    build: ./nginx
+  server:
     ports:
       - "443:443"
       - "80:80"

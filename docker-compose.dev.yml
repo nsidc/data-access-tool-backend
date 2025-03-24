@@ -5,8 +5,8 @@ services:
       - "./src:/tmp/"
     command: '/bin/bash -c "PYTHONPATH=./ python dat_backend/app.py"'
 
-  nginx:
-    build: ./nginx
+  server:
+    build: ../data-access-tool-server/
     volumes:
-      - ./nginx/logs:/var/log/nginx/
+      - ../data-access-tool-server/logs:/var/log/nginx/
       - ./nginx/edd_release/:/var/www/edd_release/
