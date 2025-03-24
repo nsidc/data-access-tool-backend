@@ -4,10 +4,14 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - EARTHDATA_APP_USERNAME
-      - EARTHDATA_APP_PASSWORD
-      - EARTHDATA_APP_CLIENT_ID
-      - DAT_FLASK_SECRET_KEY
+      - EARTHDATA_APP_USERNAME=${EARTHDATA_APP_USERNAME:?EARTHDATA_APP_USERNAME
+        must be set}
+      - EARTHDATA_APP_PASSWORD=${EARTHDATA_APP_PASSWORD:?EARTHDATA_APP_PASSWORD
+        must be set}
+      - EARTHDATA_APP_CLIENT_ID=${EARTHDATA_APP_CLIENT_ID:?EARTHDATA_APP_CLIENT_ID
+        must be set}
+      - DAT_FLASK_SECRET_KEY=${DAT_FLASK_SECRET_KEY:?DAT_FLASK_SECRET_KEY must
+        be set}
     networks:
       - dat
     dns_search: .
