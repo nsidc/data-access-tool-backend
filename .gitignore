@@ -1,2 +1,3 @@
 **/__pycache__/
 nginx/logs/*
+docker-compose.override.yml

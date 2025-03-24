@@ -10,6 +10,7 @@ dependencies:
   - flask-restx ~=1.3.0
   - gunicorn ~=22.0
   - requests ~=2.32
+  - openssl ~=3.4.1 # required for production ssl behind the Apache proxy.
 
   # Dev deps
   - pytest ~=8.2

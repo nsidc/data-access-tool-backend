@@ -1,0 +1,12 @@
+services:
+  api:
+    build: .
+    volumes:
+      - "./src:/tmp/"
+    command: '/bin/bash -c "PYTHONPATH=./ python dat_backend/app.py"'
+
+  nginx:
+    build: ./nginx
+    volumes:
+      - ./nginx/logs:/var/log/nginx/
+      - ./nginx/edd_release/:/var/www/edd_release/
