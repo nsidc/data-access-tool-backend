@@ -1,3 +1,7 @@
+# v0.2.0
+
+- Include nginx image build and configuration.
+
 # v0.1.0
 
 - Initial release. This consititues an MVP for the DAT backend and includes

@@ -1,5 +1,6 @@
 [project]
 name = "data-access-tool-backend"
+version = "0.2.0"
 authors = [
   { name = "NSIDC", email = "nsidc@nsidc.org" },
 ]
@@ -31,3 +32,19 @@ module = [
   "flask_restx.*",
 ]
 ignore_missing_imports = true
+
+
+[too.bumpversion]
+current_version = "0.2.0"
+commit = false
+tag = false
+
+[[tool.bumpversion.files]]
+filename = "docker-compose.production.yml"
+search   = ':v{current_version}'
+replace  = ':v{new_version}'
+
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
+search = 'version = "{current_version}"'
+replace = 'version = "{new_version}"'

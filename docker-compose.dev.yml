@@ -6,7 +6,7 @@ services:
     command: '/bin/bash -c "PYTHONPATH=./ python dat_backend/app.py"'
 
   server:
-    build: ../data-access-tool-server/
+    build: ./nginx
     volumes:
-      - ../data-access-tool-server/logs:/var/log/nginx/
+      - ./nginx/logs:/var/log/nginx/
       - ./nginx/edd_release/:/var/www/edd_release/

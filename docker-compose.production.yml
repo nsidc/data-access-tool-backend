@@ -1,5 +1,5 @@
 services:
   api:
-    image: "ghcr.io/nsidc/data-access-tool-api:v0.1.0"
+    image: "ghcr.io/nsidc/data-access-tool-api:v0.2.0"
   server:
-    image: "ghcr.io/nsidc/data-access-tool-server:v0.1.0"
+    image: "ghcr.io/nsidc/data-access-tool-server:v0.2.0"
