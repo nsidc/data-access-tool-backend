@@ -14,8 +14,8 @@ This repository provides:
   service required for DAT integration with the
   [NASA Earthdata Downloader](https://github.com/nasa/earthdata-download).
 
-- Docker compose configuration for the DAT backend, which includes the
-  [data-access-tool-server](https://github.com/nsidc/data-access-tool-ui).
+- Docker compose configuration for the DAT backend, which includes
+  [nginx server configuration](./nginx).
 
 ## Background
 
