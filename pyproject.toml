@@ -1,5 +1,6 @@
 [project]
 name = "data-access-tool-backend"
+version = "0.1.0"
 authors = [
   { name = "NSIDC", email = "nsidc@nsidc.org" },
 ]
@@ -42,3 +43,8 @@ tag = false
 filename = "docker-compose.production.yml"
 search   = ':v{current_version}'
 replace  = ':v{new_version}'
+
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
+search = 'version = "{current_version}"'
+replace = 'version = "{new_version}"'
