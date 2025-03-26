@@ -17,3 +17,4 @@ dependencies:
   - pyopenssl # required for test server w/ ssl
   - pre-commit ~=4.1
   - mypy ~=1.15
+  - bump-my-version ~=1.1
