@@ -1,3 +1,8 @@
+# v0.3.0
+
+- Add flask-cors, using the same config that hermes-api did. Allow all nsidc.org
+  domains.
+
 # v0.2.0
 
 - Include nginx image build and configuration.

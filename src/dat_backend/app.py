@@ -5,6 +5,7 @@ import os
 import pprint
 from typing import Any, Final, Optional, Dict
 import logging
+import re
 
 import requests
 import flask_restx as frx
@@ -18,6 +19,7 @@ from flask import (
     render_template,
 )
 from flask import Flask
+from flask_cors import CORS
 import pydantic
 from werkzeug.wrappers import Response
 
@@ -27,6 +29,14 @@ from dat_backend.reverse_proxy import ReverseProxied
 
 app = Flask(__name__)
 api = frx.Api(app)
+
+# Enable CORS, allowing all nsidc.org domains.
+CORS(
+    app,
+    origins=[re.compile(r"(.*\.)?nsidc\.org")],
+    expose_headers=["content-disposition"],
+    supports_credentials=True,
+)
 
 app.wsgi_app = ReverseProxied(app.wsgi_app)  # type: ignore[method-assign]
 
