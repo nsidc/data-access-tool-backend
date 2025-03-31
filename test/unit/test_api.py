@@ -26,3 +26,9 @@ def test_download_script():
         )
 
         assert result.status_code == 200
+
+
+def test_status_endpoint():
+    with app.test_client() as client:
+        result = client.get("/api/status")
+        assert result.status_code == 200

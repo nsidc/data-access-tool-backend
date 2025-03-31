@@ -368,6 +368,20 @@ class EarthdataAuthCallback(frx.Resource):  # type: ignore[misc]
         )
 
 
+@api.route("/api/status")
+class ApplicationStatus(frx.Resource):  # type: ignore[misc]
+    @api.response(*RESPONSE_CODES[200])  # type: ignore[misc]
+    @api.response(*RESPONSE_CODES[500])  # type: ignore[misc]
+    def get(self) -> Response:
+        return Response(
+            render_template(
+                "application_status.html.jinja",
+                request_time=dt.datetime.now(),
+            ),
+            content_type="text/html",
+        )
+
+
 if __name__ == "__main__":
     # `ssl_context` option:
     # https://werkzeug.palletsprojects.com/en/2.3.x/serving/#werkzeug.serving.run_simple
