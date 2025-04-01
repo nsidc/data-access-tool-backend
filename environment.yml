@@ -8,6 +8,7 @@ dependencies:
   - pydantic ~=2.7.3
   - flask ~=2.3.3
   - flask-restx ~=1.3.0
+  - flask-cors ~=5.0
   - gunicorn ~=22.0
   - requests ~=2.32
   - openssl ~=3.4.1 # required for production ssl behind the Apache proxy.

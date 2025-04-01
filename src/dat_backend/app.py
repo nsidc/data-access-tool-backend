@@ -5,6 +5,7 @@ import os
 import pprint
 from typing import Any, Final, Optional, Dict
 import logging
+import re
 
 import requests
 import flask_restx as frx
@@ -18,6 +19,7 @@ from flask import (
     render_template,
 )
 from flask import Flask
+from flask_cors import CORS
 import pydantic
 from werkzeug.wrappers import Response
 
@@ -26,6 +28,13 @@ from dat_backend.reverse_proxy import ReverseProxied
 
 
 app = Flask(__name__)
+# Enable CORS, allowing all nsidc.org domains.
+CORS(
+    app,
+    origins=[re.compile(r"^https?:\/\/(.*\.)?nsidc\.org")],
+    expose_headers=["content-disposition"],
+    supports_credentials=True,
+)
 api = frx.Api(app)
 
 app.wsgi_app = ReverseProxied(app.wsgi_app)  # type: ignore[method-assign]
@@ -119,7 +128,7 @@ class DataDownloaderScript(frx.Resource):  # type: ignore[misc]
                 "{bounding_box}": "",
                 "{polygon}": "",
                 "{filename_filter}": "",
-                "'{url_list}'": pprint.pformat(url_list),
+                '"{url_list}"': pprint.pformat(url_list),
             }
             app.logger.info(
                 f"Script request received successfully: {len(url_list)} URLs"
@@ -148,7 +157,7 @@ class DataDownloaderScript(frx.Resource):  # type: ignore[misc]
                 "{bounding_box}": selection_filters.bounding_box,
                 "{polygon}": selection_filters.polygon,
                 "{filename_filter}": selection_filters.filename_filter,
-                "'{url_list}'": "[]",
+                '"{url_list}"': "[]",
             }
 
             version = selection_filters.dataset_version.zfill(3)

@@ -1,6 +1,6 @@
 [project]
 name = "data-access-tool-backend"
-version = "0.2.0"
+version = "0.3.0"
 authors = [
   { name = "NSIDC", email = "nsidc@nsidc.org" },
 ]
@@ -30,12 +30,13 @@ disallow_incomplete_defs = true
 module = [
   "requests.*",
   "flask_restx.*",
+  "flask_cors.*",
 ]
 ignore_missing_imports = true
 
 
 [too.bumpversion]
-current_version = "0.2.0"
+current_version = "0.3.0"
 commit = false
 tag = false
 
