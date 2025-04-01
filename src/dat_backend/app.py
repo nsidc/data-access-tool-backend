@@ -28,15 +28,14 @@ from dat_backend.reverse_proxy import ReverseProxied
 
 
 app = Flask(__name__)
-api = frx.Api(app)
-
 # Enable CORS, allowing all nsidc.org domains.
 CORS(
     app,
-    origins=[re.compile(r"(.*\.)?nsidc\.org")],
+    origins=[re.compile(r"^https?:\/\/(.*\.)?nsidc\.org")],
     expose_headers=["content-disposition"],
     supports_credentials=True,
 )
+api = frx.Api(app)
 
 app.wsgi_app = ReverseProxied(app.wsgi_app)  # type: ignore[method-assign]
 
