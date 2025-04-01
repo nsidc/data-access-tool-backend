@@ -158,7 +158,7 @@ class DataDownloaderScript(frx.Resource):  # type: ignore[misc]
                 "{bounding_box}": selection_filters.bounding_box,
                 "{polygon}": selection_filters.polygon,
                 "{filename_filter}": selection_filters.filename_filter,
-                "'{url_list}'": "[]",
+                '"{url_list}"': "[]",
             }
 
             version = selection_filters.dataset_version.zfill(3)
