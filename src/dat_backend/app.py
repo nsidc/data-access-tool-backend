@@ -128,7 +128,7 @@ class DataDownloaderScript(frx.Resource):  # type: ignore[misc]
                 "{bounding_box}": "",
                 "{polygon}": "",
                 "{filename_filter}": "",
-                "'{url_list}'": pprint.pformat(url_list),
+                '"{url_list}"': pprint.pformat(url_list),
             }
             app.logger.info(
                 f"Script request received successfully: {len(url_list)} URLs"
