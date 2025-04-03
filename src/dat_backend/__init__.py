@@ -8,6 +8,7 @@ from flask_cors import CORS
 
 from dat_backend.reverse_proxy import ReverseProxied
 
+__version__ = "0.3.0"
 
 app = Flask(__name__)
 # Enable CORS, allowing all nsidc.org domains.
@@ -17,7 +18,12 @@ CORS(
     expose_headers=["content-disposition"],
     supports_credentials=True,
 )
-api = frx.Api(app)
+api = frx.Api(
+    app,
+    version=__version__,
+    title="Data Access Tool API",
+    description="Backend services for the Data Access Tool.",
+)
 
 app.wsgi_app = ReverseProxied(app.wsgi_app)  # type: ignore[method-assign]
 
