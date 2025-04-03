@@ -24,6 +24,8 @@ services:
       - dat
     dns_search: .
     restart: always
+    volumes:
+      - ${LOGS_SHARE_PATH:?LOGS_SHARE_PATH must be set}/server:/var/log/nginx/
 
 networks:
   dat:

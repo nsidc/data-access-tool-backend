@@ -4,6 +4,7 @@
 - Improve Swagger API docs.
 - Update python script's `cmr_filter_urls` to exclude `s3credentails` metadata
   files.
+- Add volume for persistent server (nginx) logs to `docker-compose.yml` (DA-105)
 
 # v0.3.0
 
