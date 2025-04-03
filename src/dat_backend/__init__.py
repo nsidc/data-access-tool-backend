@@ -8,7 +8,7 @@ from flask_cors import CORS
 
 from dat_backend.reverse_proxy import ReverseProxied
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 
 app = Flask(__name__)
 # Enable CORS, allowing all nsidc.org domains.
