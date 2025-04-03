@@ -3,7 +3,7 @@ services:
     build: .
     volumes:
       - "./src:/tmp/"
-    command: '/bin/bash -c "PYTHONPATH=./ python dat_backend/app.py"'
+    command: '/bin/bash -c "PYTHONPATH=./ python dat_backend/__init__.py"'
 
   server:
     build: ./nginx
