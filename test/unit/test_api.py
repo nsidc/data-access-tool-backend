@@ -1,4 +1,4 @@
-from dat_backend.app import app
+from dat_backend import app
 
 
 app.testing = True

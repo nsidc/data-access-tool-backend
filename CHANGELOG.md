@@ -1,3 +1,8 @@
+# v0.4.0
+
+- Reorganize code to make it clearer what routes serve EDD vs the python script.
+- Improve Swagger API docs.
+
 # v0.3.0
 
 - Add flask-cors, using the same config that hermes-api did. Allow all nsidc.org

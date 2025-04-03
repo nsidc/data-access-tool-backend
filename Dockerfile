@@ -13,4 +13,4 @@ RUN mkdir -p /tmp/ssl && /opt/conda/bin/openssl req -x509 -nodes -days 365 -newk
 
 EXPOSE 5000
 
-CMD /bin/bash -c "gunicorn --certfile=/tmp/ssl/dat.crt --keyfile=/tmp/ssl/dat.key --bind 0.0.0.0:5000 --workers 9 dat_backend.app:app"
+CMD /bin/bash -c "gunicorn --certfile=/tmp/ssl/dat.crt --keyfile=/tmp/ssl/dat.key --bind 0.0.0.0:5000 --workers 9 dat_backend:app"
