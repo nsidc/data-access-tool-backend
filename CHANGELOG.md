@@ -2,6 +2,8 @@
 
 - Reorganize code to make it clearer what routes serve EDD vs the python script.
 - Improve Swagger API docs.
+- Update python script's `cmr_filter_urls` to exclude `s3credentails` metadata
+  files.
 
 # v0.3.0
 
