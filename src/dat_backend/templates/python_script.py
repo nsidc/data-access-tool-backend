@@ -414,6 +414,10 @@ def cmr_filter_urls(search_results):
             # collections
             continue
 
+        if "metadata#" in link["rel"] and filename == "s3credentials":
+            # Excldue s3 metadata (DA-109)
+            continue
+
         if filename in unique_filenames:
             # Exclude links with duplicate filenames (they would overwrite)
             continue

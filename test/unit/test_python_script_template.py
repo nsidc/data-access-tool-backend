@@ -1,5 +1,8 @@
 # ignore this file because the python script itself is also ignored.
 # type: ignore
+import json
+from pathlib import Path
+
 import pytest
 
 from dat_backend.templates.python_script import (
@@ -13,6 +16,7 @@ from dat_backend.templates.python_script import (
     get_username,
     main,
     output_progress,
+    cmr_filter_urls,
 )
 
 
@@ -163,3 +167,25 @@ def test_main():
     with pytest.raises(SystemExit) as excinfo:
         main(["--foobar"])
     assert excinfo.value.code == 1
+
+
+def test_cmr_filter_urls_excludes_s3credentials():
+    with open(
+        Path(__file__).parent / "search_results_with_s3credentials.json", "r"
+    ) as f:
+        test_search_results_with_s3creds = json.load(f)
+
+    # Verify that the sample data does indeed have an s3credentials link
+    test_search_results_with_s3creds_links = [
+        link["href"]
+        for link in test_search_results_with_s3creds["feed"]["entry"][0]["links"]
+    ]
+    assert any(
+        [link for link in test_search_results_with_s3creds_links if "s3cred" in link]
+    )
+
+    # Filter the search results
+    filtered = cmr_filter_urls(test_search_results_with_s3creds)
+
+    # Assert that none of the filtered results has the s3credentials file.
+    assert not any([link for link in filtered if "s3cred" in link])

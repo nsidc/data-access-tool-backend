@@ -25,6 +25,7 @@ def get_links(
 
     assert response.ok
     cursor = response.headers.get("CMR-Search-After")
+    # Filter links using the same logic as the Python script, for consistency.
     data_urls = cmr_filter_urls(response.json())
 
     return (data_urls, cursor)
