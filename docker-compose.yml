@@ -24,6 +24,10 @@ services:
       - dat
     dns_search: .
     restart: always
+    # Setting the user explicitly ensures that the logs are written out as vagrant.
+    user: "vagrant:vagrant"
+    volumes:
+      - ${LOGS_SHARE_PATH:?LOGS_SHARE_PATH must be set}/server:/var/log/nginx/
 
 networks:
   dat:

@@ -18,4 +18,5 @@ RUN useradd --uid 1000 --user-group vagrant && \
     touch /var/run/nginx.pid && \
     chown -R vagrant:vagrant /var/run/nginx.pid && \
     chown -R vagrant:vagrant /var/cache/nginx && \
+    chown -R vagrant:vagrant /var/log/nginx && \
     chown -R vagrant:vagrant /etc/nginx
