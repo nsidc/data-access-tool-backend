@@ -9,4 +9,3 @@ services:
     build: ./nginx
     volumes:
       - ./nginx/logs:/var/log/nginx/
-      - ./nginx/edd_release/:/var/www/edd_release/

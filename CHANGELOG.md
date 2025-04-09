@@ -1,3 +1,9 @@
+# v0.5.0
+
+- Remove nginx configuration to serve Earthdata Download pre-release. This
+  served a pre-release of the EDD necessary for testing prior to the release of
+  EDD v1.0.4
+
 # v0.4.0
 
 - Reorganize code to make it clearer what routes serve EDD vs the python script.
