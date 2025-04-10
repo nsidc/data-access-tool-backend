@@ -3,9 +3,11 @@ services:
     build: .
     volumes:
       - "./src:/tmp/"
+      - ./logs/api:/tmp/logs/
     command: '/bin/bash -c "PYTHONPATH=./ python dat_backend/dev_server.py"'
 
   server:
     build: ./nginx
+    user: ""
     volumes:
-      - ./nginx/logs:/var/log/nginx/
+      - ./logs/server:/var/log/nginx/

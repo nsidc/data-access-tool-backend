@@ -1,4 +1,4 @@
-RESPONSE_CODES = {
+RESPONSE_CODES: dict[int, tuple[int, str]] = {
     200: (200, "Success"),
     201: (201, "Created"),
     302: (302, "Found"),
