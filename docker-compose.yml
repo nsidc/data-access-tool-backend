@@ -18,7 +18,7 @@ services:
     user: "${UID}:${UID}"
     volumes:
       - ${LOGS_SHARE_PATH:?LOGS_SHARE_PATH must be set}/api:/tmp/logs/
-      - ${LOGS_SHARE_PATH:?LOGS_SHARE_PATH must be set}/api:/tmp/server_logs/
+      - ${LOGS_SHARE_PATH:?LOGS_SHARE_PATH must be set}/server:/tmp/server_logs/
 
   server:
     ports:
