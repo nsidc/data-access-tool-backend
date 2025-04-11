@@ -15,7 +15,6 @@ services:
       - dat
     dns_search: .
     restart: always
-    user: "${UID}:${UID}"
     volumes:
       - ./logs/api:/tmp/logs/
       - ./logs/server:/tmp/server_logs
