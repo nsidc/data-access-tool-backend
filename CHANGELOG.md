@@ -1,3 +1,7 @@
+# v1.0.0
+
+- Add metrics endpoint to show number of interactions with DAT backend.
+
 # v0.5.0
 
 - Remove nginx configuration to serve Earthdata Download pre-release. This
