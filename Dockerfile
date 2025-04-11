@@ -6,6 +6,7 @@ RUN micromamba install -y -n base -f /tmp/env.yaml && \
     micromamba clean --all --yes
 
 RUN mkdir /tmp/logs && chown -R $MAMBA_USER:$MAMBA_USER /tmp/logs
+RUN mkdir /tmp/server_logs && chown -R $MAMBA_USER:$MAMBA_USER /tmp/server_logs
 
 COPY src/dat_backend/ ./dat_backend/
 COPY test/ ./test/

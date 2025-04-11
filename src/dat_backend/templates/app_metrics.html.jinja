@@ -1,0 +1,34 @@
+<!doctype html>
+  <body>
+    <div style="display: flex;">
+    <span>
+      <h2>The Data Access Tool Metrics</h2>
+
+      <p>
+        Total number of requests handled: {{ total_num_requests }}.
+      </p>
+
+      <h3>URI-Specific metrics</h3>
+      <p>
+        {% for uri, uri_metrics in metrics_by_uri.items() %}
+            <h4>{{ uri }}</h4>
+                <ul>
+                  <li>Number of requests: {{ uri_metrics["count"] }}</li>
+                  <li>Unique IPs: {{ uri_metrics["ips"] | unique | list | length }}</li>
+                </ul>
+        {% endfor %}
+      </p>
+
+      <h3>get-links specific metrics (indicates interaction with EDD)</h3>
+      <p>
+        {% for shortname_version, count in get_links_metrics.items() %}
+            <h4>{{ shortname_version }}</h4>
+                <ul>
+                  <li>Number of requests: {{ count }}</li>
+                </ul>
+        {% endfor %}
+      </p>
+
+    <div style="display: flex;">
+  </body>
+</html>
