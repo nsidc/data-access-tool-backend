@@ -18,7 +18,7 @@ SERVER_LOGS_DIR = Path("/tmp/server_logs/")
 def _metrics_from_logs():
     total_num_requests = 0
     uri_specific_metrics = defaultdict(dict)
-    get_links_metrics = defaultdict(lambda: 1)
+    get_links_metrics = defaultdict(dict)
 
     logfiles = SERVER_LOGS_DIR.glob("dat.access.log*")
     for logfile in logfiles:
@@ -62,8 +62,8 @@ def _metrics_from_logs():
                     )
 
                 if "get-links" in access_info["uri"]:
-                    # Indicates that a new get-links request has been initiated.
                     request_params_dict = parse_qs(access_info["args"])
+                    # Indicates that a new get-links request has been initiated.
                     if "cursor" not in request_params_dict.keys():
                         cmr_request_params = parse_qs(
                             request_params_dict["cmr_request_params"][0]
@@ -73,7 +73,17 @@ def _metrics_from_logs():
                             + "_"
                             + cmr_request_params["version"][0]
                         )
-                        get_links_metrics[shortname_version] += 1
+                        if shortname_version in get_links_metrics.keys():
+                            get_links_metrics[shortname_version][
+                                access_info["status"]
+                            ] += 1
+                        else:
+                            get_links_metrics[shortname_version] = defaultdict(
+                                lambda: 1
+                            )
+                            get_links_metrics[shortname_version][
+                                access_info["status"]
+                            ] = 1
 
     # TODO: this currently lacks info on success vs failures for each uri...
     return {
