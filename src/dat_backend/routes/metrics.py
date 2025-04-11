@@ -19,6 +19,8 @@ def _metrics_from_logs():
     total_num_requests = 0
     uri_specific_metrics = defaultdict(dict)
     get_links_metrics = defaultdict(dict)
+    min_datetime = None
+    max_datetime = None
 
     logfiles = SERVER_LOGS_DIR.glob("dat.access.log*")
     for logfile in logfiles:
@@ -41,6 +43,11 @@ def _metrics_from_logs():
                 # Skip reporting metrics on favicon
                 if "favicon" in access_info["uri"]:
                     continue
+
+                if min_datetime is None or min_datetime > access_info["time_iso8601"]:
+                    min_datetime = access_info["time_iso8601"]
+                if max_datetime is None or max_datetime < access_info["time_iso8601"]:
+                    max_datetime = access_info["time_iso8601"]
 
                 total_num_requests += 1
                 if "count" in uri_specific_metrics[access_info["uri"]].keys():
@@ -90,6 +97,8 @@ def _metrics_from_logs():
         "uri_specific_metrics": uri_specific_metrics,
         "get_links_metrics": get_links_metrics,
         "total_num_requests": total_num_requests,
+        "max_datetime": max_datetime,
+        "min_datetime": min_datetime,
     }
 
 
@@ -105,6 +114,8 @@ class ApplicationMetrics(frx.Resource):  # type: ignore[misc]
         return Response(
             render_template(
                 "app_metrics.html.jinja",
+                max_datetime=metrics["max_datetime"],
+                min_datetime=metrics["min_datetime"],
                 total_num_requests=total_num_requests,
                 metrics_by_uri=metrics_by_uri,
                 get_links_metrics=get_links_metrics,
