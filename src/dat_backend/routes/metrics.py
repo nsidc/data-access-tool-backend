@@ -44,12 +44,19 @@ def _metrics_from_logs():
 
                 total_num_requests += 1
                 if "count" in uri_specific_metrics[access_info["uri"]].keys():
-                    uri_specific_metrics[access_info["uri"]]["count"] += 1
+                    uri_specific_metrics[access_info["uri"]]["count"][
+                        access_info["status"]
+                    ] += 1
                     uri_specific_metrics[access_info["uri"]]["ips"].add(
                         access_info["remote_addr"]
                     )
                 else:
-                    uri_specific_metrics[access_info["uri"]]["count"] = 1
+                    uri_specific_metrics[access_info["uri"]]["count"] = defaultdict(
+                        lambda: 1
+                    )
+                    uri_specific_metrics[access_info["uri"]]["count"][
+                        access_info["status"]
+                    ] = 1
                     uri_specific_metrics[access_info["uri"]]["ips"] = set(
                         [access_info["remote_addr"]]
                     )
