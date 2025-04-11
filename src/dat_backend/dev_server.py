@@ -1,6 +1,6 @@
 import logging
 
-from dat_backend import app, formatter
+from dat_backend import app
 
 
 if __name__ == "__main__":
@@ -8,7 +8,6 @@ if __name__ == "__main__":
     # environments)
     filehandler = logging.FileHandler("/tmp/logs/error.log")
     filehandler.setLevel(logging.INFO)
-    filehandler.setFormatter(formatter)
     app.logger.addHandler(filehandler)
 
     # Set to debug log level
