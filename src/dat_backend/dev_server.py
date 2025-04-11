@@ -4,12 +4,6 @@ from dat_backend import app
 
 
 if __name__ == "__main__":
-    # Setup file handler for dev server (this is handled by gunicorn in non-dev
-    # environments)
-    filehandler = logging.FileHandler("/tmp/logs/error.log")
-    filehandler.setLevel(logging.INFO)
-    app.logger.addHandler(filehandler)
-
     # Set to debug log level
     app.logger.setLevel(logging.DEBUG)
 

@@ -3,7 +3,6 @@ services:
     build: .
     volumes:
       - "./src:/tmp/"
-      - ./logs/api:/tmp/logs/
       - ./logs/server:/tmp/server_logs
     command: '/bin/bash -c "PYTHONPATH=./ python dat_backend/dev_server.py"'
 

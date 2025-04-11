@@ -16,7 +16,6 @@ services:
     dns_search: .
     restart: always
     volumes:
-      - ./logs/api:/tmp/logs/
       - ./logs/server:/tmp/server_logs
       - ${LOGS_SHARE_PATH:?LOGS_SHARE_PATH must be
         set}/server:/tmp/server_logs_backup/
