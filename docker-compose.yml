@@ -17,8 +17,10 @@ services:
     restart: always
     user: "${UID}:${UID}"
     volumes:
-      - ${LOGS_SHARE_PATH:?LOGS_SHARE_PATH must be set}/api:/tmp/logs/
-      - ${LOGS_SHARE_PATH:?LOGS_SHARE_PATH must be set}/server:/tmp/server_logs/
+      - ./logs/api:/tmp/logs/
+      - ./logs/server:/tmp/server_logs
+      - ${LOGS_SHARE_PATH:?LOGS_SHARE_PATH must be
+        set}/server:/tmp/server_logs_backup/
 
   server:
     ports:
@@ -31,7 +33,7 @@ services:
     # Setting the user explicitly ensures that the logs are written out as vagrant.
     user: "vagrant:vagrant"
     volumes:
-      - ${LOGS_SHARE_PATH:?LOGS_SHARE_PATH must be set}/server:/var/log/nginx/
+      - ./logs/server:/var/log/nginx/
 
 networks:
   dat:

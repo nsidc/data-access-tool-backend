@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 from collections import defaultdict
 from urllib.parse import parse_qs
+from itertools import chain
 
 import flask_restx as frx
 from flask import render_template
@@ -13,6 +14,7 @@ from dat_backend.constants import RESPONSE_CODES
 
 
 SERVER_LOGS_DIR = Path("/tmp/server_logs/")
+SERVER_LOGS_BACKUP_DIR = Path("/tmp/server_logs_backup/")
 
 
 def _metrics_from_logs():
@@ -23,7 +25,8 @@ def _metrics_from_logs():
     max_datetime = None
 
     logfiles = SERVER_LOGS_DIR.glob("dat.access.log*")
-    for logfile in logfiles:
+    logfiles_backup = SERVER_LOGS_BACKUP_DIR.glob("dat.access.log*")
+    for logfile in chain(logfiles, logfiles_backup):
         if logfile.suffix == ".gz":
             open_func = gzip.open
         else:
