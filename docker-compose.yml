@@ -16,9 +16,9 @@ services:
     dns_search: .
     restart: always
     volumes:
-      - ./logs/server:/tmp/server_logs
-      - ${LOGS_SHARE_PATH:?LOGS_SHARE_PATH must be
-        set}/server:/tmp/server_logs_backup/
+      - "./logs/server:/tmp/server_logs:ro"
+      - "${LOGS_SHARE_PATH:?LOGS_SHARE_PATH must be
+        set}/server:/tmp/server_logs_backup/:ro"
 
   server:
     ports:
