@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 from collections import defaultdict
 from urllib.parse import parse_qs
+from typing import Any
 
 import flask_restx as frx
 from flask import render_template
@@ -16,21 +17,20 @@ from dat_backend.constants import RESPONSE_CODES
 SERVER_LOGS_DIR = Path("/tmp/server_logs/")
 
 
-def metrics_from_logs(server_logs_dir: Path):
+def metrics_from_logs(server_logs_dir: Path) -> dict[str, Any]:
     total_num_requests = 0
-    uri_specific_metrics = defaultdict(dict)
-    get_links_metrics = defaultdict(dict)
+    uri_specific_metrics: dict[str, dict[Any, Any]] = defaultdict(dict)
+    get_links_metrics: dict[str, dict[Any, Any]] = defaultdict(dict)
     min_datetime = None
     max_datetime = None
 
     logfiles = server_logs_dir.rglob("dat.access.log*")
     for logfile in logfiles:
+        open_func = open
         if logfile.suffix == ".gz":
-            open_func = gzip.open
-        else:
-            open_func = open
-        with open_func(logfile, "rt") as logfile:
-            for line in logfile:
+            open_func = gzip.open  # type: ignore[assignment]
+        with open_func(logfile, "rt") as logfile:  # type: ignore[assignment]
+            for line in logfile:  # type: ignore[attr-defined]
                 try:
                     access_info = json.loads(line)
                 except Exception:
