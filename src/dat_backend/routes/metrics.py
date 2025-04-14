@@ -95,7 +95,6 @@ def _metrics_from_logs():
                                 access_info["status"]
                             ] = 1
 
-    # TODO: this currently lacks info on success vs failures for each uri...
     return {
         "uri_specific_metrics": uri_specific_metrics,
         "get_links_metrics": get_links_metrics,
