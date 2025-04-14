@@ -17,6 +17,17 @@ from dat_backend.constants import RESPONSE_CODES
 SERVER_LOGS_DIR = Path("/tmp/server_logs/")
 
 
+def _request_ip_from_log(log_line: dict[str, str]) -> str:
+    ips = log_line["x_forwarded_for"]
+    # There may be multiple IPs depending on how many proxy hops were
+    # involved. Sitting behind the NSIDC apache proxy, this would usually be
+    # 2. The first would be the originator's IP, and the second is the proxy's
+    # IP.
+    first_ip = ips.split(",")[0]
+
+    return first_ip
+
+
 def metrics_from_logs(server_logs_dir: Path) -> dict[str, Any]:
     total_num_requests = 0
     uri_specific_metrics: dict[str, dict[Any, Any]] = defaultdict(dict)
@@ -56,7 +67,7 @@ def metrics_from_logs(server_logs_dir: Path) -> dict[str, Any]:
                         access_info["status"]
                     ] += 1
                     uri_specific_metrics[access_info["uri"]]["ips"].add(
-                        access_info["remote_addr"]
+                        _request_ip_from_log(access_info)
                     )
                 else:
                     uri_specific_metrics[access_info["uri"]]["count"] = defaultdict(
@@ -66,7 +77,9 @@ def metrics_from_logs(server_logs_dir: Path) -> dict[str, Any]:
                         access_info["status"]
                     ] = 1
                     uri_specific_metrics[access_info["uri"]]["ips"] = set(
-                        [access_info["remote_addr"]]
+                        [
+                            _request_ip_from_log(access_info),
+                        ]
                     )
 
                 if "get-links" in access_info["uri"]:

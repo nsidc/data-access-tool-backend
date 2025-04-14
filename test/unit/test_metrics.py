@@ -20,6 +20,9 @@ def test_metrics_from_logs():
     assert metrics_dict["get_links_metrics"]["ATL06_6"]["200"] == 2
     assert metrics_dict["uri_specific_metrics"]["/api/status"]["count"]["200"] == 4
 
+    # Expect two unique IP addresses  for this endpoint
+    assert len(metrics_dict["uri_specific_metrics"]["/api/get-links"]["ips"]) == 2
+
 
 def test_metrics_endpoint(monkeypatch):
     monkeypatch.setattr(metrics, "SERVER_LOGS_DIR", TEST_METRICS_PATH)
