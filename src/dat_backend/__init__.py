@@ -60,7 +60,7 @@ def handle_exception(e):
 # Imports of modules containing routes come after . This is necessary so that all of the
 # APIs are defined when this file is done initializing.
 from dat_backend.routes.earthdata_download import auth, get_links  # noqa
-from dat_backend.routes import status, python_script, metrics  # noqa
+from dat_backend.routes import status, python_script, metrics, favicon  # noqa
 
 if __name__ == "__main__":
     # `ssl_context` option:
