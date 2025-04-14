@@ -4,7 +4,7 @@ import flask_restx as frx
 from flask import render_template
 from werkzeug.wrappers import Response
 
-from dat_backend import api
+from dat_backend import api, app
 from dat_backend.constants import RESPONSE_CODES
 
 
@@ -13,6 +13,7 @@ class ApplicationStatus(frx.Resource):  # type: ignore[misc]
     @api.response(*RESPONSE_CODES[200])  # type: ignore[misc]
     @api.response(*RESPONSE_CODES[500])  # type: ignore[misc]
     def get(self) -> Response:
+        app.logger.info("Status check requested")
         return Response(
             render_template(
                 "application_status.html.jinja",

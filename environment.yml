@@ -1,7 +1,6 @@
 name: dat-backend
 channels:
   - conda-forge
-  - nsidc
   - nodefaults
 dependencies:
   - python ~=3.12.0
@@ -12,6 +11,7 @@ dependencies:
   - gunicorn ~=22.0
   - requests ~=2.32
   - openssl ~=3.4.1 # required for production ssl behind the Apache proxy.
+  - flask-caching ~=2.3.1
 
   # Dev deps
   - pytest ~=8.2

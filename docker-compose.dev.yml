@@ -3,9 +3,11 @@ services:
     build: .
     volumes:
       - "./src:/tmp/"
+      # live logs written directly by the nginx server
+      - "./logs/server:/tmp/server_logs/live/:ro"
     command: '/bin/bash -c "PYTHONPATH=./ python dat_backend/dev_server.py"'
 
   server:
     build: ./nginx
     volumes:
-      - ./nginx/logs:/var/log/nginx/
+      - ./logs/server:/var/log/nginx/

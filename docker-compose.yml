@@ -15,6 +15,12 @@ services:
       - dat
     dns_search: .
     restart: always
+    volumes:
+      # live logs written directly by the nginx server
+      - "./logs/server:/tmp/server_logs/live/:ro"
+      # backup logs rotated onto NFS
+      - "${LOGS_SHARE_PATH:?LOGS_SHARE_PATH must be
+        set}/server:/tmp/server_logs/backup/:ro"
 
   server:
     ports:
@@ -27,7 +33,7 @@ services:
     # Setting the user explicitly ensures that the logs are written out as vagrant.
     user: "vagrant:vagrant"
     volumes:
-      - ${LOGS_SHARE_PATH:?LOGS_SHARE_PATH must be set}/server:/var/log/nginx/
+      - ./logs/server:/var/log/nginx/
 
 networks:
   dat:

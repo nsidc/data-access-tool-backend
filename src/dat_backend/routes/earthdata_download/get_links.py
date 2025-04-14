@@ -81,7 +81,7 @@ class GetLinks(frx.Resource):  # type: ignore[misc]
 
         orders_done = len(links) == 0
         if not orders_done:
-            app.logger.info(f"first link: {links[0]}")
+            app.logger.debug(f"First link: {links[0]}")
         response = {
             "links": links,
             "done": orders_done,
