@@ -3,6 +3,7 @@
 - Add metrics endpoint to show number of interactions with DAT backend.
 - Tweak EDD Auth Callback HTML page text to be consistent with DAT-UI generated
   page.
+- Initial "production" release
 
 # v0.5.0
 
