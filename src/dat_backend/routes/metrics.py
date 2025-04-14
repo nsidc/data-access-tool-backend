@@ -17,7 +17,7 @@ from dat_backend.constants import RESPONSE_CODES
 SERVER_LOGS_DIR = Path("/tmp/server_logs/")
 
 
-def _request_ip_from_log(log_line: dict[Any, Any]):
+def _request_ip_from_log(log_line: dict[str, str]) -> str:
     ips = log_line["x_forwarded_for"]
     # There may be multiple IPs depending on how many proxy hops were
     # involved. Sitting behind the NSIDC apache proxy, this would usually be
