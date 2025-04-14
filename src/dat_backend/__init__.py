@@ -6,6 +6,7 @@ import traceback
 import flask_restx as frx
 from flask import Flask
 from flask_cors import CORS
+from flask_caching import Cache
 
 from dat_backend.reverse_proxy import ReverseProxied
 from dat_backend.constants import RESPONSE_CODES
@@ -34,6 +35,10 @@ app.logger.setLevel(logging.INFO)
 
 secret_key = os.environ.get("DAT_FLASK_SECRET_KEY")
 app.secret_key = secret_key
+
+# Setup caching
+cache = Cache(config={"CACHE_TYPE": "SimpleCache", "CACHE_DEFAULT_TIMEOUT": 60})
+cache.init_app(app)
 
 
 @app.errorhandler(Exception)  # noqa

@@ -1,3 +1,4 @@
+import datetime as dt
 import gzip
 import json
 from pathlib import Path
@@ -8,7 +9,7 @@ import flask_restx as frx
 from flask import render_template
 from werkzeug.wrappers import Response
 
-from dat_backend import api
+from dat_backend import api, cache
 from dat_backend.constants import RESPONSE_CODES
 
 
@@ -103,6 +104,8 @@ def metrics_from_logs(server_logs_dir: Path):
 
 @api.route("/api/metrics")
 class ApplicationMetrics(frx.Resource):  # type: ignore[misc]
+    # Implement a 2.5 minute cache for metrics
+    @cache.cached(timeout=150)
     @api.response(*RESPONSE_CODES[200])  # type: ignore[misc]
     @api.response(*RESPONSE_CODES[500])  # type: ignore[misc]
     def get(self) -> Response:
@@ -113,6 +116,7 @@ class ApplicationMetrics(frx.Resource):  # type: ignore[misc]
         return Response(
             render_template(
                 "app_metrics.html.jinja",
+                request_time=dt.datetime.now(),
                 max_datetime=metrics["max_datetime"],
                 min_datetime=metrics["min_datetime"],
                 total_num_requests=total_num_requests,
