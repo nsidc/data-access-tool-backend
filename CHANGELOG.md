@@ -1,3 +1,8 @@
+# v1.0.1
+
+- Tweak nginx access logs to show `x_forwarded_for` information, allowing
+  metrics on unique IP addresses.
+
 # v1.0.0
 
 - Add metrics endpoint to show number of interactions with DAT backend.
