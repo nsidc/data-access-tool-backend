@@ -11,7 +11,7 @@ from flask_caching import Cache
 from dat_backend.reverse_proxy import ReverseProxied
 from dat_backend.constants import RESPONSE_CODES
 
-__version__ = "0.5.0"
+__version__ = "1.0.0"
 
 
 app = Flask(__name__)
