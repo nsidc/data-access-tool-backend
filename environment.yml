@@ -1,7 +1,6 @@
 name: dat-backend
 channels:
   - conda-forge
-  - nsidc
   - nodefaults
 dependencies:
   - python ~=3.12.0
