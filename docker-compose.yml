@@ -16,9 +16,11 @@ services:
     dns_search: .
     restart: always
     volumes:
-      - "./logs/server:/tmp/server_logs:ro"
+      # live logs written directly by the nginx server
+      - "./logs/server:/tmp/server_logs/live/:ro"
+      # backup logs rotated onto NFS
       - "${LOGS_SHARE_PATH:?LOGS_SHARE_PATH must be
-        set}/server:/tmp/server_logs_backup/:ro"
+        set}/server:/tmp/server_logs/backup/:ro"
 
   server:
     ports:

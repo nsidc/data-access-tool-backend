@@ -1,0 +1,1 @@
+2025/04/14 14:31:40 [alert] 1#1: unlink() "/var/run/nginx.pid" failed (13: Permission denied)

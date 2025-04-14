@@ -3,7 +3,6 @@ import json
 from pathlib import Path
 from collections import defaultdict
 from urllib.parse import parse_qs
-from itertools import chain
 
 import flask_restx as frx
 from flask import render_template
@@ -14,19 +13,17 @@ from dat_backend.constants import RESPONSE_CODES
 
 
 SERVER_LOGS_DIR = Path("/tmp/server_logs/")
-SERVER_LOGS_BACKUP_DIR = Path("/tmp/server_logs_backup/")
 
 
-def _metrics_from_logs():
+def metrics_from_logs(server_logs_dir: Path):
     total_num_requests = 0
     uri_specific_metrics = defaultdict(dict)
     get_links_metrics = defaultdict(dict)
     min_datetime = None
     max_datetime = None
 
-    logfiles = SERVER_LOGS_DIR.glob("dat.access.log*")
-    logfiles_backup = SERVER_LOGS_BACKUP_DIR.glob("dat.access.log*")
-    for logfile in chain(logfiles, logfiles_backup):
+    logfiles = server_logs_dir.rglob("dat.access.log*")
+    for logfile in logfiles:
         if logfile.suffix == ".gz":
             open_func = gzip.open
         else:
@@ -109,7 +106,7 @@ class ApplicationMetrics(frx.Resource):  # type: ignore[misc]
     @api.response(*RESPONSE_CODES[200])  # type: ignore[misc]
     @api.response(*RESPONSE_CODES[500])  # type: ignore[misc]
     def get(self) -> Response:
-        metrics = _metrics_from_logs()
+        metrics = metrics_from_logs(SERVER_LOGS_DIR)
         total_num_requests = metrics["total_num_requests"]
         metrics_by_uri = metrics["uri_specific_metrics"]
         get_links_metrics = metrics["get_links_metrics"]
