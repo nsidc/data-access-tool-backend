@@ -7,19 +7,21 @@
 Backend services for the
 [Data Access Tool UI](https://github.com/nsidc/data-access-tool-ui).
 
-This repository provides:
+The DAT Backend is composed of:
 
-- A Flask-based API provides:
+- A Flask-based API provides endpoints that power the
+  [Data Access Tool UI](https://github.com/nsidc/data-access-tool-ui). For
+  example,
 
-* The`python_script.py` download script for data granules matching a user's
-  filters.
-* The
-  [getLinks](https://github.com/nasa/earthdata-download/blob/main/docs/GET_LINKS.md)
-  service required for DAT integration with the
-  [NASA Earthdata Downloader](https://github.com/nasa/earthdata-download).
+  - The`/api/download_script` endpoint provides the `python_script.py` download
+    script for data granules matching a user's filters.
+  - The `/api/get-links/` endpoint that provides the
+    [getLinks](https://github.com/nasa/earthdata-download/blob/main/docs/GET_LINKS.md)
+    service required for DAT integration with the
+    [NASA Earthdata Downloader](https://github.com/nasa/earthdata-download).
 
 - Docker compose configuration for the DAT backend, which includes
-  [nginx server configuration](./nginx).
+  [nginx proxy server configuration](./nginx).
 
 ## Level of Support
 
