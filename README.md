@@ -5,7 +5,9 @@
 # Data Access Tool (DAT) Backend
 
 Backend services for the
-[Data Access Tool UI](https://github.com/nsidc/data-access-tool-ui).
+[Data Access Tool UI](https://github.com/nsidc/data-access-tool-ui) that is
+deployed to NSIDC's Virtual Machine (VM) infrastructure via the
+[Data Access Tool VM](https://github.com/nsidc/data-access-tool-vm) project.
 
 The DAT Backend is composed of:
 
