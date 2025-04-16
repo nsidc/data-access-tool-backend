@@ -3,6 +3,10 @@
 The DAT backend provides endpoints that support the DAT UI's integration with
 NASA [Earthdata Download](https://github.com/nasa/earthdata-download/) (EDD).
 
+See the
+[Earthdata Download Docs](https://github.com/nasa/earthdata-download/tree/main/docs)
+for detailed information on how Earthdata Download works.
+
 Routes supporting the EDD can be found in
 [./src/dat_backend/routes/earthdata_download/](./src/dat_backend/routes/earthdata_download/).
 
@@ -49,6 +53,30 @@ sequenceDiagram
     end
 ```
 
+## Earthdata login
+
+Accessing NASA data requires authentication with Earthdata Login (URS). The DAT
+backend provides endpoints
+(`./src/dat_backend/routes/earthdata_download/auth.py`) for handling the auth
+token exchange with the Earthdata Download application.
+
+To authenticate on behalf of users, the DAT must be registered with the
+Earthdata Login system. To manage the DAT EDL app, visit this page:
+<https://urs.earthdata.nasa.gov/apps/data_access_tool>.
+
+> [!NOTE] You must have admin access to the application via your personal
+> Earthdata Login account to manage the DAT app. Reach out to NSIDC tech
+> services or another DAT developer to add you as an admin if needed.
+
+The `data_access_tool` EDL app page provides the ability to manage application
+admins, set redirection URIs, reset the application password, and more.
+
+The DAT backend requires that the `EARTHDATA_APP_USERNAME`,
+`EARTHDATA_APP_PASSWORD`, and `EARTHDATA_APP_CLIENT_ID` envvars be set with
+values provided by the EDL app. These are stored in NSIDC's vault instance and
+provided as envvars in VMs provisioned by the
+[data-access-tool-vm](https://github.com/nsidc/data-access-tool-vm) project.
+
 ## Running the EDD in dev
 
 To run a dev instance of the EDD, clone the
@@ -65,6 +93,10 @@ npm run start
 > https://github.com/nasa/earthdata-download/issues/62
 
 ## get-links service
+
+The get-links service provides the links associated with a user's selection to
+the EDD. The route for get-links can be found in
+`src/dat_backend/routes/earthdata_download/get_links.py`.
 
 See the
 [EDD Get Links Request documentation](https://github.com/nasa/earthdata-download/blob/main/docs/GET_LINKS.md)
