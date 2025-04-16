@@ -6,6 +6,49 @@ NASA [Earthdata Download](https://github.com/nasa/earthdata-download/) (EDD).
 Routes supporting the EDD can be found in
 [./src/dat_backend/routes/earthdata_download/](./src/dat_backend/routes/earthdata_download/).
 
+## EDD interaction overview
+
+The following provides a high-level overview of the sequence of interactions
+between the DAT UI, the backend, and Earthdata Download.
+
+- User make selections and clicks button to use earthdata download
+- DAT-UI opens a "deep link" to the Earthdata Download containing the getLinks
+  and auth callback URLs
+- Earthdata Download sends a request to backend using the getLinks URL
+- Backend uses CMR to request a list of granules matching the order. It returns
+  a page of download links.
+- Optionally, if the download requires EDL auth:
+  - Earthdata Download initiates auth with the DAT-backend via the auth allback
+    url.
+  - DAT-backend responds with the user's EDL auth token via an `eddRedirect`
+    deep link.
+- Earthdata download downloads the contents of each page of links from the
+  backend to the user's computer.
+- Earthdata download requests page 2 of results if there are any, and repeats
+  the last couple of steps until the results are exhausted. The user now has all
+  of the granules they requested downloaded to their computer.
+
+```mermaid
+sequenceDiagram
+    actor user
+    participant DAT-UI
+    participant DAT-backend
+    participant Earthdata Download
+
+    user->>DAT-UI: Make selections <br>and click EDD button
+    DAT-UI ->> Earthdata Download: Open EDD via "deep link" containing getLinks<br> and EDL auth callback URLs
+    loop n pages of CMR results
+        Earthdata Download->>DAT-backend: Request page of download URLs via getLinks URL
+        DAT-backend->>Earthdata Download: Send page of data download URLs
+        opt if EDL is required for download
+            Earthdata Download->>DAT-backend: request EDL auth
+            DAT-backend->>Earthdata Download: open auth callback deep-link, providing EDL token
+
+        end
+        Note left of Earthdata Download: Download data<br>to user computer.
+    end
+```
+
 ## Running the EDD in dev
 
 To run a dev instance of the EDD, clone the
