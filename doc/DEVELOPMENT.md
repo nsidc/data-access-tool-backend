@@ -42,35 +42,6 @@ scripts/run_tests.sh
 > Earthdata login credentials for all PRs and pushes to the `main` branch. See
 > [.github/workflows/test.yml](.github/workflows/test.yml).
 
-### Testing the EDD integration
-
-An example deep-link to initiate EDD downloads:
-
-In integration (note: for the get-links query param, the `cmr_request_params`
-were url-encoded, and then the entire URL was url-encoded):
-
-```
-earthdata-download://startDownload?getLinks=https%3A//integration.nsidc.org/apps/data-access-tool/api/get-links%3Fcmr_request_params%3Dprovider%253DNSIDC_CPRD%2526page_size%253D5%2526sort_key%255B%255D%253D-start_date%2526sort_key%255B%255D%253Dproducer_granule_id%2526short_name%253DATL06%2526version%253D6%2526version%253D06%2526version%253D006%2526temporal%255B%255D%253D2018-10-14T00%253A00%253A00Z%252C2025-02-25T00%253A25%253A20Z%2526bounding_box%253D-180%252C-90%252C180%252C90%2526options%255Bproducer_granule_id%255D%255Bpattern%255D%253Dtrue%2526producer_granule_id%255B%255D%253D%252AATL06_2024%252A_0804%252A_006_01.h5%252A&downloadId=atl06_06&clientId=data_access_tool&authUrl=https://integration.nsidc.org/apps/data-access-tool/api/earthdata/auth?eddRedirect=earthdata-download%3A%2F%2FauthCallback
-```
-
-A button needs to be added to the Data Access Tool that will issue a GET request
-that looks like the above.
-
-The GET request to `earthdata-download://startDownload` should include the
-following query parameters:
-
-- `getLinks`: URI for `/api/get-links/`. This URI will specify the
-  `cmr_request_params` query-parameter, which is a string representing the CMR
-  query parameters mapping to a user's selections in the DAT.
-- `downloadId`: The dataset ID and version for the current order (e.g., ATL06 v6
-  is `atl06_06`)
-- `authUrl`: URI for `/api/earthdata/auth/`. EDD will use this to initiate a
-  token exchange with URS to authenticate user downloads. This URL must include
-  `eddRedirect=earthdata-download%3A%2F%2FauthCallback` as a query parameter.
-
-> [!WARNING] As of this writing, the CMR query parameters are hard-coded to
-> always return a small subset of ATL06 v6 data.
-
 ## Releasing
 
 To release a new version:
