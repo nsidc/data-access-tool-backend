@@ -15,8 +15,8 @@ The DAT Backend is composed of:
   [Data Access Tool UI](https://github.com/nsidc/data-access-tool-ui). For
   example,
 
-  - The`/api/download_script` endpoint provides the `python_script.py` download
-    script for data granules matching a user's filters.
+  - The`/api/downloader-script` endpoint provides the `python_script.py`
+    download script for data granules matching a user's filters.
   - The `/api/get-links/` endpoint that provides the
     [getLinks](https://github.com/nasa/earthdata-download/blob/main/docs/GET_LINKS.md)
     service required for DAT integration with the
@@ -41,13 +41,6 @@ contact nsidc@nsidc.org for more information.
 - Access to NSIDC's internal Virtual Machine infrastructure. It is expected that
   this backend system be deployed via the
   [data-access-tool-vm](https://github.com/nsidc/data-access-tool-ui) project.
-
-## Background
-
-This service was originally a part of the
-[hermes-api](https://bitbucket.org/nsidc/hermes-api/src). It was moved to a
-standalone service to support the decommissioning of ECS and the rest of the
-hermes stack planned for July 2026.
 
 ## Contributing
 
