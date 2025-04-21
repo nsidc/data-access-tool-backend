@@ -82,3 +82,22 @@ test the full EDD workflow with the changes.
 See
 [Testing the EDD integration](developing_with_edd.html#testing-the-edd-integration)
 for more information.
+
+## Writing new tests
+
+Tests are authored with [pytest](https://docs.pytest.org/en/stable/) and can be
+found in `test/`.
+
+Currently, tests are separated into two directories:
+
+- `test/unit/` tests are those which are run with GitHub actions and are not
+  expected to need EDL credentials.
+
+- `test/integration` tests are those which must be run manually, and require EDL
+  credentials.
+
+::: {.callout-note}
+
+TODO: add generic EDL credentials to repo secrets so that GHA can run all tests.
+
+:::
