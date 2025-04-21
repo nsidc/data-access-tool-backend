@@ -64,9 +64,13 @@ To authenticate on behalf of users, the DAT must be registered with the
 Earthdata Login system. To manage the DAT EDL app, visit this page:
 <https://urs.earthdata.nasa.gov/apps/data_access_tool>.
 
-> [!NOTE] You must have admin access to the application via your personal
-> Earthdata Login account to manage the DAT app. Reach out to NSIDC tech
-> services or another DAT developer to add you as an admin if needed.
+::: {.callout-note}
+
+You must have admin access to the application via your personal Earthdata Login
+account to manage the DAT app. Reach out to NSIDC tech services or another DAT
+developer to add you as an admin if needed.
+
+:::
 
 The `data_access_tool` EDL app page provides the ability to manage application
 admins, set redirection URIs, reset the application password, and more.
@@ -88,9 +92,13 @@ nvm use
 npm run start
 ```
 
-> [!NOTE] On Linux, starting the EDD in dev mode may not properly associate
-> `earthdata-download://` deep links with the dev instance of the EDD. See
-> https://github.com/nasa/earthdata-download/issues/62
+::: {.callout-note}
+
+On Linux, starting the EDD in dev mode may not properly associate
+`earthdata-download://` deep links with the dev instance of the EDD. See
+https://github.com/nasa/earthdata-download/issues/62
+
+:::
 
 ## get-links service
 
