@@ -1,3 +1,18 @@
+## GitHub Actions
+
+The `data-access-tool-backend` repository is setup to utilize
+[GitHub Actions](https://docs.github.com/en/actions) to automatically test the
+DAT backend code in PRs and merges with the `main` branch.
+
+See `.github/workflows/` for all configured GitHub actions for this project.
+
+::: {.callout-warning}
+
+Not all defined tests are run automatically through GitHub Actions. See the
+sections below for details on how to ensure you are running all tests.
+
+:::
+
 ## Pre-commit
 
 This project uses [pre-commit](https://pre-commit.com/) to run pre-commit hooks
@@ -40,7 +55,8 @@ GitHub actions are configured to run pre-commit for all PRs and pushes to the
 ## Running tests
 
 Before manually running tests, setup the `EARTHDATA_USERNAME` and
-`EARTHDATA_PASSWORD` envvars, which are necessary for integration tests.
+`EARTHDATA_PASSWORD` envvars, which are necessary for integration tests. This
+can be set to your own personal EDL credentials.
 
 Next, to run all tests:
 
@@ -55,3 +71,14 @@ login credentials for all PRs and pushes to the `main` branch. See
 `.github/workflows/test.yml`.
 
 :::
+
+## Testing the EDD integration
+
+The Earthdata Download application integration (supported through the
+`dat_backend/routes/earthdata_download/` routes) does not have full integration
+tests defined. When major changes are made, it is important that the developer
+test the full EDD workflow with the changes.
+
+See
+[Testing the EDD integration](developing_with_edd.html#testing-the-edd-integration)
+for more information.
