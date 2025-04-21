@@ -1,3 +1,43 @@
+# Getting started
+
+## Contributing
+
+- Strive to create tests for all new features/bugfixes.
+- New or modified features should be accompanied by adequate documentation.
+- Follow the recommended
+  [git flow](https://docs.github.com/en/get-started/using-github/github-flow#following-github-flow).
+
+## Setting up a dev environment
+
+### Local development
+
+Local development (not on an NISDC development VM) is not recommended. However,
+it can be useful to install the `dat-backend` conda environment locally. To do
+so,
+
+```
+conda env create -f environment.yml
+conda activate dat-backend
+```
+
+Moreover, the `docker-compose.local.yml` can be used to run the stack locally:
+
+```
+ln -s docker-compose.local.yml docker-compose.override.yml
+docker compose up -d
+```
+
+Docker logs can be followed via:
+
+```
+docker compose logs -f
+```
+
+### Development on a dev VM at NSIDC
+
+See the [data-access-tool-vm](https://github.com/nsidc/data-access-tool-ui)
+project documentation.
+
 ### Pre-commit
 
 This project uses [pre-commit](https://pre-commit.com/) to run pre-commit hooks
@@ -48,17 +88,3 @@ login credentials for all PRs and pushes to the `main` branch. See
 `.github/workflows/test.yml`.
 
 :::
-
-## Releasing
-
-To release a new version:
-
-- Make changes on a branch
-- Update CHANGELOG for next release
-- Run `bump-my-version bump {major|minor|patch}`
-- Open a PR and have it merged to `main` after review
-- Tag latest commit on `main` with the version, and push. This will trigger a
-  build of the `data-access-tool-api` and `data-access-tool-server` images with
-  the given version tag.
-- Deploy the latest change with the
-  [data-access-tool-vm](https://github.com/nsidc/data-access-tool-vm).
