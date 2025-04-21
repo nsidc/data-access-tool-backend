@@ -22,7 +22,7 @@ contact nsidc@nsidc.org for more information.
   [docker compose](https://docs.docker.com/compose/)
 - Access to NSIDC's internal Virtual Machine infrastructure. It is expected that
   this backend system be deployed via the
-  [data-access-tool-vm](https://github.com/nsidc/data-access-tool-ui) project.
+  [data-access-tool-vm](https://github.com/nsidc/data-access-tool-vm) project.
 
 ## Contributing
 

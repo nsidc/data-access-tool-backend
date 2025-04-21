@@ -77,9 +77,8 @@ admins, set redirection URIs, reset the application password, and more.
 
 The DAT backend requires that the `EARTHDATA_APP_USERNAME`,
 `EARTHDATA_APP_PASSWORD`, and `EARTHDATA_APP_CLIENT_ID` envvars be set with
-values provided by the EDL app. These are stored in NSIDC's vault instance and
-provided as envvars in VMs provisioned by the
-[data-access-tool-vm](https://github.com/nsidc/data-access-tool-vm) project.
+values provided by the EDL app. See [Environment Variables](envvars.md) for more
+information about environment variables used by the DAT backend.
 
 ## Running the EDD in dev
 

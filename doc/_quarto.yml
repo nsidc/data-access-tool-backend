@@ -12,8 +12,12 @@ website:
         text: Home
       - href: getting_started.md
         text: "Getting Started"
+      - href: testing.md
+        text: "Testing"
       - href: developing_with_edd.qmd
         text: "Developing with EDD"
+      - href: envvars.md
+      - href: logs.md
       - href: releasing.md
 
   page-footer:
