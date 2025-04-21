@@ -32,7 +32,7 @@ between the DAT UI, the backend, and Earthdata Download.
   the last couple of steps until the results are exhausted. The user now has all
   of the granules they requested downloaded to their computer.
 
-```mermaid
+```{mermaid}
 sequenceDiagram
     actor user
     participant DAT-UI

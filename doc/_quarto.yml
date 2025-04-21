@@ -13,7 +13,7 @@ website:
       - href: project_history.md
       - href: getting_started.md
         text: "Getting Started"
-      - href: developing_with_edd.md
+      - href: developing_with_edd.qmd
         text: "Developing with EDD"
 
   page-footer:
