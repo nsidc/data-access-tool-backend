@@ -26,7 +26,7 @@ contact nsidc@nsidc.org for more information.
 
 ## Contributing
 
-See [./doc/DEVELOPMENT.md](./doc/DEVELOPMENT.md).
+Contributing documentation can be viewed by running `quarto preview docs/`
 
 ## Credit
 
