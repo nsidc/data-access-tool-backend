@@ -1,0 +1,29 @@
+project:
+  type: website
+
+website:
+  title: "Data Access Tool Backend Documentation"
+  site-url: "https://nsidc.github.io/data-access-tool-backend"
+  repo-url: &repo-url "https://github.com/nsidc/data-access-tool-backend"
+  repo-actions: ["edit", "issue"]
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: project_history.md
+      - href: DEVELOPMENT.md
+        text: "Getting Started"
+      - href: developing_with_edd.md
+        text: "Developing with EDD"
+
+  page-footer:
+    left: "© NSIDC 2025"
+    right: "Built with [Quarto](https://quarto.org/)"
+
+format:
+  html:
+    theme:
+      - cosmo
+      - brand
+    css: styles.css
+    toc: true

@@ -18,7 +18,11 @@ This service went into production at NSIDC alongside the
 [data-access-tool-ui](https://github.com/nsidc/data-access-tool-ui/) v3.1.0 on
 April 16, 2025.
 
-> [!NOTE] The Data Access Tool project has been referred to as "Everest" and
-> "Hermes" at NSIDC. Generally speaking, "Hermes" refers to the legacy backend
-> services that powered the DAT UI <3.1.0. "Everest" referred to the frontend
-> UI. In practice, these terms were sometimes used interchangeably.
+::: {.callout-note}
+
+The Data Access Tool project has been referred to as "Everest" and "Hermes" at
+NSIDC. Generally speaking, "Hermes" refers to the legacy backend services that
+powered the DAT UI <3.1.0. "Everest" referred to the frontend UI. In practice,
+these terms were sometimes used interchangeably.
+
+:::

@@ -5,25 +5,7 @@
 # Data Access Tool (DAT) Backend
 
 Backend services for the
-[Data Access Tool UI](https://github.com/nsidc/data-access-tool-ui) that is
-deployed to NSIDC's Virtual Machine (VM) infrastructure via the
-[Data Access Tool VM](https://github.com/nsidc/data-access-tool-vm) project.
-
-The DAT Backend is composed of:
-
-- A Flask-based API provides endpoints that power the
-  [Data Access Tool UI](https://github.com/nsidc/data-access-tool-ui). For
-  example,
-
-  - The`/api/downloader-script` endpoint provides the `python_script.py`
-    download script for data granules matching a user's filters.
-  - The `/api/get-links/` endpoint that provides the
-    [getLinks](https://github.com/nasa/earthdata-download/blob/main/docs/GET_LINKS.md)
-    service required for DAT integration with the
-    [NASA Earthdata Downloader](https://github.com/nasa/earthdata-download).
-
-- Docker compose configuration for the DAT backend, which includes
-  [nginx proxy server configuration](./nginx).
+[Data Access Tool UI](https://github.com/nsidc/data-access-tool-ui).
 
 ## Level of Support
 
