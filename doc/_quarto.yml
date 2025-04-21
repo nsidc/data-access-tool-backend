@@ -17,6 +17,8 @@ website:
       - href: envvars.md
       - href: logs.md
       - href: releasing.md
+      - href: docs.md
+        text: "Docs"
 
   page-footer:
     left: "© NSIDC 2025"
