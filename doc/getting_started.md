@@ -1,7 +1,8 @@
 # Contributing
 
-- Strive to create tests for all new features/bugfixes.
-- New or modified features should be accompanied by adequate documentation.
+- Strive to create [tests](testing.md) for all new features/bugfixes.
+- New or modified features should be accompanied by adequate
+  [documentation](docs.md).
 - Follow the recommended
   [git flow](https://docs.github.com/en/get-started/using-github/github-flow#following-github-flow).
 
