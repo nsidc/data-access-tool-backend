@@ -11,7 +11,7 @@ website:
       - href: index.qmd
         text: Home
       - href: project_history.md
-      - href: DEVELOPMENT.md
+      - href: getting_started.md
         text: "Getting Started"
       - href: developing_with_edd.md
         text: "Developing with EDD"

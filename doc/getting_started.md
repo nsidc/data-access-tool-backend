@@ -23,9 +23,12 @@ To manually run the pre-commit hooks without a commit:
 $ pre-commit run --all-files
 ```
 
-> [!NOTE] GitHub actions are configured to run pre-commit for all PRs and pushes
-> to the `main` branch. See
-> [.github/workflows/pre-commit.yml](.github/workflows/pre-commit.yml).
+::: {.callout-note}
+
+GitHub actions are configured to run pre-commit for all PRs and pushes to the
+`main` branch. See `.github/workflows/pre-commit.yml`.
+
+:::
 
 ### Running tests
 
@@ -38,9 +41,13 @@ Next, to run all tests:
 scripts/run_tests.sh
 ```
 
-> [!NOTE] GitHub actions are configured to run unit tests that do not require
-> Earthdata login credentials for all PRs and pushes to the `main` branch. See
-> [.github/workflows/test.yml](.github/workflows/test.yml).
+::: {.callout-note}
+
+GitHub actions are configured to run unit tests that do not require Earthdata
+login credentials for all PRs and pushes to the `main` branch. See
+`.github/workflows/test.yml`.
+
+:::
 
 ## Releasing
 
