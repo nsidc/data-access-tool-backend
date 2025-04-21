@@ -1,5 +1,3 @@
-# Getting started
-
 ## Contributing
 
 - Strive to create tests for all new features/bugfixes.
@@ -15,21 +13,21 @@ Local development (not on an NISDC development VM) is not recommended. However,
 it can be useful to install the `dat-backend` conda environment locally. To do
 so,
 
-```
+```bash
 conda env create -f environment.yml
 conda activate dat-backend
 ```
 
 Moreover, the `docker-compose.local.yml` can be used to run the stack locally:
 
-```
+```bash
 ln -s docker-compose.local.yml docker-compose.override.yml
 docker compose up -d
 ```
 
 Docker logs can be followed via:
 
-```
+```bash
 docker compose logs -f
 ```
 
@@ -38,7 +36,7 @@ docker compose logs -f
 See the [data-access-tool-vm](https://github.com/nsidc/data-access-tool-ui)
 project documentation.
 
-### Pre-commit
+## Pre-commit
 
 This project uses [pre-commit](https://pre-commit.com/) to run pre-commit hooks
 that check and format this project's code for stylistic consistency (e.g., using
@@ -53,14 +51,14 @@ For more information about using `pre-commit`, please sese the
 
 To install pre-commit to run checks for each commit you make:
 
-```
-$ pre-commit install
+```bash
+pre-commit install
 ```
 
 To manually run the pre-commit hooks without a commit:
 
-```
-$ pre-commit run --all-files
+```bash
+pre-commit run --all-files
 ```
 
 ::: {.callout-note}
@@ -70,7 +68,7 @@ GitHub actions are configured to run pre-commit for all PRs and pushes to the
 
 :::
 
-### Running tests
+## Running tests
 
 Before manually running tests, setup the `EARTHDATA_USERNAME` and
 `EARTHDATA_PASSWORD` envvars, which are necessary for integration tests.
