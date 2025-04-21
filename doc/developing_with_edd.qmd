@@ -8,7 +8,7 @@ See the
 for detailed information on how Earthdata Download works.
 
 Routes supporting the EDD can be found in
-[./src/dat_backend/routes/earthdata_download/](./src/dat_backend/routes/earthdata_download/).
+`./src/dat_backend/routes/earthdata_download/`.
 
 ## EDD interaction overview
 
