@@ -8,8 +8,6 @@ website:
   repo-actions: ["edit", "issue"]
   navbar:
     left:
-      - href: index.qmd
-        text: Home
       - href: getting_started.md
         text: "Getting Started"
       - href: testing.md
