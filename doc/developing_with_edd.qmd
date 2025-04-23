@@ -8,7 +8,7 @@ See the
 for detailed information on how Earthdata Download works.
 
 Routes supporting the EDD can be found in
-[./src/dat_backend/routes/earthdata_download/](./src/dat_backend/routes/earthdata_download/).
+`./src/dat_backend/routes/earthdata_download/`.
 
 ## EDD interaction overview
 
@@ -32,7 +32,7 @@ between the DAT UI, the backend, and Earthdata Download.
   the last couple of steps until the results are exhausted. The user now has all
   of the granules they requested downloaded to their computer.
 
-```mermaid
+```{mermaid}
 sequenceDiagram
     actor user
     participant DAT-UI
@@ -64,18 +64,21 @@ To authenticate on behalf of users, the DAT must be registered with the
 Earthdata Login system. To manage the DAT EDL app, visit this page:
 <https://urs.earthdata.nasa.gov/apps/data_access_tool>.
 
-> [!NOTE] You must have admin access to the application via your personal
-> Earthdata Login account to manage the DAT app. Reach out to NSIDC tech
-> services or another DAT developer to add you as an admin if needed.
+::: {.callout-note}
+
+You must have admin access to the application via your personal Earthdata Login
+account to manage the DAT app. Reach out to NSIDC tech services or another DAT
+developer to add you as an admin if needed.
+
+:::
 
 The `data_access_tool` EDL app page provides the ability to manage application
 admins, set redirection URIs, reset the application password, and more.
 
 The DAT backend requires that the `EARTHDATA_APP_USERNAME`,
 `EARTHDATA_APP_PASSWORD`, and `EARTHDATA_APP_CLIENT_ID` envvars be set with
-values provided by the EDL app. These are stored in NSIDC's vault instance and
-provided as envvars in VMs provisioned by the
-[data-access-tool-vm](https://github.com/nsidc/data-access-tool-vm) project.
+values provided by the EDL app. See [Environment Variables](envvars.md) for more
+information about environment variables used by the DAT backend.
 
 ## Running the EDD in dev
 
@@ -88,9 +91,13 @@ nvm use
 npm run start
 ```
 
-> [!NOTE] On Linux, starting the EDD in dev mode may not properly associate
-> `earthdata-download://` deep links with the dev instance of the EDD. See
-> https://github.com/nasa/earthdata-download/issues/62
+::: {.callout-note}
+
+On Linux, starting the EDD in dev mode may not properly associate
+`earthdata-download://` deep links with the dev instance of the EDD. See
+https://github.com/nasa/earthdata-download/issues/62
+
+:::
 
 ## get-links service
 
