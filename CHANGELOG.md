@@ -4,6 +4,8 @@
 - Fixed issue with docker logs: limit total amount of logs retained by Docker.
   This prevents a VM's local disk from completely filling after long enough
   uptime.
+- Fix issue with EDD metrics being nested under each other in the `/api/metrics`
+  generated-page.
 
 # v1.0.1
 

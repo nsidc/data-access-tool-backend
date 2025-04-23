@@ -30,17 +30,16 @@
         {% endfor %}
       </p>
 
-      <h3>get-links specific metrics (indicates interaction with EDD)</h3>
-      <p>
-        {% for shortname_version, metrics in get_links_metrics.items() %}
-            <h4><u>{{ shortname_version }}</u></h4>
-                <p>Number of requests by status:</p>
-                <ul>
-                  {% for status_code, count in metrics.items() %}
-                      <li>{{ status_code }}: {{ count }}</li>
-                  {% endfor %}
-        {% endfor %}
-      </p>
+      <h3>get-links specific metrics (indicates interaction with EDD!)</h3>
+      {% for shortname_version, metrics in get_links_metrics.items() %}
+          <h4><u>{{ shortname_version }}</u></h4>
+          <p>Number of requests by status:</p>
+          <ul>
+            {% for status_code, count in metrics.items() %}
+                <li>{{ status_code }}: {{ count }}</li>
+            {% endfor %}
+          </ul>
+      {% endfor %}
 
     <div style="display: flex;">
   </body>
