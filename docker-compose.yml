@@ -21,6 +21,10 @@ services:
       # backup logs rotated onto NFS
       - "${LOGS_SHARE_PATH:?LOGS_SHARE_PATH must be
         set}/server:/tmp/server_logs/backup/:ro"
+    logging:
+      options:
+        max-size: "20m"
+        max-file: "5"
 
   server:
     ports:
@@ -34,6 +38,10 @@ services:
     user: "vagrant:vagrant"
     volumes:
       - ./logs/server:/var/log/nginx/
+    logging:
+      options:
+        max-size: "20m"
+        max-file: "5"
 
 networks:
   dat:
