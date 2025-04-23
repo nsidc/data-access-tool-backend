@@ -1,3 +1,10 @@
+# NEXT_RELEASE
+
+- Improved documentation
+- Fixed issue with docker logs: limit total amount of logs retained by Docker.
+  This prevents a VM's local disk from completely filling after long enough
+  uptime.
+
 # v1.0.1
 
 - Tweak nginx access logs to show `x_forwarded_for` information, allowing
