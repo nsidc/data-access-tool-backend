@@ -7,6 +7,7 @@ import flask_restx as frx
 from flask import Flask
 from flask_cors import CORS
 from flask_caching import Cache
+from werkzeug.exceptions import HTTPException
 
 from dat_backend.reverse_proxy import ReverseProxied
 from dat_backend.constants import RESPONSE_CODES
@@ -47,6 +48,9 @@ def handle_exception(e):
 
     https://flask.palletsprojects.com/en/stable/errorhandling/#error-handlers
     """
+    # pass through HTTP errors
+    if isinstance(e, HTTPException):
+        return e
     # Log the error
     err_traceback = traceback.format_exception(e)
     err_msg = f"Unhandled exception during request: {e}"

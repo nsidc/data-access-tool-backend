@@ -8,6 +8,8 @@
   generated-page.
 - Add `./deploy/deploy` script for use with
   [garrison](https://bitbucket.org/nsidc/garrison) deployment system at NSIDC.
+- Bugfix: pass through HTTP errors (e.g., 404) handled by the server. Prior to
+  this, all HTTP errors were presented to clients as 500: Internal Server Error.
 
 # v1.0.1
 
