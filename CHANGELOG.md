@@ -10,6 +10,10 @@
   [garrison](https://bitbucket.org/nsidc/garrison) deployment system at NSIDC.
 - Bugfix: pass through HTTP errors (e.g., 404) handled by the server. Prior to
   this, all HTTP errors were presented to clients as 500: Internal Server Error.
+- When Earthdata Login auth redirect fails due to missing session data, return a
+  400 response w/ HTML page telling users to enable cookies.
+- More informative exception messages for auth failures during Earthdata Login
+  token exchange.
 
 # v1.0.1
 
