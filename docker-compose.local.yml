@@ -9,15 +9,9 @@ services:
   api:
     build: .
     volumes:
-      - "./src:/tmp/"
-      # live logs written directly by the nginx server
-      - "./logs/server:/tmp/server_logs/live/:ro"
     command: '/bin/bash -c "PYTHONPATH=./ python dat_backend/dev_server.py"'
 
   server:
     build: ./nginx
     volumes:
-      - ./logs/server:/var/log/nginx/
-    # Run server as root locally. This works for systems that do not have the
-    # `vagrant` user defined
     user: ":"

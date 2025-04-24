@@ -17,9 +17,10 @@ services:
     restart: always
     volumes:
       # live logs written directly by the nginx server
-      - "./logs/server:/tmp/server_logs/live/:ro"
-      # backup logs rotated onto NFS
       - "${LOGS_SHARE_PATH:?LOGS_SHARE_PATH must be
+        set}/server:/tmp/server_logs/live/:ro"
+      # backup logs rotated onto NFS
+      - "${LOGS_SHARE_BACKUP_PATH:?LOGS_SHARE_PATH must be
         set}/server:/tmp/server_logs/backup/:ro"
     logging:
       options:
@@ -37,7 +38,8 @@ services:
     # Setting the user explicitly ensures that the logs are written out as vagrant.
     user: "vagrant:vagrant"
     volumes:
-      - ./logs/server:/var/log/nginx/
+      - "${LOGS_SHARE_PATH:?LOGS_SHARE_PATH must be
+        set}/server:/var/log/nginx/:rw"
     logging:
       options:
         max-size: "20m"

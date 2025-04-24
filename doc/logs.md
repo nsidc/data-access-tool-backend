@@ -12,10 +12,10 @@ The Data Access Tool backend produces logs from two primary sources:
 
 ## NGINX Server logs
 
-Logs are written to local disk, in `./logs/server/`.
+Logs are written to local disk, in a directory defined by `LOGS_SHARE_PATH`.
 
 It is expected that these logs be backed-up to a networked share drive (defined
-through the `LOGS_SHARE_PATH` [environment variable](envvars.md)) through
+through the `LOGS_SHARE_BACKUP_PATH` [environment variable](envvars.md)) through
 `logrotation`. The `dat.access.log` is intended to be used for application
 metrics, and these data should be retained for recordkeeping. The
 [data-access-tool-vm](https://github.com/nsidc/data-access-tool-vm) project sets
