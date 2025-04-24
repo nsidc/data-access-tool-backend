@@ -1,3 +1,6 @@
+# TODO: is this actually helpful? It seems like we should just collapse this
+# down to a dict where the key is the code and the value is the message. This is
+# a legacy of hermes.
 RESPONSE_CODES: dict[int, tuple[int, str]] = {
     200: (200, "Success"),
     201: (201, "Created"),
