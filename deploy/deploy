@@ -1,0 +1,22 @@
+#!/bin/bash
+set -e
+
+ENVIRONMENT=$1
+
+THISDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+COMPOSE_FILE=$THISDIR/../docker-compose.yml
+
+if [ "${ENVIRONMENT}" = "dev" ]; then
+    echo "Dev does not support stack deploy with garrison."
+    exit 1
+elif [ "${ENVIRONMENT}" = "integration" ]; then
+    OVERRIDE_FILE=$THISDIR/../docker-compose.integration.yml
+else
+    OVERRIDE_FILE=$THISDIR/../docker-compose.production.yml
+fi
+
+source /etc/profile.d/envvars.sh
+
+cd $THISDIR/../
+docker compose -f $COMPOSE_FILE -f $OVERRIDE_FILE up --detach
+docker system prune -af

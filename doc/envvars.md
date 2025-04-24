@@ -21,3 +21,5 @@ Environment variables are exposed to the DAT's components through
   <https://flask.palletsprojects.com/en/stable/quickstart/#sessions>.
 - `LOGS_SHARE_PATH`: Local path to directory where logs are stored. See
   [Logs](logs.md) for more information.
+- `LOGS_SHARE_BACKUP_PATH`: Path to directory where logs are backed-up for
+  long-term storage. See [Logs](logs.md) for more information.

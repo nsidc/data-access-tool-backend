@@ -6,6 +6,8 @@
   uptime.
 - Fix issue with EDD metrics being nested under each other in the `/api/metrics`
   generated-page.
+- Add `./deploy/deploy` script for use with
+  [garrison](https://bitbucket.org/nsidc/garrison) deployment system at NSIDC.
 
 # v1.0.1
 
