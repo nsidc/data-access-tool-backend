@@ -4,9 +4,11 @@ import re
 import traceback
 
 import flask_restx as frx
-from flask import Flask
+from flask import Flask, render_template
 from flask_cors import CORS
 from flask_caching import Cache
+from werkzeug.exceptions import HTTPException
+from werkzeug.wrappers import Response
 
 from dat_backend.reverse_proxy import ReverseProxied
 from dat_backend.constants import RESPONSE_CODES
@@ -47,14 +49,24 @@ def handle_exception(e):
 
     https://flask.palletsprojects.com/en/stable/errorhandling/#error-handlers
     """
+    # pass through HTTP errors
+    if isinstance(e, HTTPException):
+        return e
     # Log the error
     err_traceback = traceback.format_exception(e)
     err_msg = f"Unhandled exception during request: {e}"
     app.logger.exception(err_msg, extra={"exception_traceback": err_traceback})
 
     # Return a 500 response
-    response_code, response_message = RESPONSE_CODES[500]
-    return response_message, response_code
+    return Response(
+        render_template(
+            "generic_error.html.jinja",
+            status_code=RESPONSE_CODES[500][0],
+            status_message=RESPONSE_CODES[500][1],
+        ),
+        content_type="text/html",
+        status=RESPONSE_CODES[500][0],
+    )
 
 
 # Imports of modules containing routes come after . This is necessary so that all of the
