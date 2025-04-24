@@ -91,7 +91,7 @@ def earthdata_token_exchange(authorization_code: Optional[str]) -> Dict[str, Any
     )
 
     if authorization_result.status_code != 200:
-        raise Exception("Authorization Failed")
+        raise Exception(f"Authorization Failed: {authorization_result.text}")
 
     authorization_result_json: Dict[str, Any] = authorization_result.json()
 
