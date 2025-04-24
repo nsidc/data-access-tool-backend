@@ -1,5 +1,7 @@
 services:
   api:
     image: "ghcr.io/nsidc/data-access-tool-api:latest"
+    pull_policy: always
   server:
     image: "ghcr.io/nsidc/data-access-tool-server:latest"
+    pull_policy: always
