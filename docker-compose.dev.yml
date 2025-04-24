@@ -2,6 +2,16 @@ services:
   api:
     build: .
     command: '/bin/bash -c "PYTHONPATH=./ python dat_backend/dev_server.py"'
+    volumes:
+      # Mount local src.
+      - "./src:/tmp/"
+      # Note: the following are the same mounts as in the base docker-compose file.
+      # live logs written directly by the nginx server
+      - "${LOGS_SHARE_PATH:?LOGS_SHARE_PATH must be
+        set}/server:/tmp/server_logs/live/:ro"
+      # backup logs rotated onto NFS
+      - "${LOGS_SHARE_BACKUP_PATH:?LOGS_SHARE_PATH must be
+        set}/server:/tmp/server_logs/backup/:ro"
 
   server:
     build: ./nginx
