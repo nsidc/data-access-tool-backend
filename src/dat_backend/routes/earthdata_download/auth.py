@@ -112,7 +112,22 @@ class EarthdataAuthCallback(frx.Resource):  # type: ignore[misc]
 
         app.logger.info("Authorized with token: {0}".format(user_edl_token))
 
-        eddRedirect = session.pop("eddRedirect")
+        eddRedirect = session.get("eddRedirect")
+        if not eddRedirect:
+            # The client likely does not support cookies, which means that Flask
+            # cannot associate the current request with the appropriate session
+            # containing the eddRedirect.
+            # Return 400, bad request, with a handy error message
+            return Response(
+                render_template(
+                    "edd_auth_session_fail.html.jinja",
+                    status_code=RESPONSE_CODES[400][0],
+                    status_message=RESPONSE_CODES[400][1],
+                ),
+                content_type="text/html",
+                status=RESPONSE_CODES[400][0],
+            )
+
         # Redirect back to the application
         # The eddRedirect includes the `FileId` query parameter already set and
         # will look something like this:
