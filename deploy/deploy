@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-# ENVIRONMENT=$1
+ENVIRONMENT=$1
 
 THISDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 COMPOSE_FILE=$THISDIR/../docker-compose.yml
@@ -14,10 +14,9 @@ elif [ "${ENVIRONMENT}" = "integration" ]; then
 else
     OVERRIDE_FILE=$THISDIR/../docker-compose.production.yml
 fi
-# 
-# # start up docker stack
+
 source /etc/profile.d/envvars.sh
-# docker stack deploy --with-registry-auth --compose-file $COMPOSE_FILE --compose-file $OVERRIDE_FILE dat-backend
 
 cd $THISDIR/../
 docker compose -f $COMPOSE_FILE -f $OVERRIDE_FILE up --detach
+docker system prune -af
