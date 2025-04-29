@@ -76,8 +76,3 @@ def handle_exception(e):
 # APIs are defined when this file is done initializing.
 from dat_backend.routes.earthdata_download import auth, get_links  # noqa
 from dat_backend.routes import status, python_script, metrics, favicon  # noqa
-
-if __name__ == "__main__":
-    # `ssl_context` option:
-    # https://werkzeug.palletsprojects.com/en/2.3.x/serving/#werkzeug.serving.run_simple
-    app.run(host="0.0.0.0", debug=True, ssl_context="adhoc")
