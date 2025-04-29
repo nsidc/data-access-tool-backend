@@ -43,7 +43,10 @@ cache = Cache(config={"CACHE_TYPE": "SimpleCache", "CACHE_DEFAULT_TIMEOUT": 60})
 cache.init_app(app)
 
 
+# Note: both deocrators are necessary or this function will not work in non-dev
+# environments.
 @app.errorhandler(Exception)  # noqa
+@api.errorhandler  # noqa
 def handle_exception(e):
     """Handle any exceptions raised from the application.
 
