@@ -6,7 +6,7 @@ RESPONSE_CODES: dict[int, tuple[int, str]] = {
     201: (201, "Created"),
     302: (302, "Found"),
     303: (303, "See Other"),
-    400: (400, "Validation error"),
+    400: (400, "Bad Request"),
     401: (401, "Unauthorized"),
     403: (403, "Forbidden"),
     404: (404, "Not found"),
