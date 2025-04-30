@@ -42,7 +42,12 @@ app.secret_key = secret_key
 cache = Cache(config={"CACHE_TYPE": "SimpleCache", "CACHE_DEFAULT_TIMEOUT": 60})
 cache.init_app(app)
 
-# Required for the error handler below to work correctly.
+# Required for the error handler below to work correctly. Without this set, the
+# flask-restx error handler takes primary responsibiliy for handling the
+# error. Although there is a way to register a flask-restx error handler with
+# `@api.errorhandler`, there are limits on its capabilities:
+# https://github.com/python-restx/flask-restx/issues/458
+# https://flask.palletsprojects.com/en/stable/config/#PROPAGATE_EXCEPTIONS
 app.config.update({"PROPAGATE_EXCEPTIONS": True})
 
 
