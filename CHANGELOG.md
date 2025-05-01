@@ -1,4 +1,4 @@
-# NEXT_RELEASE
+# v1.1.0
 
 - Improved documentation
 - Fixed issue with docker logs: limit total amount of logs retained by Docker.
