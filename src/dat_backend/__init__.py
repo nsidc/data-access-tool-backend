@@ -13,7 +13,7 @@ from werkzeug.wrappers import Response
 from dat_backend.reverse_proxy import ReverseProxied
 from dat_backend.constants import RESPONSE_CODES
 
-__version__ = "1.0.1"
+__version__ = "1.1.0"
 
 
 app = Flask(__name__)
