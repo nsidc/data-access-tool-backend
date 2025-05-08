@@ -26,7 +26,8 @@ contact nsidc@nsidc.org for more information.
 
 ## Contributing
 
-Contributing documentation can be viewed by running `quarto preview docs/`
+Contributing documentation can be viewed here:
+<https://nsidc.github.io/data-access-tool-backend/>
 
 ## Credit
 
