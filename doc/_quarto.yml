@@ -19,6 +19,8 @@ website:
       - href: releasing.md
       - href: docs.md
         text: "Docs"
+      - href: cires_rendezvous_poster.md
+        text: "CIRES Rendezvous 2025 poster"
 
   page-footer:
     left: "© NSIDC 2025"
