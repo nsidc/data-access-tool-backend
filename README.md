@@ -7,6 +7,10 @@
 Backend services for the
 [Data Access Tool UI](https://github.com/nsidc/data-access-tool-ui).
 
+<p align="center">
+  <img alt="High Level DAT architecture diagram" src="./doc/high_level_architecture.png" />
+</p>
+
 ## Level of Support
 
 This repository is fully supported by NSIDC. If you discover any problems or

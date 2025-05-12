@@ -1,0 +1,1 @@
+![High-level software architecture for the DAT. The DAT UI is embedded in dataset-specific pages powered by Drupal. Drupal provides the DAT with the dataset name and version.](high_level_architecture.png)
