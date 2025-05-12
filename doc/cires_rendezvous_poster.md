@@ -27,6 +27,10 @@ also provides information about the open source software that defines and powers
 the DAT, opening the possibility for collaboration with the open source
 community.
 
+## Poster
+
+![CIRES Rendezvous 2025 poster](cires_rendezvous_poster.jpg)
+
 ## Try out the Data Access Tool
 
 Below are some example links to dataset-specific instances of the Data Access
