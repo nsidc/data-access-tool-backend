@@ -11,6 +11,14 @@ Backend services for the
   <img alt="High Level DAT architecture diagram" src="./doc/high_level_architecture.png" />
 </p>
 
+The DAT is composed of:
+
+- [data-access-tool-ui](https://github.com/nsidc/data-access-tool-ui): Web
+  interface to support granule-level discovery and access of NASA Earthdata for
+  a given data collection.
+- [data-access-tool-vm](https://github.com/nsidc/data-access-tool-vm): NSIDC
+  virtual machine configuration for deploying the backend service).
+
 ## Level of Support
 
 This repository is fully supported by NSIDC. If you discover any problems or
