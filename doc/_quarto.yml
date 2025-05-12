@@ -10,6 +10,8 @@ website:
     left:
       - href: getting_started.md
         text: "Getting Started"
+      - href: architecture.md
+        text: "Architecture"
       - href: testing.md
         text: "Testing"
       - href: developing_with_edd.qmd

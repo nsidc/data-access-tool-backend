@@ -2,7 +2,6 @@
 
 This is a landing page for the
 [CIRES Rendezvous](https://ciresevents.colorado.edu/rendezvous/) 2025 poster.
-More content will be added here shortly!
 
 ## Abstract
 
@@ -26,6 +25,10 @@ the years, and previews the DAT's future as an enterprise NASA tool. The poster
 also provides information about the open source software that defines and powers
 the DAT, opening the possibility for collaboration with the open source
 community.
+
+## Poster
+
+![CIRES Rendezvous 2025 poster](cires_rendezvous_poster.jpg)
 
 ## Try out the Data Access Tool
 
