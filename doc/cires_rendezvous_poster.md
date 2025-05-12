@@ -2,7 +2,6 @@
 
 This is a landing page for the
 [CIRES Rendezvous](https://ciresevents.colorado.edu/rendezvous/) 2025 poster.
-More content will be added here shortly!
 
 ## Abstract
 
