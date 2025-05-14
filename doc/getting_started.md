@@ -57,3 +57,8 @@ docker compose logs -f
 ```
 
 :::
+
+## Data Access Tool UI
+
+See the [data-access-tool-ui](https://github.com/nsidc/data-access-tool-ui)
+project for information on how to get the UI setup for testing and development.
