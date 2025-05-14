@@ -32,26 +32,7 @@ between the DAT UI, the backend, and Earthdata Download.
   the last couple of steps until the results are exhausted. The user now has all
   of the granules they requested downloaded to their computer.
 
-```{mermaid}
-sequenceDiagram
-    actor user
-    participant DAT-UI
-    participant DAT-backend
-    participant Earthdata Download
-
-    user->>DAT-UI: Make selections <br>and click EDD button
-    DAT-UI ->> Earthdata Download: Open EDD via "deep link" containing getLinks<br> and EDL auth callback URLs
-    loop n pages of CMR results
-        Earthdata Download->>DAT-backend: Request page of download URLs via getLinks URL
-        DAT-backend->>Earthdata Download: Send page of data download URLs
-        opt if EDL is required for download
-            Earthdata Download->>DAT-backend: request EDL auth
-            DAT-backend->>Earthdata Download: open auth callback deep-link, providing EDL token
-
-        end
-        Note left of Earthdata Download: Download data<br>to user computer.
-    end
-```
+{{< include edd_sequence_diagram.qmd >}}
 
 ## Earthdata login
 

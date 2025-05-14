@@ -1,0 +1,135 @@
+---
+title: "Earthdata Download & Data Access Tool (EDDAT)"
+date: "2025-05-14"
+format: revealjs
+author:
+  - name: "Trey Stafford"
+  - name: "Amy Steiker"
+  - name: "Colin Nickerson"
+  - name: "Leslie Goldman"
+---
+
+
+# Data Access Tool (DAT)
+
+Web-based Javascript application that provides an interface for users to find,
+filter, and download data files associated with NSIDC DAAC datasets.
+  
+:::: {.columns}
+
+::: {.column width="50%"}
+**Filter**
+
+🕙 Temporal
+
+🌐 Spatial
+
+🔎 Filename
+:::
+
+::: {.column width="50%"}
+**Download**
+
+🐍 Python download script
+
+💾 NASA Earthdata Download
+
+🚀 NASA Earthdata Search
+
+:::
+::::
+
+
+# DAT Usage and impact
+🗓️ Originally released in late 2018
+
+👤 28% of total DAAC data users
+
+🗃️ 739 datasets served
+
+🥧 17% of total NASA DAAC data download volume 
+
+
+#
+
+![Total DAT views for each month from May 2023-April 2025.  In total, the DAT
+served over 100k page views for over 35k users.  Note: data for September 2024
+is incomplete. ](dat_usage.png)
+
+
+# 
+
+::: {.r-fit-text}
+![The DAT page for High Mountain Asia 8-meter DEM Mosaics Derived from Optical Imagery, Version 1 (HMA_DEM8m_MOS). The dataset’s coverage is shown in the Map viewer in teal. A user’s spatial polygon selection is shown in red, selecting 80 of the dataset’s 417 files. Annotations show major features and download options.](dat_annotated_screenshot.jpg)
+:::
+
+# EDDAT Motivation
+
+ECS decommissioning - July 2026!
+
+* Update to support cloud collections
+* Replace ECS-based order option with Earthdata Download
+
+# Earthdata Download
+
+::: {.r-fit-text}
+[Earthdata Download](https://github.com/nasa/earthdata-download) is an
+[Electron](https://www.electronjs.org/) desktop application designed to
+facilitate large downloads of granules from Earthdata Search.
+
+Users download and install Earthdata Download to their personal computers.
+:::
+
+![Earthdata Download](edd_screenshot.png)
+
+# Demo
+
+::: {.r-fit-text}
+<https://nsidc.org/data/data-access-tool/HMA_DEM8m_MOS/versions/1>
+:::
+
+
+::: {.r-fit-text}
+# Software Architecture
+
+![High-level software architecture diagram for the DAT. The DAT is embedded in
+dataset-specific pages powered by Drupal. Drupal provides the DAT with the
+dataset name and version. The DAT then uses NASA CMR to query for dataset
+metadata.](high_level_architecture.png)
+:::
+
+#
+
+::: {style="transform: scale(0.75); transform-origin: center;"}
+{{< include edd_sequence_diagram.qmd >}}
+:::
+
+::: {.r-fit-text}
+High-level sequence diagram showing interaction between the DAT UI, DAT Backend,
+and Earthdata Download.
+:::
+
+# Future Evolution
+
+NSIDC DAAC plans to collaborate with teams across the NASA Earth Science Data
+Systems program to scale the DAT into an enterprise tool, with the goal of
+serving all NASA Earthdata datasets as an integrated application within the NASA
+Earthdata website.
+
+# CIRES Rendezvous 2025
+
+![CIRES Rendezvous 2025 poster](cires_rendezvous_poster.jpg)
+
+
+# References
+
+* See [CIRES Rendezvous 2025 poster landing page](cires_rendezvous_poster.md)
+for more info about the poster, and links to example DAT pages for popular
+datasets.
+* [NSIDC DAT help
+  article](https://nsidc.org/data/user-resources/help-center/filter-and-order-data-set-web-page-using-data-access-tool)
+* [NSIDC Earthdata Download help
+  article](https://nsidc.org/data/user-resources/help-center/how-to-use-earthdata-download)
+* [NASA Earthdata Download downloads page](https://nasa.github.io/earthdata-download/)
+
+# Questions?
