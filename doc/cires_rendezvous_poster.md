@@ -40,3 +40,17 @@ Tool:
 - [MODIS/Terra Snow Cover Daily L3 Global 500m SIN Grid, Version 61 (MOD10A1)](https://nsidc.org/data/data-access-tool/MOD10A1/versions/61)
 - [High Mountain Asia 8-meter DEM Mosaics Derived from Optical Imagery, Version 1 (HMA_DEM8m_MOS)](https://nsidc.org/data/data-access-tool/HMA_DEM8m_MOS/versions/1)
 - [SMAP Enhanced L3 Radiometer Global and Polar Grid Daily 9 km EASE-Grid Soil Moisture, Version 6 (SPL3SMP_E)](https://nsidc.org/data/data-access-tool/SPL3SMP_E/versions/6)
+
+## Data Access Tool Software
+
+The Data Access Tool is composed of three open source repositories in GitHub:
+
+- [data-access-tool-ui](https://github.com/nsidc/data-access-tool-ui): Web
+  interface to support granule-level discovery and access of NASA Earthdata for
+  a given data collection.
+
+- [data-access-tool-backend](https://github.com/nsidc/data-access-tool-backend):
+  backend services that support the Python bulk download script and Earthdata
+  Download.
+- [data-access-tool-vm](https://github.com/nsidc/data-access-tool-vm): NSIDC
+  virtual machine configuration for deploying the backend service.
