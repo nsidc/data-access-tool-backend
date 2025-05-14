@@ -23,6 +23,8 @@ website:
         text: "Docs"
       - href: cires_rendezvous_poster.md
         text: "CIRES Rendezvous 2025 poster"
+      - href: dat_nsidc_demo_slides.qmd
+        text: "NSIDC DAT Demo Slides"
 
   page-footer:
     left: "© NSIDC 2025"
