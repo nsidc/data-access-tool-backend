@@ -27,22 +27,24 @@ def test_cmr_download(tmpdir, monkeypatch):
         lambda text: os.environ.get("EARTHDATA_PASSWORD"),
     )
 
-    # TODO: get download URL from cmr query. This example uses ECS, which is
-    # going away!
+    # TODO: get download URL from cmr query. This example uses a hard-coded URL
+    # that might change!
+    download_filename = "MOD10A2.A2019001.h09v04.061.2020286153245.hdf"
+    download_url = f"https://data.nsidc.earthdatacloud.nasa.gov/nsidc-cumulus-prod-protected/MODIS/MOD10A2/61/2019/01/01/{download_filename}"
     original_cwd = os.getcwd()
     os.chdir(tmpdir)
     cmr_download(
         [
-            "https://n5eil01u.ecs.nsidc.org/DP4/MOST/MOD10A2.061/2019.01.01/MOD10A2.A2019001.h09v04.061.2020286153245.hdf"
+            download_url
         ]
     )
     # # Call again so we exercise the "skip duplicate file" code path
     cmr_download(
         [
-            "https://n5eil01u.ecs.nsidc.org/DP4/MOST/MOD10A2.061/2019.01.01/MOD10A2.A2019001.h09v04.061.2020286153245.hdf"
+            download_url
         ]
     )
-    assert Path("MOD10A2.A2019001.h09v04.061.2020286153245.hdf").is_file()
+    assert Path(download_filename).is_file()
     os.chdir(original_cwd)
 
     # HTTP error 404
