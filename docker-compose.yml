@@ -20,7 +20,7 @@ services:
       - "${LOGS_SHARE_PATH:?LOGS_SHARE_PATH must be
         set}/server:/tmp/server_logs/live/:ro"
       # backup logs rotated onto NFS
-      - "${LOGS_SHARE_BACKUP_PATH:?LOGS_SHARE_PATH must be
+      - "${LOGS_SHARE_BACKUP_PATH:?LOGS_SHARE_BACKUP_PATH must be
         set}/server:/tmp/server_logs/backup/:ro"
     logging:
       options:
