@@ -32,8 +32,8 @@ else:
 
 @api.route("/api/earthdata/auth")
 class EarthdataAuth(frx.Resource):  # type: ignore[misc]
-    @api.response(*RESPONSE_CODES[302])  # type: ignore[misc]
-    @api.response(*RESPONSE_CODES[500])  # type: ignore[misc]
+    @api.response(*RESPONSE_CODES[302])  # type: ignore[untyped-decorator]
+    @api.response(*RESPONSE_CODES[500])  # type: ignore[untyped-decorator]
     def get(self) -> Response:
         app.logger.info("AUTH HAPPENING HERE!")
         app.logger.info(f"Got {request.args}")
@@ -102,8 +102,8 @@ def earthdata_token_exchange(authorization_code: Optional[str]) -> Dict[str, Any
 
 @api.route("/api/earthdata/auth_callback")
 class EarthdataAuthCallback(frx.Resource):  # type: ignore[misc]
-    @api.response(*RESPONSE_CODES[200])  # type: ignore[misc]
-    @api.response(*RESPONSE_CODES[500])  # type: ignore[misc]
+    @api.response(*RESPONSE_CODES[200])  # type: ignore[untyped-decorator]
+    @api.response(*RESPONSE_CODES[500])  # type: ignore[untyped-decorator]
     def get(self) -> Response:
         # Perform token exchange
         authorization_code: Optional[str] = request.args.get("code")

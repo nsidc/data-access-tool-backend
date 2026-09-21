@@ -70,9 +70,9 @@ SCRIPT_DOC: Final[frx.model.Model] = api.model(
 @api.route("/api/downloader-script/")
 class DataDownloaderScript(frx.Resource):  # type: ignore[misc]
 
-    @api.response(*RESPONSE_CODES[200])  # type: ignore[misc]
-    @api.response(*RESPONSE_CODES[500])  # type: ignore[misc]
-    @api.expect(SCRIPT_DOC)  # type: ignore[misc]
+    @api.response(*RESPONSE_CODES[200])  # type: ignore[untyped-decorator]
+    @api.response(*RESPONSE_CODES[500])  # type: ignore[untyped-decorator]
+    @api.expect(SCRIPT_DOC)  # type: ignore[untyped-decorator]
     def post(self) -> Any:
         current_date = dt.date.today().isoformat()
 

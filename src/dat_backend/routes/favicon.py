@@ -10,8 +10,8 @@ from dat_backend.constants import RESPONSE_CODES
 
 @api.route("/favicon.ico")
 class Favicon(frx.Resource):  # type: ignore[misc]
-    @api.response(*RESPONSE_CODES[200])  # type: ignore[misc]
-    @api.response(*RESPONSE_CODES[500])  # type: ignore[misc]
+    @api.response(*RESPONSE_CODES[200])  # type: ignore[untyped-decorator]
+    @api.response(*RESPONSE_CODES[500])  # type: ignore[untyped-decorator]
     def get(self) -> Response:
         # https://flask.palletsprojects.com/en/stable/patterns/favicon/
         return send_from_directory(
