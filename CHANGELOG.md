@@ -1,3 +1,8 @@
+# v1.1.1
+
+- Update core dependencies
+
+
 # v1.1.0
 
 - Improved documentation
