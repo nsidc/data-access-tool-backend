@@ -81,7 +81,7 @@ class DataDownloaderScript(frx.Resource):  # type: ignore[misc]
         if url_list:
             script_parameters = {
                 "SHORT_NAME_PLACEHOLDER": "",
-                "VERSION_PALCEHOLDER": "",
+                "VERSION_PLACEHOLDER": "",
                 "TIME_START_PLACEHOLDER": "",
                 "TIME_END_PLACEHOLDER": "",
                 "BOUNDING_BOX_PLACEHOLDER": "",
@@ -110,7 +110,7 @@ class DataDownloaderScript(frx.Resource):  # type: ignore[misc]
 
             script_parameters = {
                 "SHORT_NAME_PLACEHOLDER": selection_filters.dataset_short_name,
-                "VERSION_PALCEHOLDER": selection_filters.dataset_version,
+                "VERSION_PLACEHOLDER": selection_filters.dataset_version,
                 "TIME_START_PLACEHOLDER": cmr_datetime_format(
                     selection_filters.time_start
                 ),
