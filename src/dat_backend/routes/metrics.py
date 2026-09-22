@@ -76,7 +76,7 @@ def metrics_from_logs(server_logs_dir: Path) -> dict[str, Any]:
                         access_info["status"]
                     ] = 1
                     uri_specific_metrics[access_info["uri"]]["ips"] = set(
-                        _request_ip_from_log(access_info)
+                        (_request_ip_from_log(access_info),)
                     )
 
                 if "get-links" in access_info["uri"]:
