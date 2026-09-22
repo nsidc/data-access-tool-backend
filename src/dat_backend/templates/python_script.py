@@ -12,7 +12,7 @@
 # The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
 #
-# Tested in Python 2.7 and Python 3.4, 3.6, 3.7, 3.8, 3.9
+# Tested with Python {python_version}, but should work on earlier versions >=3.6.
 #
 # To run the script at a Linux, macOS, or Cygwin command-line terminal:
 #   $ python nsidc-data-download.py

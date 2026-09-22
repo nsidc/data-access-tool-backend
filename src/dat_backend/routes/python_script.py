@@ -2,6 +2,7 @@ import datetime as dt
 import io
 import os
 import pprint
+import sys
 from typing import Any, Final
 
 import flask_restx as frx
@@ -130,6 +131,9 @@ class DataDownloaderScript(frx.Resource):  # type: ignore[misc]
             script = file.read()
 
         script_parameters["{copyright_year}"] = str(dt.date.today().year)
+        script_parameters["{python_version}"] = (
+            f"{sys.version_info.major}.{sys.version_info.minor}"
+        )
 
         # Do not use .format, otherwise we can't have {} within the python_script file.
         for param, value in script_parameters.items():
