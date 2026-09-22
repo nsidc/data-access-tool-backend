@@ -8,6 +8,7 @@ import pytest
 from dat_backend.templates.python_script import (
     build_cmr_query_url,
     build_version_query_params,
+    cmr_filter_urls,
     cmr_search,
     get_login_credentials,
     get_password,
@@ -16,7 +17,6 @@ from dat_backend.templates.python_script import (
     get_username,
     main,
     output_progress,
-    cmr_filter_urls,
 )
 
 

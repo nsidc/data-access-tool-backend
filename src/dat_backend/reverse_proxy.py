@@ -1,11 +1,12 @@
-from typing import Iterable, TYPE_CHECKING
+from collections.abc import Iterable
+from typing import TYPE_CHECKING
 
 # https://git.io/fhHMJ
 if TYPE_CHECKING:
     from wsgiref.types import StartResponse, WSGIApplication, WSGIEnvironment
 
 
-class ReverseProxied(object):
+class ReverseProxied:
     """Adapted from Flask Snippets.
 
         https://web.archive.org/web/20190523102024/http://flask.pocoo.org/snippets/35/

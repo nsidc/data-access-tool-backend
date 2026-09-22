@@ -5,11 +5,11 @@ import pprint
 from typing import Any, Final
 
 import flask_restx as frx
+import pydantic
 from flask import (
     make_response,
     send_file,
 )
-import pydantic
 
 from dat_backend import api, app
 from dat_backend.constants import RESPONSE_CODES

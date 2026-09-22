@@ -2,7 +2,6 @@ import logging
 
 from dat_backend import app
 
-
 if __name__ == "__main__":
     # Set to debug log level
     app.logger.setLevel(logging.DEBUG)

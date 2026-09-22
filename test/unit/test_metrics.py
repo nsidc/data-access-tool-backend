@@ -1,8 +1,7 @@
 from pathlib import Path
 
-from dat_backend.routes import metrics
 from dat_backend import app
-
+from dat_backend.routes import metrics
 
 app.testing = True
 

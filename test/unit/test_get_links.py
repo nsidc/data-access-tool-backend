@@ -2,7 +2,6 @@ from urllib.parse import quote
 
 from dat_backend import app
 
-
 app.testing = True
 
 

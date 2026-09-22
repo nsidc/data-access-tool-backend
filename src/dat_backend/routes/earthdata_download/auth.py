@@ -1,15 +1,15 @@
 import base64
 import os
-from typing import Any, Optional, Dict
+from typing import Any
 
-import requests
 import flask_restx as frx
+import requests
 from flask import (
-    request,
-    url_for,
     redirect,
-    session,
     render_template,
+    request,
+    session,
+    url_for,
 )
 from werkzeug.wrappers import Response
 
@@ -45,29 +45,27 @@ class EarthdataAuth(frx.Resource):  # type: ignore[misc]
         session["eddRedirect"] = eddRedirect
 
         earthdata_authorize_url = "https://urs.earthdata.nasa.gov/oauth/authorize"
-        earthdata_authorize_url += "?client_id={0}".format(EARTHDATA_APP_CLIENT_ID)
+        earthdata_authorize_url += f"?client_id={EARTHDATA_APP_CLIENT_ID}"
         earthdata_authorize_url += "&response_type=code"
         edl_auth_callback_redirect_uri = url_for(
             "earthdata_auth_callback",
             _external=True,
         )
         app.logger.info(f"Using {edl_auth_callback_redirect_uri=}")
-        earthdata_authorize_url += "&redirect_uri={0}".format(
-            edl_auth_callback_redirect_uri
-        )
+        earthdata_authorize_url += f"&redirect_uri={edl_auth_callback_redirect_uri}"
 
         response = redirect(earthdata_authorize_url, code=302)
         return response
 
 
-def earthdata_token_exchange(authorization_code: Optional[str]) -> Dict[str, Any]:
+def earthdata_token_exchange(authorization_code: str | None) -> dict[str, Any]:
     # Example response:
     #   {
-    #     u'access_token': u'secret',  # noqa
+    #     u'access_token': u'secret',
     #     u'token_type': u'Bearer',
     #     u'endpoint': u'/api/users/kbeam',
     #     u'expires_in': 3600,
-    #     u'refresh_token': u'secret'  # noqa
+    #     u'refresh_token': u'secret'
     #   }
 
     # TODO: This URL maybe needs to be parametrized like in Constants.py
@@ -78,7 +76,7 @@ def earthdata_token_exchange(authorization_code: Optional[str]) -> Dict[str, Any
     credentials = f"{EARTHDATA_APP_UID}:{EARTHDATA_APP_PASSWORD}"
     auth = base64.b64encode(credentials.encode("ascii")).decode("ascii")
 
-    headers = {"Authorization": "BASIC {0}".format(auth)}
+    headers = {"Authorization": f"BASIC {auth}"}
 
     authorization_data = {
         "grant_type": grant_type,
@@ -93,9 +91,9 @@ def earthdata_token_exchange(authorization_code: Optional[str]) -> Dict[str, Any
     if authorization_result.status_code != 200:
         raise Exception(f"Authorization Failed: {authorization_result.text}")
 
-    authorization_result_json: Dict[str, Any] = authorization_result.json()
+    authorization_result_json: dict[str, Any] = authorization_result.json()
 
-    app.logger.info("result json: {0}".format(authorization_result_json))
+    app.logger.info(f"result json: {authorization_result_json}")
 
     return authorization_result_json
 
@@ -106,11 +104,11 @@ class EarthdataAuthCallback(frx.Resource):  # type: ignore[misc]
     @api.response(*RESPONSE_CODES[500])  # type: ignore[untyped-decorator]
     def get(self) -> Response:
         # Perform token exchange
-        authorization_code: Optional[str] = request.args.get("code")
+        authorization_code: str | None = request.args.get("code")
         earthdata_auth_result = earthdata_token_exchange(authorization_code)
         user_edl_token = earthdata_auth_result["access_token"]
 
-        app.logger.info("Authorized with token: {0}".format(user_edl_token))
+        app.logger.info(f"Authorized with token: {user_edl_token}")
 
         eddRedirect = session.get("eddRedirect")
         if not eddRedirect:

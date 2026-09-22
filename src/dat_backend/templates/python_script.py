@@ -39,7 +39,6 @@
 # where 'MYBEARERTOKEN' is your Earthdata bearer token.
 #
 # type: ignore
-from __future__ import print_function
 
 import base64
 import getopt
@@ -54,19 +53,19 @@ import time
 from getpass import getpass
 
 try:
-    from urllib.parse import urlparse
-    from urllib.request import urlopen, Request, build_opener, HTTPCookieProcessor
     from urllib.error import HTTPError, URLError
+    from urllib.parse import urlparse
+    from urllib.request import HTTPCookieProcessor, Request, build_opener, urlopen
 except ImportError:
-    from urlparse import urlparse
     from urllib2 import (
-        urlopen,
-        Request,
+        HTTPCookieProcessor,
         HTTPError,
+        Request,
         URLError,
         build_opener,
-        HTTPCookieProcessor,
+        urlopen,
     )
+    from urlparse import urlparse
 
 short_name = "{short_name}"
 version = "{version}"
@@ -81,11 +80,11 @@ CMR_URL = "https://cmr.earthdata.nasa.gov"
 URS_URL = "https://urs.earthdata.nasa.gov"
 CMR_PAGE_SIZE = 2000
 CMR_FILE_URL = (
-    "{0}/search/granules.json?"
+    f"{CMR_URL}/search/granules.json?"
     "&sort_key[]=start_date&sort_key[]=producer_granule_id"
-    "&page_size={1}".format(CMR_URL, CMR_PAGE_SIZE)
+    f"&page_size={CMR_PAGE_SIZE}"
 )
-CMR_COLLECTIONS_URL = "{0}/search/collections.json?".format(CMR_URL)
+CMR_COLLECTIONS_URL = f"{CMR_URL}/search/collections.json?"
 # Maximum number of times to re-try downloading a file if something goes wrong.
 FILE_DOWNLOAD_MAX_RETRIES = 3
 
@@ -95,7 +94,7 @@ def get_username():
 
     # For Python 2/3 compatibility:
     try:
-        do_input = raw_input  # noqa
+        do_input = raw_input
     except NameError:
         do_input = input
 
@@ -128,7 +127,7 @@ def get_login_credentials():
         if username == "token":
             token = password
         else:
-            credentials = "{0}:{1}".format(username, password)
+            credentials = f"{username}:{password}"
             credentials = base64.b64encode(credentials.encode("ascii")).decode("ascii")
     except Exception:
         username = None
@@ -138,7 +137,7 @@ def get_login_credentials():
         username = get_username()
         if len(username):
             password = get_password()
-            credentials = "{0}:{1}".format(username, password)
+            credentials = f"{username}:{password}"
             credentials = base64.b64encode(credentials.encode("ascii")).decode("ascii")
         else:
             token = get_token()
@@ -149,7 +148,7 @@ def get_login_credentials():
 def build_version_query_params(version):
     desired_pad_length = 3
     if len(version) > desired_pad_length:
-        print('Version string too long: "{0}"'.format(version))
+        print(f'Version string too long: "{version}"')
         quit()
 
     version = str(int(version))  # Strip off any leading zeros
@@ -157,7 +156,7 @@ def build_version_query_params(version):
 
     while len(version) <= desired_pad_length:
         padded_version = version.zfill(desired_pad_length)
-        query_params += "&version={0}".format(padded_version)
+        query_params += f"&version={padded_version}"
         desired_pad_length -= 1
     return query_params
 
@@ -192,20 +191,20 @@ def build_query_params_str(
 
     E.g.,: '&short_name=ATL06&version=006&version=06&version=6'
     """
-    params = "&short_name={0}".format(short_name)
+    params = f"&short_name={short_name}"
     params += build_version_query_params(version)
     if time_start or time_end:
         # See
         # https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html#temporal-range-searches
-        params += "&temporal[]={0},{1}".format(time_start, time_end)
+        params += f"&temporal[]={time_start},{time_end}"
     if polygon:
-        params += "&polygon={0}".format(polygon)
+        params += f"&polygon={polygon}"
     elif bounding_box:
-        params += "&bounding_box={0}".format(bounding_box)
+        params += f"&bounding_box={bounding_box}"
     if filename_filter:
         params += build_filename_filter(filename_filter)
     if provider:
-        params += "&provider={0}".format(provider)
+        params += f"&provider={provider}"
 
     return params
 
@@ -243,7 +242,7 @@ def get_speed(time_elapsed, chunk_size):
     size_name = ("", "k", "M", "G", "T", "P", "E", "Z", "Y")
     i = int(math.floor(math.log(speed, 1000)))
     p = math.pow(1000, i)
-    return "{0:.1f}{1}B/s".format(speed / p, size_name[i])
+    return f"{speed / p:.1f}{size_name[i]}B/s"
 
 
 def output_progress(count, total, status="", bar_len=60):
@@ -253,7 +252,7 @@ def output_progress(count, total, status="", bar_len=60):
     filled_len = int(round(bar_len * fraction))
     percents = int(round(100.0 * fraction))
     bar = "=" * filled_len + " " * (bar_len - filled_len)
-    fmt = "  [{0}] {1:3d}%  {2}   ".format(bar, percents, status)
+    fmt = f"  [{bar}] {percents:3d}%  {status}   "
     print("\b" * (len(fmt) + 4), end="")  # clears the line
     sys.stdout.write(fmt)
     sys.stdout.flush()
@@ -273,7 +272,7 @@ def get_login_response(url, credentials, token):
 
     req = Request(url)
     if token:
-        req.add_header("Authorization", "Bearer {0}".format(token))
+        req.add_header("Authorization", f"Bearer {token}")
     elif credentials:
         try:
             response = opener.open(req)
@@ -283,16 +282,16 @@ def get_login_response(url, credentials, token):
             # No redirect - just try again with authorization.
             pass
         except Exception as e:
-            print("Error{0}: {1}".format(type(e), str(e)))
+            print(f"Error{type(e)}: {e!s}")
             sys.exit(1)
 
         req = Request(url)
-        req.add_header("Authorization", "Basic {0}".format(credentials))
+        req.add_header("Authorization", f"Basic {credentials}")
 
     try:
         response = opener.open(req)
     except HTTPError as e:
-        err = "HTTP error {0}, {1}".format(e.code, e.reason)
+        err = f"HTTP error {e.code}, {e.reason}"
         if "Unauthorized" in e.reason:
             if token:
                 err += ": Check your bearer token"
@@ -302,7 +301,7 @@ def get_login_response(url, credentials, token):
             sys.exit(1)
         raise
     except Exception as e:
-        print("Error{0}: {1}".format(type(e), str(e)))
+        print(f"Error{type(e)}: {e!s}")
         sys.exit(1)
 
     return response
@@ -315,7 +314,7 @@ def cmr_download(urls, force=False, quiet=False):
 
     url_count = len(urls)
     if not quiet:
-        print("Downloading {0} files...".format(url_count))
+        print(f"Downloading {url_count} files...")
     credentials = None
     token = None
 
@@ -327,15 +326,11 @@ def cmr_download(urls, force=False, quiet=False):
 
         filename = url.split("/")[-1]
         if not quiet:
-            print(
-                "{0}/{1}: {2}".format(
-                    str(index).zfill(len(str(url_count))), url_count, filename
-                )
-            )
+            print(f"{str(index).zfill(len(str(url_count)))}/{url_count}: {filename}")
 
         for download_attempt_number in range(1, FILE_DOWNLOAD_MAX_RETRIES + 1):
             if not quiet and download_attempt_number > 1:
-                print("Retrying download of {0}".format(url))
+                print(f"Retrying download of {url}")
             try:
                 response = get_login_response(url, credentials, token)
                 length = int(response.headers["content-length"])
@@ -366,16 +361,16 @@ def cmr_download(urls, force=False, quiet=False):
                 # out of the retry loop.
                 break
             except HTTPError as e:
-                print("HTTP error {0}, {1}".format(e.code, e.reason))
+                print(f"HTTP error {e.code}, {e.reason}")
             except URLError as e:
-                print("URL error: {0}".format(e.reason))
-            except IOError:
+                print(f"URL error: {e.reason}")
+            except OSError:
                 raise
 
             # If this happens, none of our attempts to download the file
             # succeeded. Print an error message and raise an error.
             if download_attempt_number == FILE_DOWNLOAD_MAX_RETRIES:
-                print("failed to download file {0}.".format(filename))
+                print(f"failed to download file {filename}.")
                 sys.exit(1)
 
 
@@ -475,9 +470,7 @@ def get_provider_for_collection(short_name, version):
         return ecs_provider
 
     raise RuntimeError(
-        "Found no collection matching the given short_name ({0}) and version ({1})".format(
-            short_name, version
-        )
+        f"Found no collection matching the given short_name ({short_name}) and version ({version})"
     )
 
 
@@ -504,7 +497,7 @@ def cmr_search(
         filename_filter=filename_filter,
     )
     if not quiet:
-        print("Querying for data:\n\t{0}\n".format(cmr_query_url))
+        print(f"Querying for data:\n\t{cmr_query_url}\n")
 
     cmr_paging_header = "cmr-search-after"
     cmr_page_id = None
@@ -532,7 +525,7 @@ def cmr_search(
             hits = int(headers["cmr-hits"])
             if not quiet:
                 if hits > 0:
-                    print("Found {0} matches.".format(hits))
+                    print(f"Found {hits} matches.")
                 else:
                     print("Found no matches.")
 

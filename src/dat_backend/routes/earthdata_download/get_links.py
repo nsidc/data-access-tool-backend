@@ -1,12 +1,14 @@
-import requests
 import flask_restx as frx
+import requests
 from flask import (
     request,
 )
 
 from dat_backend import api, app
 from dat_backend.constants import RESPONSE_CODES
-from dat_backend.templates.python_script import cmr_filter_urls  # type: ignore[attr-defined]
+from dat_backend.templates.python_script import (
+    cmr_filter_urls,  # type: ignore[attr-defined]
+)
 
 CMR_GRANULES_URL = "https://cmr.earthdata.nasa.gov/search/granules.json"
 
