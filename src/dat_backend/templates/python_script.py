@@ -507,7 +507,7 @@ def cmr_search(
             print("Error: " + str(e))
             sys.exit(1)
 
-        # Python 2 and 3 have different case for the http headers
+        # Normalize case for the http headers
         headers = {k.lower(): v for k, v in dict(response.info()).items()}
         if not cmr_page_id:
             # Number of hits is on the first result set, which will not have a
