@@ -1,4 +1,4 @@
-FROM mambaorg/micromamba:1.5.8
+FROM mambaorg/micromamba:2.9.0
 
 # https://micromamba-docker.readthedocs.io/en/latest/quick_start.html
 COPY --chown=$MAMBA_USER:$MAMBA_USER environment.yml /tmp/env.yaml
