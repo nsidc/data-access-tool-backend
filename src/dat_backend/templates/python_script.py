@@ -91,14 +91,7 @@ FILE_DOWNLOAD_MAX_RETRIES = 3
 
 def get_username():
     username = ""
-
-    # For Python 2/3 compatibility:
-    try:
-        do_input = raw_input
-    except NameError:
-        do_input = input
-
-    username = do_input("Earthdata username (or press Return to use a bearer token): ")
+    username = input("Earthdata username (or press Return to use a bearer token): ")
     return username
 
 
