@@ -564,7 +564,7 @@ def main(argv=None):
 
     # Supply some default search parameters, just for testing purposes.
     # These are only used if the parameters aren't filled in up above.
-    if "SHORT_NAME_PLACEHOLDER" in short_name:
+    if "PLACEHOLDER" in short_name:
         short_name = "ATL06"
         version = "003"
         time_start = "2018-10-14T00:00:00Z"
