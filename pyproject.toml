@@ -54,3 +54,6 @@ replace = 'version = "{new_version}"'
 filename = "src/dat_backend/__init__.py"
 search = '__version__ = "{current_version}"'
 replace = '__version__ = "{new_version}"'
+
+[tool.ruff]
+ignore = ["BLE001", "RUF046", "DTZ005", "DTZ011", "SIM118", "S112", "TRY002"]

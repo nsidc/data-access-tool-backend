@@ -51,7 +51,7 @@ parameters = [
         "",
         "",
         "A2019,A2020",
-        "&options[producer_granule_id][pattern]=true&"
+        "&options[producer_granule_id][pattern]=true&",
         "producer_granule_id[]=*A2019*&producer_granule_id[]=*A2020*",
     ),
 ]
@@ -181,11 +181,11 @@ def test_cmr_filter_urls_excludes_s3credentials():
         for link in test_search_results_with_s3creds["feed"]["entry"][0]["links"]
     ]
     assert any(
-        [link for link in test_search_results_with_s3creds_links if "s3cred" in link]
+        link for link in test_search_results_with_s3creds_links if "s3cred" in link
     )
 
     # Filter the search results
     filtered = cmr_filter_urls(test_search_results_with_s3creds)
 
     # Assert that none of the filtered results has the s3credentials file.
-    assert not any([link for link in filtered if "s3cred" in link])
+    assert not any(link for link in filtered if "s3cred" in link)

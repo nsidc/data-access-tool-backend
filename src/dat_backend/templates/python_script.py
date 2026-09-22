@@ -149,7 +149,7 @@ def build_version_query_params(version):
     desired_pad_length = 3
     if len(version) > desired_pad_length:
         print(f'Version string too long: "{version}"')
-        quit()
+        sys.exit()
 
     version = str(int(version))  # Strip off any leading zeros
     query_params = ""
@@ -444,10 +444,7 @@ def check_provider_for_collection(short_name, version, provider):
     if "feed" not in search_page or "entry" not in search_page["feed"]:
         return False
 
-    if len(search_page["feed"]["entry"]) > 0:
-        return True
-    else:
-        return False
+    return len(search_page["feed"]["entry"]) > 0
 
 
 def get_provider_for_collection(short_name, version):
@@ -558,7 +555,7 @@ def main(argv=None):
     usage = "usage: nsidc-download_***.py [--help, -h] [--force, -f] [--quiet, -q]"
 
     try:
-        opts, args = getopt.getopt(argv, "hfq", ["help", "force", "quiet"])
+        opts, _args = getopt.getopt(argv, "hfq", ["help", "force", "quiet"])
         for opt, _arg in opts:
             if opt in ("-f", "--force"):
                 force = True
@@ -599,7 +596,7 @@ def main(argv=None):
 
         cmr_download(url_list, force=force, quiet=quiet)
     except KeyboardInterrupt:
-        quit()
+        sys.exit()
 
 
 if __name__ == "__main__":
