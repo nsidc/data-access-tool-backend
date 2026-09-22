@@ -3,14 +3,14 @@ default_language_version:
 
 repos:
   - repo: "https://github.com/pre-commit/pre-commit-hooks"
-    rev: "v5.0.0"
+    rev: "v6.0.0"
     hooks:
       - id: "check-added-large-files"
       - id: "check-vcs-permalinks"
       - id: "end-of-file-fixer"
 
   - repo: "https://github.com/charliermarsh/ruff-pre-commit"
-    rev: "v0.9.9"
+    rev: "v0.16.8"
     hooks:
       - id: "ruff"
         # NOTE: "--exit-non-zero-on-fix" is important for CI to function
@@ -19,12 +19,12 @@ repos:
           ["--fix", "--exit-non-zero-on-fix", "--verbose", "--line-length=88"]
 
   - repo: "https://github.com/psf/black"
-    rev: "25.1.0"
+    rev: "26.5.1"
     hooks:
       - id: "black"
 
   - repo: "https://github.com/jendrikseipp/vulture"
-    rev: "v2.14"
+    rev: "v2.16"
     hooks:
       - id: "vulture"
         args:
@@ -38,12 +38,12 @@ repos:
           - "check_hostname,verify_mode,StartResponse,WSGIApplication,WSGIEnvironment,api_root"
 
   - repo: https://github.com/codespell-project/codespell
-    rev: "v2.4.1"
+    rev: "v2.4.3"
     hooks:
       - id: codespell
 
   - repo: https://github.com/rbubley/mirrors-prettier
-    rev: "v3.5.2"
+    rev: "v3.9.8"
     hooks:
       - id: prettier
         types_or: [yaml, markdown, html, css, scss, javascript, json]
