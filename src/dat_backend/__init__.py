@@ -51,7 +51,7 @@ cache.init_app(app)
 app.config.update({"PROPAGATE_EXCEPTIONS": True})
 
 
-@app.errorhandler(Exception)  # noqa
+@app.errorhandler(Exception)  # noqa: V103
 def handle_exception(e):
     """Handle any exceptions raised from the application.
 
