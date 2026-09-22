@@ -33,17 +33,9 @@ def test_cmr_download(tmpdir, monkeypatch):
     download_url = f"https://data.nsidc.earthdatacloud.nasa.gov/nsidc-cumulus-prod-protected/MODIS/MOD10A2/61/2019/01/01/{download_filename}"
     original_cwd = os.getcwd()
     os.chdir(tmpdir)
-    cmr_download(
-        [
-            download_url
-        ]
-    )
+    cmr_download([download_url])
     # # Call again so we exercise the "skip duplicate file" code path
-    cmr_download(
-        [
-            download_url
-        ]
-    )
+    cmr_download([download_url])
     assert Path(download_filename).is_file()
     os.chdir(original_cwd)
 
