@@ -10,6 +10,7 @@ def test_app():
 
 
 def test_download_script():
+    """Test 'normal' download script request: CMR search params passed."""
     with app.test_client() as client:
         result = client.post(
             "/api/downloader-script/",
@@ -25,6 +26,33 @@ def test_download_script():
         )
 
         assert result.status_code == 200
+
+        # Ensure all "PLACEHOLDER" text has been properly replaced.
+        assert "_PLACEHOLDER" not in result.text
+
+
+def test_download_script_url_list():
+    """Test case where url list is passed instead of CMR search params.
+
+    TODO: this code path may no longer be used (it may have just been for the
+    OIB portal, which has been decommissioned.
+    """
+    with app.test_client() as client:
+        result = client.post(
+            "/api/downloader-script/",
+            json={
+                "url_list": [
+                    "https://fake.url.com/path/to/fake/granule_a",
+                    "https://fake.url.com/path/to/fake/granule_b",
+                    "https://fake.url.com/path/to/fake/granule_c",
+                ],
+            },
+        )
+
+        assert result.status_code == 200
+
+        # Ensure all "PLACEHOLDER" text has been properly replaced.
+        assert "_PLACEHOLDER" not in result.text
 
 
 def test_status_endpoint():
