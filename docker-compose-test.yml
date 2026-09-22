@@ -4,8 +4,8 @@ services:
     volumes:
       - "./src/dat_backend:/tmp/dat_backend/"
       - "./test:/tmp/test/"
+    # Command sets up a ~/.netrc for integration tests and then runs the tests.
     command: |
-      # Command sets up a ~/.netrc for integration tests and then runs the tests.
       bash -c '
         echo "machine urs.earthdata.nasa.gov
         login $$EARTHDATA_USERNAME
