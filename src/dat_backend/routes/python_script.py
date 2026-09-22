@@ -80,14 +80,14 @@ class DataDownloaderScript(frx.Resource):  # type: ignore[misc]
         url_list = api.payload.get("url_list")
         if url_list:
             script_parameters = {
-                "{short_name}": "",
-                "{version}": "",
-                "{time_start}": "",
-                "{time_end}": "",
-                "{bounding_box}": "",
-                "{polygon}": "",
-                "{filename_filter}": "",
-                '"{url_list}"': pprint.pformat(url_list),
+                "SHORT_NAME_PLACEHOLDER": "",
+                "VERSION_PALCEHOLDER": "",
+                "TIME_START_PLACEHOLDER": "",
+                "TIME_END_PLACEHOLDER": "",
+                "BOUNDING_BOX_PLACEHOLDER": "",
+                "POLYGON_PLACEHOLDER": "",
+                "FILENAME_FILTER_PLACEHOLDER": "",
+                '"URL_LIST_PLACEHOLDER"': pprint.pformat(url_list),
             }
             app.logger.info(
                 f"Script request received successfully: {len(url_list)} URLs"
@@ -109,14 +109,16 @@ class DataDownloaderScript(frx.Resource):  # type: ignore[misc]
                 frx.abort(400, str(e))
 
             script_parameters = {
-                "{short_name}": selection_filters.dataset_short_name,
-                "{version}": selection_filters.dataset_version,
-                "{time_start}": cmr_datetime_format(selection_filters.time_start),
-                "{time_end}": cmr_datetime_format(selection_filters.time_end),
-                "{bounding_box}": selection_filters.bounding_box,
-                "{polygon}": selection_filters.polygon,
-                "{filename_filter}": selection_filters.filename_filter,
-                '"{url_list}"': "[]",
+                "SHORT_NAME_PLACEHOLDER": selection_filters.dataset_short_name,
+                "VERSION_PALCEHOLDER": selection_filters.dataset_version,
+                "TIME_START_PLACEHOLDER": cmr_datetime_format(
+                    selection_filters.time_start
+                ),
+                "TIME_END_PLACEHOLDER": cmr_datetime_format(selection_filters.time_end),
+                "BOUNDING_BOX_PLACEHOLDER": selection_filters.bounding_box,
+                "POLYGON_PLACEHOLDER": selection_filters.polygon,
+                "FILENAME_FILTER_PLACEHOLDER": selection_filters.filename_filter,
+                '"URL_LIST_PLACEHOLDER"': "[]",
             }
 
             version = selection_filters.dataset_version.zfill(3)
@@ -130,8 +132,8 @@ class DataDownloaderScript(frx.Resource):  # type: ignore[misc]
         with open(fp, "r") as file:
             script = file.read()
 
-        script_parameters["{copyright_year}"] = str(dt.date.today().year)
-        script_parameters["{python_version}"] = (
+        script_parameters["COPYRIGHT_YEAR_PLACEHOLDER"] = str(dt.date.today().year)
+        script_parameters["PYTHON_VERSION_PLACEHOLDER"] = (
             f"{sys.version_info.major}.{sys.version_info.minor}"
         )
 

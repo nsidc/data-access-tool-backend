@@ -2,7 +2,7 @@
 # ----------------------------------------------------------------------------
 # NSIDC Data Download Script
 #
-# Copyright (c) {copyright_year} Regents of the University of Colorado
+# Copyright (c) COPYRIGHT_YEAR_PLACEHOLDER Regents of the University of Colorado
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the "Software"),
 # to deal in the Software without restriction, including without limitation
@@ -12,7 +12,7 @@
 # The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
 #
-# Tested with Python {python_version}, but should work on earlier versions >=3.6.
+# Tested with Python PYTHON_VERSION_PLACEHOLDER, but should work on earlier versions >=3.6.
 #
 # To run the script at a Linux, macOS, or Cygwin command-line terminal:
 #   $ python nsidc-data-download.py
@@ -67,14 +67,14 @@ except ImportError:
     )
     from urlparse import urlparse
 
-short_name = "{short_name}"
-version = "{version}"
-time_start = "{time_start}"
-time_end = "{time_end}"
-bounding_box = "{bounding_box}"
-polygon = "{polygon}"
-filename_filter = "{filename_filter}"
-url_list = "{url_list}"
+short_name = "SHORT_NAME_PLACEHOLDER"
+version = "VERSION_PALCEHOLDER"
+time_start = "TIME_START_PLACEHOLDER"
+time_end = "TIME_END_PLACEHOLDER"
+bounding_box = "BOUNDING_BOX_PLACEHOLDER"
+polygon = "POLYGON_PLACEHOLDER"
+filename_filter = "FILENAME_FILTER_PLACEHOLDER"
+url_list = "URL_LIST_PLACEHOLDER"
 
 CMR_URL = "https://cmr.earthdata.nasa.gov"
 URS_URL = "https://urs.earthdata.nasa.gov"
