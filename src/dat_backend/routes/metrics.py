@@ -119,8 +119,8 @@ def metrics_from_logs(server_logs_dir: Path) -> dict[str, Any]:
 class ApplicationMetrics(frx.Resource):  # type: ignore[misc]
     # Implement a 2.5 minute cache for metrics
     @cache.cached(timeout=150)
-    @api.response(*RESPONSE_CODES[200])  # type: ignore[misc]
-    @api.response(*RESPONSE_CODES[500])  # type: ignore[misc]
+    @api.response(*RESPONSE_CODES[200])  # type: ignore[untyped-decorator]
+    @api.response(*RESPONSE_CODES[500])  # type: ignore[untyped-decorator]
     def get(self) -> Response:
         metrics = metrics_from_logs(SERVER_LOGS_DIR)
         total_num_requests = metrics["total_num_requests"]

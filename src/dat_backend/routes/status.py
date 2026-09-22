@@ -10,8 +10,8 @@ from dat_backend.constants import RESPONSE_CODES
 
 @api.route("/api/status")
 class ApplicationStatus(frx.Resource):  # type: ignore[misc]
-    @api.response(*RESPONSE_CODES[200])  # type: ignore[misc]
-    @api.response(*RESPONSE_CODES[500])  # type: ignore[misc]
+    @api.response(*RESPONSE_CODES[200])  # type: ignore[untyped-decorator]
+    @api.response(*RESPONSE_CODES[500])  # type: ignore[untyped-decorator]
     def get(self) -> Response:
         app.logger.info("Status check requested")
         return Response(
