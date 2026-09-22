@@ -6,8 +6,8 @@ from flask import (
 
 from dat_backend import api, app
 from dat_backend.constants import RESPONSE_CODES
-from dat_backend.templates.python_script import (
-    cmr_filter_urls,  # type: ignore[attr-defined]
+from dat_backend.templates.python_script import (  # type: ignore[attr-defined]
+    cmr_filter_urls,
 )
 
 CMR_GRANULES_URL = "https://cmr.earthdata.nasa.gov/search/granules.json"
