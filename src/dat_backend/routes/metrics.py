@@ -1,10 +1,10 @@
 import datetime as dt
 import gzip
 import json
-from pathlib import Path
 from collections import defaultdict
-from urllib.parse import parse_qs
+from pathlib import Path
 from typing import Any
+from urllib.parse import parse_qs
 
 import flask_restx as frx
 from flask import render_template
@@ -12,7 +12,6 @@ from werkzeug.wrappers import Response
 
 from dat_backend import api, cache
 from dat_backend.constants import RESPONSE_CODES
-
 
 SERVER_LOGS_DIR = Path("/tmp/server_logs/")
 
@@ -77,9 +76,7 @@ def metrics_from_logs(server_logs_dir: Path) -> dict[str, Any]:
                         access_info["status"]
                     ] = 1
                     uri_specific_metrics[access_info["uri"]]["ips"] = set(
-                        [
-                            _request_ip_from_log(access_info),
-                        ]
+                        (_request_ip_from_log(access_info),)
                     )
 
                 if "get-links" in access_info["uri"]:
@@ -94,7 +91,7 @@ def metrics_from_logs(server_logs_dir: Path) -> dict[str, Any]:
                             + "_"
                             + cmr_request_params["version"][0]
                         )
-                        if shortname_version in get_links_metrics.keys():
+                        if shortname_version in get_links_metrics:
                             get_links_metrics[shortname_version][
                                 access_info["status"]
                             ] += 1

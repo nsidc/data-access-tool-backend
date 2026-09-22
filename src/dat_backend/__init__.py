@@ -1,19 +1,19 @@
-import os
 import logging
+import os
 import re
 import traceback
 
 import flask_restx as frx
 from flask import Flask, render_template
-from flask_cors import CORS
 from flask_caching import Cache
+from flask_cors import CORS
 from werkzeug.exceptions import HTTPException
 from werkzeug.wrappers import Response
 
-from dat_backend.reverse_proxy import ReverseProxied
 from dat_backend.constants import RESPONSE_CODES
+from dat_backend.reverse_proxy import ReverseProxied
 
-__version__ = "1.1.1"
+__version__ = "2.0.0"
 
 
 app = Flask(__name__)
@@ -51,7 +51,7 @@ cache.init_app(app)
 app.config.update({"PROPAGATE_EXCEPTIONS": True})
 
 
-@app.errorhandler(Exception)  # noqa
+@app.errorhandler(Exception)  # noqa: V103
 def handle_exception(e):
     """Handle any exceptions raised from the application.
 

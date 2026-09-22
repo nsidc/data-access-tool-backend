@@ -2,7 +2,7 @@
 # ----------------------------------------------------------------------------
 # NSIDC Data Download Script
 #
-# Copyright (c) {copyright_year} Regents of the University of Colorado
+# Copyright (c) COPYRIGHT_YEAR_PLACEHOLDER Regents of the University of Colorado
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the "Software"),
 # to deal in the Software without restriction, including without limitation
@@ -12,7 +12,7 @@
 # The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
 #
-# Tested in Python 2.7 and Python 3.4, 3.6, 3.7, 3.8, 3.9
+# Tested with Python PYTHON_VERSION_PLACEHOLDER, but should work on earlier versions >=3.6.
 #
 # To run the script at a Linux, macOS, or Cygwin command-line terminal:
 #   $ python nsidc-data-download.py
@@ -39,7 +39,6 @@
 # where 'MYBEARERTOKEN' is your Earthdata bearer token.
 #
 # type: ignore
-from __future__ import print_function
 
 import base64
 import getopt
@@ -54,52 +53,45 @@ import time
 from getpass import getpass
 
 try:
-    from urllib.parse import urlparse
-    from urllib.request import urlopen, Request, build_opener, HTTPCookieProcessor
     from urllib.error import HTTPError, URLError
+    from urllib.parse import urlparse
+    from urllib.request import HTTPCookieProcessor, Request, build_opener, urlopen
 except ImportError:
-    from urlparse import urlparse
     from urllib2 import (
-        urlopen,
-        Request,
+        HTTPCookieProcessor,
         HTTPError,
+        Request,
         URLError,
         build_opener,
-        HTTPCookieProcessor,
+        urlopen,
     )
+    from urlparse import urlparse
 
-short_name = "{short_name}"
-version = "{version}"
-time_start = "{time_start}"
-time_end = "{time_end}"
-bounding_box = "{bounding_box}"
-polygon = "{polygon}"
-filename_filter = "{filename_filter}"
-url_list = "{url_list}"
+short_name = "SHORT_NAME_PLACEHOLDER"
+version = "VERSION_PLACEHOLDER"
+time_start = "TIME_START_PLACEHOLDER"
+time_end = "TIME_END_PLACEHOLDER"
+bounding_box = "BOUNDING_BOX_PLACEHOLDER"
+polygon = "POLYGON_PLACEHOLDER"
+filename_filter = "FILENAME_FILTER_PLACEHOLDER"
+url_list = "URL_LIST_PLACEHOLDER"
 
 CMR_URL = "https://cmr.earthdata.nasa.gov"
 URS_URL = "https://urs.earthdata.nasa.gov"
 CMR_PAGE_SIZE = 2000
 CMR_FILE_URL = (
-    "{0}/search/granules.json?"
+    f"{CMR_URL}/search/granules.json?"
     "&sort_key[]=start_date&sort_key[]=producer_granule_id"
-    "&page_size={1}".format(CMR_URL, CMR_PAGE_SIZE)
+    f"&page_size={CMR_PAGE_SIZE}"
 )
-CMR_COLLECTIONS_URL = "{0}/search/collections.json?".format(CMR_URL)
+CMR_COLLECTIONS_URL = f"{CMR_URL}/search/collections.json?"
 # Maximum number of times to re-try downloading a file if something goes wrong.
 FILE_DOWNLOAD_MAX_RETRIES = 3
 
 
 def get_username():
     username = ""
-
-    # For Python 2/3 compatibility:
-    try:
-        do_input = raw_input  # noqa
-    except NameError:
-        do_input = input
-
-    username = do_input("Earthdata username (or press Return to use a bearer token): ")
+    username = input("Earthdata username (or press Return to use a bearer token): ")
     return username
 
 
@@ -128,7 +120,7 @@ def get_login_credentials():
         if username == "token":
             token = password
         else:
-            credentials = "{0}:{1}".format(username, password)
+            credentials = f"{username}:{password}"
             credentials = base64.b64encode(credentials.encode("ascii")).decode("ascii")
     except Exception:
         username = None
@@ -138,7 +130,7 @@ def get_login_credentials():
         username = get_username()
         if len(username):
             password = get_password()
-            credentials = "{0}:{1}".format(username, password)
+            credentials = f"{username}:{password}"
             credentials = base64.b64encode(credentials.encode("ascii")).decode("ascii")
         else:
             token = get_token()
@@ -149,15 +141,15 @@ def get_login_credentials():
 def build_version_query_params(version):
     desired_pad_length = 3
     if len(version) > desired_pad_length:
-        print('Version string too long: "{0}"'.format(version))
-        quit()
+        print(f'Version string too long: "{version}"')
+        sys.exit()
 
     version = str(int(version))  # Strip off any leading zeros
     query_params = ""
 
     while len(version) <= desired_pad_length:
         padded_version = version.zfill(desired_pad_length)
-        query_params += "&version={0}".format(padded_version)
+        query_params += f"&version={padded_version}"
         desired_pad_length -= 1
     return query_params
 
@@ -192,20 +184,20 @@ def build_query_params_str(
 
     E.g.,: '&short_name=ATL06&version=006&version=06&version=6'
     """
-    params = "&short_name={0}".format(short_name)
+    params = f"&short_name={short_name}"
     params += build_version_query_params(version)
     if time_start or time_end:
         # See
         # https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html#temporal-range-searches
-        params += "&temporal[]={0},{1}".format(time_start, time_end)
+        params += f"&temporal[]={time_start},{time_end}"
     if polygon:
-        params += "&polygon={0}".format(polygon)
+        params += f"&polygon={polygon}"
     elif bounding_box:
-        params += "&bounding_box={0}".format(bounding_box)
+        params += f"&bounding_box={bounding_box}"
     if filename_filter:
         params += build_filename_filter(filename_filter)
     if provider:
-        params += "&provider={0}".format(provider)
+        params += f"&provider={provider}"
 
     return params
 
@@ -243,7 +235,7 @@ def get_speed(time_elapsed, chunk_size):
     size_name = ("", "k", "M", "G", "T", "P", "E", "Z", "Y")
     i = int(math.floor(math.log(speed, 1000)))
     p = math.pow(1000, i)
-    return "{0:.1f}{1}B/s".format(speed / p, size_name[i])
+    return f"{speed / p:.1f}{size_name[i]}B/s"
 
 
 def output_progress(count, total, status="", bar_len=60):
@@ -253,7 +245,7 @@ def output_progress(count, total, status="", bar_len=60):
     filled_len = int(round(bar_len * fraction))
     percents = int(round(100.0 * fraction))
     bar = "=" * filled_len + " " * (bar_len - filled_len)
-    fmt = "  [{0}] {1:3d}%  {2}   ".format(bar, percents, status)
+    fmt = f"  [{bar}] {percents:3d}%  {status}   "
     print("\b" * (len(fmt) + 4), end="")  # clears the line
     sys.stdout.write(fmt)
     sys.stdout.flush()
@@ -273,7 +265,7 @@ def get_login_response(url, credentials, token):
 
     req = Request(url)
     if token:
-        req.add_header("Authorization", "Bearer {0}".format(token))
+        req.add_header("Authorization", f"Bearer {token}")
     elif credentials:
         try:
             response = opener.open(req)
@@ -283,16 +275,16 @@ def get_login_response(url, credentials, token):
             # No redirect - just try again with authorization.
             pass
         except Exception as e:
-            print("Error{0}: {1}".format(type(e), str(e)))
+            print(f"Error{type(e)}: {e!s}")
             sys.exit(1)
 
         req = Request(url)
-        req.add_header("Authorization", "Basic {0}".format(credentials))
+        req.add_header("Authorization", f"Basic {credentials}")
 
     try:
         response = opener.open(req)
     except HTTPError as e:
-        err = "HTTP error {0}, {1}".format(e.code, e.reason)
+        err = f"HTTP error {e.code}, {e.reason}"
         if "Unauthorized" in e.reason:
             if token:
                 err += ": Check your bearer token"
@@ -302,7 +294,7 @@ def get_login_response(url, credentials, token):
             sys.exit(1)
         raise
     except Exception as e:
-        print("Error{0}: {1}".format(type(e), str(e)))
+        print(f"Error{type(e)}: {e!s}")
         sys.exit(1)
 
     return response
@@ -315,7 +307,7 @@ def cmr_download(urls, force=False, quiet=False):
 
     url_count = len(urls)
     if not quiet:
-        print("Downloading {0} files...".format(url_count))
+        print(f"Downloading {url_count} files...")
     credentials = None
     token = None
 
@@ -327,15 +319,11 @@ def cmr_download(urls, force=False, quiet=False):
 
         filename = url.split("/")[-1]
         if not quiet:
-            print(
-                "{0}/{1}: {2}".format(
-                    str(index).zfill(len(str(url_count))), url_count, filename
-                )
-            )
+            print(f"{str(index).zfill(len(str(url_count)))}/{url_count}: {filename}")
 
         for download_attempt_number in range(1, FILE_DOWNLOAD_MAX_RETRIES + 1):
             if not quiet and download_attempt_number > 1:
-                print("Retrying download of {0}".format(url))
+                print(f"Retrying download of {url}")
             try:
                 response = get_login_response(url, credentials, token)
                 length = int(response.headers["content-length"])
@@ -366,16 +354,16 @@ def cmr_download(urls, force=False, quiet=False):
                 # out of the retry loop.
                 break
             except HTTPError as e:
-                print("HTTP error {0}, {1}".format(e.code, e.reason))
+                print(f"HTTP error {e.code}, {e.reason}")
             except URLError as e:
-                print("URL error: {0}".format(e.reason))
-            except IOError:
+                print(f"URL error: {e.reason}")
+            except OSError:
                 raise
 
             # If this happens, none of our attempts to download the file
             # succeeded. Print an error message and raise an error.
             if download_attempt_number == FILE_DOWNLOAD_MAX_RETRIES:
-                print("failed to download file {0}.".format(filename))
+                print(f"failed to download file {filename}.")
                 sys.exit(1)
 
 
@@ -449,10 +437,7 @@ def check_provider_for_collection(short_name, version, provider):
     if "feed" not in search_page or "entry" not in search_page["feed"]:
         return False
 
-    if len(search_page["feed"]["entry"]) > 0:
-        return True
-    else:
-        return False
+    return len(search_page["feed"]["entry"]) > 0
 
 
 def get_provider_for_collection(short_name, version):
@@ -475,9 +460,7 @@ def get_provider_for_collection(short_name, version):
         return ecs_provider
 
     raise RuntimeError(
-        "Found no collection matching the given short_name ({0}) and version ({1})".format(
-            short_name, version
-        )
+        f"Found no collection matching the given short_name ({short_name}) and version ({version})"
     )
 
 
@@ -504,7 +487,7 @@ def cmr_search(
         filename_filter=filename_filter,
     )
     if not quiet:
-        print("Querying for data:\n\t{0}\n".format(cmr_query_url))
+        print(f"Querying for data:\n\t{cmr_query_url}\n")
 
     cmr_paging_header = "cmr-search-after"
     cmr_page_id = None
@@ -524,7 +507,7 @@ def cmr_search(
             print("Error: " + str(e))
             sys.exit(1)
 
-        # Python 2 and 3 have different case for the http headers
+        # Normalize case for the http headers
         headers = {k.lower(): v for k, v in dict(response.info()).items()}
         if not cmr_page_id:
             # Number of hits is on the first result set, which will not have a
@@ -532,7 +515,7 @@ def cmr_search(
             hits = int(headers["cmr-hits"])
             if not quiet:
                 if hits > 0:
-                    print("Found {0} matches.".format(hits))
+                    print(f"Found {hits} matches.")
                 else:
                     print("Found no matches.")
 
@@ -565,7 +548,7 @@ def main(argv=None):
     usage = "usage: nsidc-download_***.py [--help, -h] [--force, -f] [--quiet, -q]"
 
     try:
-        opts, args = getopt.getopt(argv, "hfq", ["help", "force", "quiet"])
+        opts, _args = getopt.getopt(argv, "hfq", ["help", "force", "quiet"])
         for opt, _arg in opts:
             if opt in ("-f", "--force"):
                 force = True
@@ -581,7 +564,7 @@ def main(argv=None):
 
     # Supply some default search parameters, just for testing purposes.
     # These are only used if the parameters aren't filled in up above.
-    if "short_name" in short_name:
+    if "PLACEHOLDER" in short_name:
         short_name = "ATL06"
         version = "003"
         time_start = "2018-10-14T00:00:00Z"
@@ -606,7 +589,7 @@ def main(argv=None):
 
         cmr_download(url_list, force=force, quiet=quiet)
     except KeyboardInterrupt:
-        quit()
+        sys.exit()
 
 
 if __name__ == "__main__":

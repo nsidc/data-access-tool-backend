@@ -4,7 +4,15 @@ services:
     volumes:
       - "./src/dat_backend:/tmp/dat_backend/"
       - "./test:/tmp/test/"
-    command: 'bash -c "mypy dat_backend/ test/ && pytest test/"'
+    command: |
+      # Command sets up a ~/.netrc for integration tests and then runs the tests.
+      bash -c '
+        echo "machine urs.earthdata.nasa.gov
+        login $$EARTHDATA_USERNAME
+        password $$EARTHDATA_PASSWORD" > ~/.netrc &&
+        chmod 600 ~/.netrc &&
+        mypy dat_backend/ test/ && pytest test/
+      '
     environment:
       - EARTHDATA_USERNAME=${EARTHDATA_USERNAME:?EARTHDATA_USERNAME must be set}
       - EARTHDATA_PASSWORD=${EARTHDATA_PASSWORD:?EARTHDATA_PASSWORD must be set}
