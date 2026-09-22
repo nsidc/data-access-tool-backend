@@ -51,8 +51,10 @@ parameters = [
         "",
         "",
         "A2019,A2020",
-        "&options[producer_granule_id][pattern]=true&",
-        "producer_granule_id[]=*A2019*&producer_granule_id[]=*A2020*",
+        (
+            "&options[producer_granule_id][pattern]=true&"
+            "producer_granule_id[]=*A2019*&producer_granule_id[]=*A2020*"
+        ),
     ),
 ]
 
