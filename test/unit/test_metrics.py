@@ -15,7 +15,7 @@ def test_metrics_from_logs():
     assert metrics_dict.get("max_datetime") is not None
     assert metrics_dict.get("min_datetime") is not None
 
-    assert metrics_dict.get("total_num_requests") == 7
+    assert metrics_dict.get("total_num_requests") == 6
     assert metrics_dict["get_links_metrics"]["ATL06_6"]["200"] == 2
     assert metrics_dict["uri_specific_metrics"]["/api/status"]["count"]["200"] == 4
 
@@ -28,4 +28,4 @@ def test_metrics_endpoint(monkeypatch):
     with app.test_client() as client:
         result = client.get("/api/metrics")
         assert result.status_code == 200
-        assert "Total number of requests handled: 7" in result.text
+        assert "Total number of requests handled: 6" in result.text

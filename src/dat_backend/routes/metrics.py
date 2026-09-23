@@ -39,10 +39,18 @@ def metrics_from_logs(server_logs_dir: Path) -> dict[str, Any]:
         open_func = open
         if logfile.suffix == ".gz":
             open_func = gzip.open  # type: ignore[assignment]
-        with open_func(logfile, "rt") as logfile:  # type: ignore[assignment]
+        with open_func(logfile, "rb") as logfile:  # type: ignore[assignment]
             for line in logfile:  # type: ignore[attr-defined]
                 try:
-                    access_info = json.loads(line)
+                    # Try to decode the line explicitly here (instead of using
+                    # `open_func(logfile, "rt")` because some log lines are
+                    # corrupted with invalid start bytes.
+                    # According to Claude, these lines are likely "TLS packets"
+                    # that are being sent ia http and can be safely
+                    # ignored. Requests look like e.g.,
+                    # `\\u0016\\u0003\\u0001\\u0002\\u0000\\u0001\\u0000\\u0001\xfc\\u0003\\u0003`.
+                    decoded_line = line.decode("utf8")
+                    access_info = json.loads(decoded_line)
                 except Exception:
                     continue
 
@@ -53,6 +61,15 @@ def metrics_from_logs(server_logs_dir: Path) -> dict[str, Any]:
                     continue
                 # Skip reporting metrics on favicon
                 if "favicon" in access_info["uri"]:
+                    continue
+
+                # Skip any non-API URIs. Some of these are e.g., webcrawlers and
+                # not worth reporting on.
+                # TODO: consider a more aggressive filter...there are still some
+                # URIs being counted here that are not part of our app (e.g.,
+                # `/api/config/class/guis`). Maybe this script should be very
+                # specific about what routes it looks at (e.g., `get-links`).
+                if not access_info["uri"].startswith("/api/"):
                     continue
 
                 if min_datetime is None or min_datetime > access_info["time_iso8601"]:
@@ -83,9 +100,23 @@ def metrics_from_logs(server_logs_dir: Path) -> dict[str, Any]:
                     request_params_dict = parse_qs(access_info["args"])
                     # Indicates that a new get-links request has been initiated.
                     if "cursor" not in request_params_dict.keys():
+                        # There are some cases (just one as of Sept. 23, 2026) where
+                        # the search params are not properly formatted (posisbly
+                        # due to testing or someone providing a malformed
+                        # request.
+                        if "cmr_request_params" not in request_params_dict:
+                            continue
                         cmr_request_params = parse_qs(
                             request_params_dict["cmr_request_params"][0]
                         )
+                        # Sometimes the short_name is not present because the
+                        # cmr request params are malformed (just two cases as of
+                        # Sept. 23, 2026), maybe from testing?
+                        if (
+                            "short_name" not in cmr_request_params
+                            or "version" not in cmr_request_params
+                        ):
+                            continue
                         shortname_version = (
                             cmr_request_params["short_name"][0]
                             + "_"
