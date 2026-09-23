@@ -44,8 +44,11 @@ def metrics_from_logs(server_logs_dir: Path) -> dict[str, Any]:
                 try:
                     # Try to decode the line explicitly here (instead of using
                     # `open_func(logfile, "rt")` because some log lines are
-                    # corrupted with invalid start bytes (TODO: figure out
-                    # what's causing this and fix it!)
+                    # corrupted with invalid start bytes.
+                    # According to Claude, these lines are likely "TLS packets"
+                    # that are being sent ia http and can be safely
+                    # ignored. Requests look like e.g.,
+                    # `\\u0016\\u0003\\u0001\\u0002\\u0000\\u0001\\u0000\\u0001\xfc\\u0003\\u0003`.
                     decoded_line = line.decode("utf8")
                     access_info = json.loads(decoded_line)
                 except Exception:
