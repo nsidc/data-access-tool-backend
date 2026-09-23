@@ -60,6 +60,15 @@ def metrics_from_logs(server_logs_dir: Path) -> dict[str, Any]:
                 if "favicon" in access_info["uri"]:
                     continue
 
+                # Skip any non-API URIs. Some of these are e.g., webcrawlers and
+                # not worth reporting on.
+                # TODO: consider a more aggressive filter...there are still some
+                # URIs being counted here that are not part of our app (e.g.,
+                # `/api/config/class/guis`). Maybe this script should be very
+                # specific about what routes it looks at (e.g., `get-links`).
+                if not access_info["uri"].startswith("/api/"):
+                    continue
+
                 if min_datetime is None or min_datetime > access_info["time_iso8601"]:
                     min_datetime = access_info["time_iso8601"]
                 if max_datetime is None or max_datetime < access_info["time_iso8601"]:
