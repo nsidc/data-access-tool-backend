@@ -5,6 +5,7 @@
   (apply latest black/ruff rules via pre-commit). This drops support for using
   the script with Python <3.6.
 - Update nginx server version from v1.27.4 -> v1.31.6
+- Fix bug in metrics endpoint code.
 
 # v1.1.0
 

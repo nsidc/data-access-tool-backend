@@ -39,10 +39,15 @@ def metrics_from_logs(server_logs_dir: Path) -> dict[str, Any]:
         open_func = open
         if logfile.suffix == ".gz":
             open_func = gzip.open  # type: ignore[assignment]
-        with open_func(logfile, "rt") as logfile:  # type: ignore[assignment]
+        with open_func(logfile, "rb") as logfile:  # type: ignore[assignment]
             for line in logfile:  # type: ignore[attr-defined]
                 try:
-                    access_info = json.loads(line)
+                    # Try to decode the line explicitly here (instead of using
+                    # `open_func(logfile, "rt")` because some log lines are
+                    # corrupted with invalid start bytes (TODO: figure out
+                    # what's causing this and fix it!)
+                    decoded_line = line.decode("utf8")
+                    access_info = json.loads(decoded_line)
                 except Exception:
                     continue
 
