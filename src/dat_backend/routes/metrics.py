@@ -88,9 +88,23 @@ def metrics_from_logs(server_logs_dir: Path) -> dict[str, Any]:
                     request_params_dict = parse_qs(access_info["args"])
                     # Indicates that a new get-links request has been initiated.
                     if "cursor" not in request_params_dict.keys():
+                        # There are some cases (just one as of Sept. 23, 2026) where
+                        # the search params are not properly formatted (posisbly
+                        # due to testing or someone providing a malformed
+                        # request.
+                        if "cmr_request_params" not in request_params_dict:
+                            continue
                         cmr_request_params = parse_qs(
                             request_params_dict["cmr_request_params"][0]
                         )
+                        # Sometimes the short_name is not present because the
+                        # cmr request params are malformed (just two cases as of
+                        # Sept. 23, 2026), maybe from testing?
+                        if (
+                            "short_name" not in cmr_request_params
+                            or "version" not in cmr_request_params
+                        ):
+                            continue
                         shortname_version = (
                             cmr_request_params["short_name"][0]
                             + "_"
