@@ -1,3 +1,5 @@
+import sys
+
 from dat_backend import app
 
 app.testing = True
@@ -29,6 +31,10 @@ def test_download_script():
 
         # Ensure all "PLACEHOLDER" text has been properly replaced.
         assert "_PLACEHOLDER" not in result.text
+
+        # Ensure the python version the script is tested against is present
+        expected_python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
+        assert f"# Tested with Python {expected_python_version}" in result.text
 
 
 def test_download_script_url_list():

@@ -2,9 +2,14 @@
 # type: ignore
 import json
 from pathlib import Path
+from typing import get_args
 
 import pytest
 
+from dat_backend.routes.python_script import (
+    PYTHON_SCRIPT_PLACEHOLDER,
+    _get_python_download_script_as_str,
+)
 from dat_backend.templates.python_script import (
     build_cmr_query_url,
     build_version_query_params,
@@ -191,3 +196,31 @@ def test_cmr_filter_urls_excludes_s3credentials():
 
     # Assert that none of the filtered results has the s3credentials file.
     assert not any(link for link in filtered if "s3cred" in link)
+
+
+def test_all_placeholders_in_template_text():
+    """This test ensures that all of the expected replacement placeholders are in the python script."""
+    script_string = _get_python_download_script_as_str()
+
+    for placeholder in get_args(PYTHON_SCRIPT_PLACEHOLDER):
+        assert placeholder in script_string
+
+
+def test_no_python_script_placeholder_collisions():
+    """Test that there are no collisions between python script placeholders.
+
+    Because interpolation of the script placeholders uses simple `.replace` on
+    the script string, collisions are possible (e.g., `VERSION_PLACEHOLDER`
+    would conflict with `PYTHON_VERSION_PLACEHOLDER` and could result in
+    improper replacement - if `VERSION_PLACEHOLDER` gets replaced first with
+    e.g., `007` ,then the `PYTHON_VERSION_PLACEHOLDER` would become
+    `PYTHON_007`! This test ensures that each placeholder is not a substring of
+    any of the other placeholders.
+    """
+    placeholders = get_args(PYTHON_SCRIPT_PLACEHOLDER)
+    for idx1, placeholder1 in enumerate(placeholders):
+        for idx2, placeholder2 in enumerate(placeholders):
+            if idx1 != idx2 and placeholder1 in placeholder2:
+                raise AssertionError(
+                    f"Placeholder {placeholder1} conflicts with {placeholder2}"
+                )

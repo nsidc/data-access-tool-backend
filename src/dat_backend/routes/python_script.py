@@ -3,7 +3,7 @@ import io
 import os
 import pprint
 import sys
-from typing import Any, Final
+from typing import Any, Final, Literal
 
 import flask_restx as frx
 import pydantic
@@ -26,12 +26,34 @@ class SelectionFilters(pydantic.BaseModel):
     filename_filter: str
 
 
+PYTHON_SCRIPT_PLACEHOLDER = Literal[
+    "COPYRIGHT_YEAR_PLACEHOLDER",
+    "PYTHON_VERSION_PLACEHOLDER",
+    "SHORT_NAME_PLACEHOLDER",
+    "DATASET_VERSION_PLACEHOLDER",
+    "TIME_START_PLACEHOLDER",
+    "TIME_END_PLACEHOLDER",
+    "BOUNDING_BOX_PLACEHOLDER",
+    "POLYGON_PLACEHOLDER",
+    "FILENAME_FILTER_PLACEHOLDER",
+    '"URL_LIST_PLACEHOLDER"',
+]
+
+
 def cmr_datetime_format(dt: dt.datetime) -> str:
     """CMR only supports the 'Z' ISO 8601 suffix.
 
     Replace the default datetime.isoformat() suffix ('+00:00') with 'Z'.
     """
     return dt.isoformat().replace("+00:00", "Z")
+
+
+def _get_python_download_script_as_str() -> str:
+    fp = os.path.join(os.path.dirname(__file__), "..", "templates", "python_script.py")
+    with open(fp, "r") as file:
+        script = file.read()
+
+    return script
 
 
 SCRIPT_DOC: Final[frx.model.Model] = api.model(
@@ -78,10 +100,11 @@ class DataDownloaderScript(frx.Resource):  # type: ignore[misc]
         current_date = dt.date.today().isoformat()
 
         url_list = api.payload.get("url_list")
+        script_parameters: dict[PYTHON_SCRIPT_PLACEHOLDER, str]
         if url_list:
             script_parameters = {
                 "SHORT_NAME_PLACEHOLDER": "",
-                "VERSION_PLACEHOLDER": "",
+                "DATASET_VERSION_PLACEHOLDER": "",
                 "TIME_START_PLACEHOLDER": "",
                 "TIME_END_PLACEHOLDER": "",
                 "BOUNDING_BOX_PLACEHOLDER": "",
@@ -110,7 +133,7 @@ class DataDownloaderScript(frx.Resource):  # type: ignore[misc]
 
             script_parameters = {
                 "SHORT_NAME_PLACEHOLDER": selection_filters.dataset_short_name,
-                "VERSION_PLACEHOLDER": selection_filters.dataset_version,
+                "DATASET_VERSION_PLACEHOLDER": selection_filters.dataset_version,
                 "TIME_START_PLACEHOLDER": cmr_datetime_format(
                     selection_filters.time_start
                 ),
@@ -126,11 +149,7 @@ class DataDownloaderScript(frx.Resource):  # type: ignore[misc]
 
         app.logger.info("Building script...")
 
-        fp = os.path.join(
-            os.path.dirname(__file__), "..", "templates", "python_script.py"
-        )
-        with open(fp, "r") as file:
-            script = file.read()
+        script = _get_python_download_script_as_str()
 
         script_parameters["COPYRIGHT_YEAR_PLACEHOLDER"] = str(dt.date.today().year)
         script_parameters["PYTHON_VERSION_PLACEHOLDER"] = (
