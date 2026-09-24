@@ -68,7 +68,7 @@ except ImportError:
     from urlparse import urlparse
 
 short_name = "SHORT_NAME_PLACEHOLDER"
-version = "VERSION_PLACEHOLDER"
+version = "DATASET_VERSION_PLACEHOLDER"
 time_start = "TIME_START_PLACEHOLDER"
 time_end = "TIME_END_PLACEHOLDER"
 bounding_box = "BOUNDING_BOX_PLACEHOLDER"
