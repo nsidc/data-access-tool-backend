@@ -406,6 +406,10 @@ def cmr_filter_urls(search_results):
             # Excldue s3 metadata (DA-109)
             continue
 
+        if "metadata#" in link["rel"] and "opendap" in link["href"]:
+            # Excldue opedap metadata files (#30)
+            continue
+
         if filename in unique_filenames:
             # Exclude links with duplicate filenames (they would overwrite)
             continue

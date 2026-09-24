@@ -7,6 +7,9 @@
 - Update nginx server version from v1.27.4 -> v1.31.6
 - Fix bug in metrics endpoint code and filter to report metrics only for `/api/`
   endpoints.
+- Fix bug allowing links for granules that are opendap links (which end in e.g.,
+  `.h5_KOiFgTqo`) and result in failures when the Python script or EDD try to
+  download them (#30).
 
 # v1.1.0
 
