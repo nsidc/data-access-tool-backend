@@ -403,7 +403,11 @@ def cmr_filter_urls(search_results):
             continue
 
         if "metadata#" in link["rel"] and filename == "s3credentials":
-            # Excldue s3 metadata (DA-109)
+            # Exclude s3 metadata (DA-109)
+            continue
+
+        if "metadata#" in link["rel"] and "opendap" in link["href"]:
+            # Exclude opendap metadata files (#30)
             continue
 
         if filename in unique_filenames:
