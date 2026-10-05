@@ -29,6 +29,9 @@ else:
     EARTHDATA_APP_UID = os.environ.get("EARTHDATA_APP_USERNAME")
     EARTHDATA_APP_PASSWORD = os.environ.get("EARTHDATA_APP_PASSWORD")
 
+# We expect the auth callback deeplink to always start with `earthdata-download://authCallback`.
+EXPECTED_AUTH_CALLBACK_DEEPLINK = "earthdata-download://authCallback"
+
 
 @api.route("/api/earthdata/auth")
 class EarthdataAuth(frx.Resource):  # type: ignore[misc]
@@ -37,6 +40,18 @@ class EarthdataAuth(frx.Resource):  # type: ignore[misc]
     def get(self) -> Response:
         eddRedirect = request.args.get("eddRedirect")
         referrer = request.referrer
+
+        if not eddRedirect.startswith(EXPECTED_AUTH_CALLBACK_DEEPLINK):
+            app.logger.error(f"Received unexpected EDD Redirect URL: {eddRedirect=})")
+            return Response(
+                render_template(
+                    "edd_auth_session_fail.html.jinja",
+                    status_code=RESPONSE_CODES[400][0],
+                    status_message=RESPONSE_CODES[400][1],
+                ),
+                content_type="text/html",
+                status=RESPONSE_CODES[400][0],
+            )
 
         app.logger.info(f"Received {eddRedirect=}")
         session["referrer"] = referrer
