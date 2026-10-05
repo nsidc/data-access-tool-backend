@@ -22,7 +22,7 @@ between the DAT UI, the backend, and Earthdata Download.
 - Backend uses CMR to request a list of granules matching the order. It returns
   a page of download links.
 - Optionally, if the download requires EDL auth:
-  - Earthdata Download initiates auth with the DAT-backend via the auth allback
+  - Earthdata Download initiates auth with the DAT-backend via the auth callback
     url.
   - DAT-backend responds with the user's EDL auth token via an `eddRedirect`
     deep link.
@@ -76,7 +76,7 @@ npm run start
 
 On Linux, starting the EDD in dev mode may not properly associate
 `earthdata-download://` deep links with the dev instance of the EDD. See
-https://github.com/nasa/earthdata-download/issues/62
+<https://github.com/nasa/earthdata-download/issues/62>
 
 :::
 
