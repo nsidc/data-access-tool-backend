@@ -106,8 +106,6 @@ def earthdata_token_exchange(authorization_code: str | None) -> dict[str, Any]:
 
     authorization_result_json: dict[str, Any] = authorization_result.json()
 
-    app.logger.info(f"result json: {authorization_result_json}")
-
     return authorization_result_json
 
 
