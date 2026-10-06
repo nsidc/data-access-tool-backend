@@ -41,7 +41,9 @@ class EarthdataAuth(frx.Resource):  # type: ignore[misc]
         eddRedirect = request.args.get("eddRedirect")
         referrer = request.referrer
 
-        if not eddRedirect.startswith(EXPECTED_AUTH_CALLBACK_DEEPLINK):
+        if eddRedirect is None or not eddRedirect.startswith(
+            EXPECTED_AUTH_CALLBACK_DEEPLINK
+        ):
             app.logger.error(f"Received unexpected EDD Redirect URL: {eddRedirect=})")
             return Response(
                 render_template(
