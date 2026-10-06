@@ -29,16 +29,31 @@ else:
     EARTHDATA_APP_UID = os.environ.get("EARTHDATA_APP_USERNAME")
     EARTHDATA_APP_PASSWORD = os.environ.get("EARTHDATA_APP_PASSWORD")
 
+# We expect the auth callback deeplink to always start with `earthdata-download://authCallback`.
+EXPECTED_AUTH_CALLBACK_DEEPLINK = "earthdata-download://authCallback"
+
 
 @api.route("/api/earthdata/auth")
 class EarthdataAuth(frx.Resource):  # type: ignore[misc]
     @api.response(*RESPONSE_CODES[302])  # type: ignore[untyped-decorator]
     @api.response(*RESPONSE_CODES[500])  # type: ignore[untyped-decorator]
     def get(self) -> Response:
-        app.logger.info("AUTH HAPPENING HERE!")
-        app.logger.info(f"Got {request.args}")
         eddRedirect = request.args.get("eddRedirect")
         referrer = request.referrer
+
+        if eddRedirect is None or not eddRedirect.startswith(
+            EXPECTED_AUTH_CALLBACK_DEEPLINK
+        ):
+            app.logger.error(f"Received unexpected EDD Redirect URL: {eddRedirect=})")
+            return Response(
+                render_template(
+                    "edd_auth_session_fail.html.jinja",
+                    status_code=RESPONSE_CODES[400][0],
+                    status_message=RESPONSE_CODES[400][1],
+                ),
+                content_type="text/html",
+                status=RESPONSE_CODES[400][0],
+            )
 
         app.logger.info(f"Received {eddRedirect=}")
         session["referrer"] = referrer
@@ -93,8 +108,6 @@ def earthdata_token_exchange(authorization_code: str | None) -> dict[str, Any]:
 
     authorization_result_json: dict[str, Any] = authorization_result.json()
 
-    app.logger.info(f"result json: {authorization_result_json}")
-
     return authorization_result_json
 
 
@@ -108,7 +121,7 @@ class EarthdataAuthCallback(frx.Resource):  # type: ignore[misc]
         earthdata_auth_result = earthdata_token_exchange(authorization_code)
         user_edl_token = earthdata_auth_result["access_token"]
 
-        app.logger.info(f"Authorized with token: {user_edl_token}")
+        app.logger.info("Authorized with token.")
 
         eddRedirect = session.get("eddRedirect")
         if not eddRedirect:
@@ -132,7 +145,7 @@ class EarthdataAuthCallback(frx.Resource):  # type: ignore[misc]
         # `earthdata-download://authCallback?fileId=6833`
         # Add the user's access token:
         auth_callback_deeplink = f"{eddRedirect}&token={user_edl_token}"
-        app.logger.info(f"Using auth callback redirect: {auth_callback_deeplink}")
+        app.logger.info(f"Using auth callback redirect: {eddRedirect}&token=REDACTED")
 
         # TODO: using a redirect here does not work, because the protocol+host
         # bit of the redirect URI gets cast to lowercase. EDD expects
