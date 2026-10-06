@@ -10,6 +10,7 @@
 - Fix bug allowing links for granules that are opendap links (which end in e.g.,
   `.h5_KOiFgTqo`) and result in failures when the Python script or EDD try to
   download them (#30).
+- Address potential security vulnerabilities in auth (#45).
 
 # v1.1.0
 
