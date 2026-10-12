@@ -31,6 +31,7 @@ module = [
   "requests.*",
   "flask_restx.*",
   "flask_cors.*",
+  "pandas.*",
 ]
 ignore_missing_imports = true
 
