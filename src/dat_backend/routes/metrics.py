@@ -17,7 +17,7 @@ from dat_backend.constants import RESPONSE_CODES
 SERVER_LOGS_DIR = Path("/tmp/server_logs/")
 
 
-def _get_links_metrics(access_info: dict[str, str]) -> dict[str, str] | None:
+def _get_links_metrics(access_info: dict[str, str]) -> dict[str, str | None] | None:
 
     if "get-links" not in access_info["uri"]:
         return None
@@ -47,13 +47,17 @@ def _get_links_metrics(access_info: dict[str, str]) -> dict[str, str] | None:
             "datetime": datetime_str,
         }
 
+    return None
+
 
 _http_referer_pattern = re.compile(
     r"https://nsidc.org/data/data-access-tool/(?P<dataset_shortname>.*)/versions/(?P<dataset_version>[^?]*)"
 )
 
 
-def _get_python_script_metrics(access_info: dict[str, str]) -> dict[str, str] | None:
+def _get_python_script_metrics(
+    access_info: dict[str, str],
+) -> dict[str, str | None] | None:
     if "downloader-script" not in access_info["uri"]:
         return None
 
@@ -77,7 +81,7 @@ def _get_python_script_metrics(access_info: dict[str, str]) -> dict[str, str] | 
 
 
 def metrics_from_logs(server_logs_dir: Path) -> pd.DataFrame:
-    metrics_list: list[dict[str, str]] = []
+    metrics_list: list[dict[str, str | None]] = []
 
     logfiles = list(server_logs_dir.rglob("dat.access.log*"))
     for logfile in logfiles:
