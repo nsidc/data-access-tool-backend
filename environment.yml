@@ -12,6 +12,7 @@ dependencies:
   - requests ~=2.34
   - openssl ~=3.6 # required for production ssl behind the Apache proxy.
   - flask-caching ~=2.5.0
+  - pandas ~=3.0.6
 
   # Dev deps
   - pytest ~=9.1

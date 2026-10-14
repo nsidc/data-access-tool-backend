@@ -5,8 +5,9 @@
   (apply latest black/ruff rules via pre-commit). This drops support for using
   the script with Python <3.6.
 - Update nginx server version from v1.27.4 -> v1.31.6
-- Fix bug in metrics endpoint code and filter to report metrics only for `/api/`
-  endpoints.
+- Fix bug in metrics endpoint code and update metrics endpoint to return a CSV
+  giving handoffs to Earthdata Download and the Python script. This is much more
+  flexible than the static HTML representation of metrics for all endpoints.
 - Fix bug allowing links for granules that are opendap links (which end in e.g.,
   `.h5_KOiFgTqo`) and result in failures when the Python script or EDD try to
   download them (#30).

@@ -1,13 +1,14 @@
 import datetime as dt
 import gzip
+import io
 import json
-from collections import defaultdict
+import re
 from pathlib import Path
-from typing import Any
 from urllib.parse import parse_qs
 
 import flask_restx as frx
-from flask import render_template
+import pandas as pd
+from flask import send_file
 from werkzeug.wrappers import Response
 
 from dat_backend import api, cache
@@ -16,25 +17,73 @@ from dat_backend.constants import RESPONSE_CODES
 SERVER_LOGS_DIR = Path("/tmp/server_logs/")
 
 
-def _request_ip_from_log(log_line: dict[str, str]) -> str:
-    ips = log_line["x_forwarded_for"]
-    # There may be multiple IPs depending on how many proxy hops were
-    # involved. Sitting behind the NSIDC apache proxy, this would usually be
-    # 2. The first would be the originator's IP, and the second is the proxy's
-    # IP.
-    first_ip = ips.split(",")[0]
+def _get_links_metrics(access_info: dict[str, str]) -> dict[str, str | None] | None:
 
-    return first_ip
+    if "get-links" not in access_info["uri"]:
+        return None
+
+    datetime_str = access_info["time_iso8601"]
+
+    request_params_dict = parse_qs(access_info["args"])
+    # Indicates that a new get-links request has been initiated.
+    if "cursor" not in request_params_dict.keys():
+        # missing cmr request params - request was not formatted correctly.
+        if "cmr_request_params" not in request_params_dict:
+            return None
+        cmr_request_params = parse_qs(request_params_dict["cmr_request_params"][0])
+        # missing short name - request was not formatted correctly.
+        if (
+            "short_name" not in cmr_request_params
+            or "version" not in cmr_request_params
+        ):
+            return None
+
+        dataset_short_name = cmr_request_params["short_name"][0]
+        dataset_version = cmr_request_params["version"][0]
+
+        return {
+            "short_name": dataset_short_name,
+            "dataset_version": dataset_version,
+            "datetime": datetime_str,
+        }
+
+    return None
 
 
-def metrics_from_logs(server_logs_dir: Path) -> dict[str, Any]:
-    total_num_requests = 0
-    uri_specific_metrics: dict[str, dict[Any, Any]] = defaultdict(dict)
-    get_links_metrics: dict[str, dict[Any, Any]] = defaultdict(dict)
-    min_datetime = None
-    max_datetime = None
+_http_referer_pattern = re.compile(
+    r"https://nsidc.org/data/data-access-tool/(?P<dataset_shortname>.*)/versions/(?P<dataset_version>[^?]*)"
+)
 
-    logfiles = server_logs_dir.rglob("dat.access.log*")
+
+def _get_python_script_metrics(
+    access_info: dict[str, str],
+) -> dict[str, str | None] | None:
+    if "downloader-script" not in access_info["uri"]:
+        return None
+
+    datetime_str = access_info["time_iso8601"]
+
+    # NOTE: we can infer the dataset name and version from the `http_referrer`,
+    # but we can't get the params from the request dict because this was sent as
+    # a POST payload and that's not included in the logs.
+    dataset_shortname = None
+    dataset_version = None
+    match = _http_referer_pattern.match(access_info["http_referer"])
+    if match:
+        dataset_shortname = match.group("dataset_shortname")
+        dataset_version = match.group("dataset_version")
+
+    return {
+        "short_name": dataset_shortname,
+        "dataset_version": dataset_version,
+        "datetime": datetime_str,
+    }
+
+
+def metrics_from_logs(server_logs_dir: Path) -> pd.DataFrame:
+    metrics_list: list[dict[str, str | None]] = []
+
+    logfiles = list(server_logs_dir.rglob("dat.access.log*"))
     for logfile in logfiles:
         open_func = open
         if logfile.suffix == ".gz":
@@ -54,93 +103,24 @@ def metrics_from_logs(server_logs_dir: Path) -> dict[str, Any]:
                 except Exception:
                     continue
 
-                # skip swagger endpoints. The `/` response should be enough to
-                # give us an idea of how many requests are being made to API
-                # docs.
-                if "swagger" in access_info["uri"]:
-                    continue
-                # Skip reporting metrics on favicon
-                if "favicon" in access_info["uri"]:
+                # Filter for only the successful requests
+                if access_info["status"] != "200":
                     continue
 
-                # Skip any non-API URIs. Some of these are e.g., webcrawlers and
-                # not worth reporting on.
-                # TODO: consider a more aggressive filter...there are still some
-                # URIs being counted here that are not part of our app (e.g.,
-                # `/api/config/class/guis`). Maybe this script should be very
-                # specific about what routes it looks at (e.g., `get-links`).
-                if not access_info["uri"].startswith("/api/"):
-                    continue
+                metrics_info = None
+                if metrics_info := _get_links_metrics(access_info):
+                    metrics_info["handoff_type"] = "get-links"
+                elif metrics_info := _get_python_script_metrics(access_info):
+                    metrics_info["handoff_type"] = "python-script"
 
-                if min_datetime is None or min_datetime > access_info["time_iso8601"]:
-                    min_datetime = access_info["time_iso8601"]
-                if max_datetime is None or max_datetime < access_info["time_iso8601"]:
-                    max_datetime = access_info["time_iso8601"]
+                if metrics_info:
+                    metrics_list.append(metrics_info)
 
-                total_num_requests += 1
-                if "count" in uri_specific_metrics[access_info["uri"]].keys():
-                    uri_specific_metrics[access_info["uri"]]["count"][
-                        access_info["status"]
-                    ] += 1
-                    uri_specific_metrics[access_info["uri"]]["ips"].add(
-                        _request_ip_from_log(access_info)
-                    )
-                else:
-                    uri_specific_metrics[access_info["uri"]]["count"] = defaultdict(
-                        lambda: 1
-                    )
-                    uri_specific_metrics[access_info["uri"]]["count"][
-                        access_info["status"]
-                    ] = 1
-                    uri_specific_metrics[access_info["uri"]]["ips"] = set(
-                        (_request_ip_from_log(access_info),)
-                    )
+    df = pd.DataFrame(metrics_list)
 
-                if "get-links" in access_info["uri"]:
-                    request_params_dict = parse_qs(access_info["args"])
-                    # Indicates that a new get-links request has been initiated.
-                    if "cursor" not in request_params_dict.keys():
-                        # There are some cases (just one as of Sept. 23, 2026) where
-                        # the search params are not properly formatted (posisbly
-                        # due to testing or someone providing a malformed
-                        # request.
-                        if "cmr_request_params" not in request_params_dict:
-                            continue
-                        cmr_request_params = parse_qs(
-                            request_params_dict["cmr_request_params"][0]
-                        )
-                        # Sometimes the short_name is not present because the
-                        # cmr request params are malformed (just two cases as of
-                        # Sept. 23, 2026), maybe from testing?
-                        if (
-                            "short_name" not in cmr_request_params
-                            or "version" not in cmr_request_params
-                        ):
-                            continue
-                        shortname_version = (
-                            cmr_request_params["short_name"][0]
-                            + "_"
-                            + cmr_request_params["version"][0]
-                        )
-                        if shortname_version in get_links_metrics:
-                            get_links_metrics[shortname_version][
-                                access_info["status"]
-                            ] += 1
-                        else:
-                            get_links_metrics[shortname_version] = defaultdict(
-                                lambda: 1
-                            )
-                            get_links_metrics[shortname_version][
-                                access_info["status"]
-                            ] = 1
+    df = df.set_index("datetime").sort_index()
 
-    return {
-        "uri_specific_metrics": uri_specific_metrics,
-        "get_links_metrics": get_links_metrics,
-        "total_num_requests": total_num_requests,
-        "max_datetime": max_datetime,
-        "min_datetime": min_datetime,
-    }
+    return df
 
 
 @api.route("/api/metrics")
@@ -150,19 +130,19 @@ class ApplicationMetrics(frx.Resource):  # type: ignore[misc]
     @api.response(*RESPONSE_CODES[200])  # type: ignore[untyped-decorator]
     @api.response(*RESPONSE_CODES[500])  # type: ignore[untyped-decorator]
     def get(self) -> Response:
-        metrics = metrics_from_logs(SERVER_LOGS_DIR)
-        total_num_requests = metrics["total_num_requests"]
-        metrics_by_uri = metrics["uri_specific_metrics"]
-        get_links_metrics = metrics["get_links_metrics"]
-        return Response(
-            render_template(
-                "app_metrics.html.jinja",
-                request_time=dt.datetime.now(),
-                max_datetime=metrics["max_datetime"],
-                min_datetime=metrics["min_datetime"],
-                total_num_requests=total_num_requests,
-                metrics_by_uri=metrics_by_uri,
-                get_links_metrics=get_links_metrics,
-            ),
-            content_type="text/html",
+        metrics_df = metrics_from_logs(SERVER_LOGS_DIR)
+
+        output = io.BytesIO()
+        metrics_df.to_csv(
+            output,
+            index=True,
+            encoding="utf-8",
+        )
+        output.seek(0)
+
+        return send_file(
+            output,
+            mimetype="text/csv",
+            as_attachment=True,
+            download_name=f"DAT_handoff_metrics_{dt.datetime.now().isoformat()}.csv",
         )
