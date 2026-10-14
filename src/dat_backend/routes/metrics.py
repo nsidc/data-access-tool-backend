@@ -51,7 +51,7 @@ def _get_links_metrics(access_info: dict[str, str]) -> dict[str, str | None] | N
 
 
 _http_referer_pattern = re.compile(
-    r"https://nsidc.org/data/data-access-tool/(?P<dataset_shortname>.*)/versions/(?P<dataset_version>[^?]*)"
+    r"https://.*nsidc.org/data/data-access-tool/(?P<dataset_shortname>.*)/versions/(?P<dataset_version>[^?]*)"
 )
 
 
